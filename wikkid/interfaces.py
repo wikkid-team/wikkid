@@ -42,7 +42,7 @@ class IFile(Interface):
 
     path = TextLine(
         description=(
-            "The full path of the page with respect to the root of the "
+            u"The full path of the page with respect to the root of the "
             "file store."))
 
     def get_content():
@@ -52,12 +52,12 @@ class IFile(Interface):
             empty, otherwise the unicode content of the file.
         """
 
-    def update(content, user):
-        """The content is being updated by the user.
+    # def update(content, user):
+    #     """The content is being updated by the user.
 
-        :param content: A unicode string with the content.
-        :param user: An `IUser`.
-        """
+    #     :param content: A unicode string with the content.
+    #     :param user: An `IUser`.
+    #     """
 
 
 class IUserFactory(Interface):
@@ -78,9 +78,9 @@ class IUser(Interface):
      - session identity
     """
     email = TextLine(
-        description="The user's email adderss.")
+        description=u"The user's email adderss.")
     display_name = TextLine(
-        description="The name that is shown through the user interface.")
+        description=u"The name that is shown through the user interface.")
 
 
 class IWikiPage(Interface):
@@ -88,11 +88,11 @@ class IWikiPage(Interface):
 
     path = TextLine(
         description=(
-            "The full path of the page with respect to the root of the "
+            u"The full path of the page with respect to the root of the "
             "file store."))
 
     title = TextLine(
-        description="The last path segment of the path.  Case sensitive.")
+        description=u"The last path segment of the path.  Case sensitive.")
 
     def raw_text():
         """Unicode raw text of the file."""

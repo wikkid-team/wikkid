@@ -32,11 +32,17 @@ class FileStore(object):
 
     implements(IFileStore)
 
-    def __init__(self):
-        self.files = {}
+    def __init__(self, files=None):
+        if files is None:
+            files = {}
+        self.files = files
 
     def get_file(self, path):
         """Return an object representing the file."""
+        if path in self.files:
+            return File(path, self.files[path])
+        else:
+            return None
 
 
 class File(object):
@@ -44,7 +50,10 @@ class File(object):
 
     implements(IFile)
 
-    def __init__(self, path):
+    def __init__(self, path, content):
         self.path = path
+        self.content = content
 
-        
+    def get_content(self):
+        return self.content
+
