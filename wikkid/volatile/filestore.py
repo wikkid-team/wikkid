@@ -16,12 +16,35 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Tests for the wikkid.server."""
+"""A volatile filestore.
 
-from testtools import TestCase
+Used primarily for test purposes, this class should be a fully functional
+filestore, albiet one that doesn't remember anything persistently.
+"""
+
+from zope.interface import implements
+
+from wikkid.interfaces import IFile, IFileStore
 
 
-class TestServer(TestCase):
+class FileStore(object):
+    """A filestore that just uses an internal map to store data."""
 
-    def test_something(self):
-        pass
+    implements(IFileStore)
+
+    def __init__(self):
+        self.files = {}
+
+    def get_file(self, path):
+        """Return an object representing the file."""
+
+
+class File(object):
+    """A volatile file object."""
+
+    implements(IFile)
+
+    def __init__(self, path):
+        self.path = path
+
+        

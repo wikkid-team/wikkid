@@ -16,12 +16,21 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Tests for the wikkid.server."""
+"""Tests for the wikkid.volatile.FileStore."""
 
-from testtools import TestCase
+from wikkid.interfaces import IFile, IFileStore
+from wikkid.tests import TestCase
+from wikkid.volatile.filestore import FileStore
 
 
-class TestServer(TestCase):
+class TestVolatileFileStore(TestCase):
 
-    def test_something(self):
-        pass
+    def test_filestore_provides_IFileStore(self):
+        filestore = FileStore()
+        self.assertProvides(filestore, IFileStore)
+
+    def test_file_provides_IFile(self):
+        filestore = FileStore({
+                'README': 'Content'})
+        readme = filestore.get_file('README')
+        self.assertProvides(readme, IFile)
