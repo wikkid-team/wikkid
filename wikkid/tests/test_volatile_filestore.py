@@ -31,6 +31,35 @@ class TestVolatileFileStore(TestCase):
 
     def test_file_provides_IFile(self):
         filestore = FileStore({
-                'README': 'Content'})
+                'README': ''})
         readme = filestore.get_file('README')
         self.assertProvides(readme, IFile)
+
+    def test_file_gives_content(self):
+        filestore = FileStore({
+                'README': 'Content'})
+        readme = filestore.get_file('README')
+        self.assertEqual('Content', readme.get_content())
+
+    def test_file_path(self):
+        filestore = FileStore({
+                'README': 'Content'})
+        readme = filestore.get_file('README')
+        self.assertEqual('Content', readme.get_content())
+
+    def test_file_is_directory(self):
+        filestore = FileStore({
+                'README': 'Content',
+                'lib': None})
+        self.assertFalse(filestore.get_file('README').is_directory)
+        self.assertTrue(filestore.get_file('lib').is_directory)
+
+    def test_file_is_binary(self):
+        filestore = FileStore({
+                'README': 'Content',
+                'lib': None,
+                'image.png': 'some\0zero\0containing\0string'})
+        self.assertFalse(filestore.get_file('README').is_binary)
+        self.assertTrue(filestore.get_file('lib').is_binary)
+        self.assertTrue(filestore.get_file('image.png').is_binary)
+

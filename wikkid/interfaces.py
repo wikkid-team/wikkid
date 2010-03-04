@@ -22,7 +22,7 @@
 """
 
 from zope.interface import Interface
-from zope.schema import TextLine
+from zope.schema import Bool, TextLine
 
 
 class IFileStore(Interface):
@@ -44,6 +44,18 @@ class IFile(Interface):
         description=(
             u"The full path of the page with respect to the root of the "
             "file store."))
+
+    is_binary = Bool(
+        description=(
+            u"True if the file is a binary file, like an image or pdf. "
+            "Directories are considered binary."),
+        readonly=True)
+
+    is_directory = Bool(
+        description=(
+            u"True if the path specifies a directory."
+            ),
+        readonly=True)
 
     def get_content():
         """Get the contents of the file.

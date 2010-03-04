@@ -33,6 +33,11 @@ class FileStore(object):
     implements(IFileStore)
 
     def __init__(self, files=None):
+        """Files is a dictionary containing path to content mapping.
+
+        If the content is None, the path is assumed to be a directory.  If the
+        content contains a null character, the file is considered binary.
+        """
         if files is None:
             files = {}
         self.files = files
@@ -57,3 +62,13 @@ class File(object):
     def get_content(self):
         return self.content
 
+    @property
+    def is_directory(self):
+        return self.content is None
+
+    @property
+    def is_binary(self):
+        # Directories are considered binary.
+        if self.is_directory:
+            return True
+        return '\0' in self.content
