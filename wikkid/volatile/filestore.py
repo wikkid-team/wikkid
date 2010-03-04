@@ -24,6 +24,7 @@ filestore, albiet one that doesn't remember anything persistently.
 
 from zope.interface import implements
 
+from wikkid.errors import FileExists
 from wikkid.interfaces import IFile, IFileStore
 
 
@@ -48,6 +49,25 @@ class FileStore(object):
             return File(path, self.files[path])
         else:
             return None
+
+    def update_file(self, path, content, user):
+        """The `user` is updating the file at `path` with `content`."""
+        # Split the path, and make sure there are directories registered.
+        dirs = path.split('/')
+        for i in range(1, len(dirs)):
+            check_dir_path = '/'.join(dirs[:i])
+            check_dir = self.get_file(check_dir_path)
+            if check_dir is None:
+                # Add it in.
+                self.files[check_dir_path] = None
+            elif not check_dir.is_directory:
+                raise FileExists(
+                    "Found a file at '%s' where a directory is needed"
+                    % check_dir_path)
+            else:
+                # Everything's fine.
+                pass
+        self.files[path] = content
 
 
 class File(object):

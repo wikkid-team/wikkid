@@ -36,6 +36,14 @@ class IFileStore(Interface):
     def get_file(path):
         """Return an object representing the file at specified path."""
 
+    def update_file(path, content, user):
+        """Update the file at the given path with the content.
+
+        :param path: The path of the file.
+        :param content: The content of the file.
+        :param user: Who is doing the updating.
+        """
+
 
 class IFile(Interface):
     """A file from the file store."""

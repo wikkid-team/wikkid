@@ -18,6 +18,7 @@
 
 """Tests for the wikkid.volatile.FileStore."""
 
+from wikkid.errors import FileExists
 from wikkid.interfaces import IFile, IFileStore
 from wikkid.tests import TestCase
 from wikkid.volatile.filestore import FileStore
@@ -64,3 +65,23 @@ class TestVolatileFileStore(TestCase):
         self.assertTrue(filestore.get_file('lib').is_binary)
         self.assertTrue(filestore.get_file('image.png').is_binary)
 
+    def assertDirectory(self, filestore, path):
+        """The filestore should have a directory at path."""
+        location = filestore.get_file(path)
+        self.assertTrue(location.is_directory)
+
+    def test_updating_file_adds_directories(self):
+        filestore = FileStore()
+        user = None
+        filestore.update_file('first/second/third', 'content', user)
+        self.assertDirectory(filestore, 'first')
+        self.assertDirectory(filestore, 'first/second')
+        third = filestore.get_file('first/second/third')
+        self.assertEqual('content', third.get_content())
+
+    def test_updating_file_with_directory_clash(self):
+        filestore = FileStore({'first': 'content'})
+        user = None
+        self.assertRaises(
+            FileExists, filestore.update_file,
+            'first/second', 'content', user)
