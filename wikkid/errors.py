@@ -16,12 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Tests for the wikkid.server."""
-
-from testtools import TestCase
+"""Wikkid errors."""
 
 
-class TestServer(TestCase):
-
-    def test_something(self):
-        pass
+class FileExists(Exception):
+    """A file was found where a directory is wanted."""

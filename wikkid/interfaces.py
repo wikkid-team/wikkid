@@ -22,7 +22,7 @@
 """
 
 from zope.interface import Interface
-from zope.schema import TextLine
+from zope.schema import Bool, TextLine
 
 
 class IFileStore(Interface):
@@ -36,14 +36,34 @@ class IFileStore(Interface):
     def get_file(path):
         """Return an object representing the file at specified path."""
 
+    def update_file(path, content, user):
+        """Update the file at the given path with the content.
+
+        :param path: The path of the file.
+        :param content: The content of the file.
+        :param user: Who is doing the updating.
+        """
+
 
 class IFile(Interface):
     """A file from the file store."""
 
     path = TextLine(
         description=(
-            "The full path of the page with respect to the root of the "
+            u"The full path of the page with respect to the root of the "
             "file store."))
+
+    is_binary = Bool(
+        description=(
+            u"True if the file is a binary file, like an image or pdf. "
+            "Directories are considered binary."),
+        readonly=True)
+
+    is_directory = Bool(
+        description=(
+            u"True if the path specifies a directory."
+            ),
+        readonly=True)
 
     def get_content():
         """Get the contents of the file.
@@ -52,12 +72,12 @@ class IFile(Interface):
             empty, otherwise the unicode content of the file.
         """
 
-    def update(content, user):
-        """The content is being updated by the user.
+    # def update(content, user):
+    #     """The content is being updated by the user.
 
-        :param content: A unicode string with the content.
-        :param user: An `IUser`.
-        """
+    #     :param content: A unicode string with the content.
+    #     :param user: An `IUser`.
+    #     """
 
 
 class IUserFactory(Interface):
@@ -78,9 +98,9 @@ class IUser(Interface):
      - session identity
     """
     email = TextLine(
-        description="The user's email adderss.")
+        description=u"The user's email adderss.")
     display_name = TextLine(
-        description="The name that is shown through the user interface.")
+        description=u"The name that is shown through the user interface.")
 
 
 class IWikiPage(Interface):
@@ -88,11 +108,11 @@ class IWikiPage(Interface):
 
     path = TextLine(
         description=(
-            "The full path of the page with respect to the root of the "
+            u"The full path of the page with respect to the root of the "
             "file store."))
 
     title = TextLine(
-        description="The last path segment of the path.  Case sensitive.")
+        description=u"The last path segment of the path.  Case sensitive.")
 
     def raw_text():
         """Unicode raw text of the file."""

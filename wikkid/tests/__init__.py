@@ -20,10 +20,28 @@
 
 import unittest
 
+import testtools
+from zope.interface.verify import verifyObject
+
+
+class TestCase(testtools.TestCase):
+    """Add some zope interface helpers."""
+
+    def assertProvides(self, obj, interface):
+        """Assert 'obj' correctly provides 'interface'."""
+        self.assertTrue(
+            interface.providedBy(obj),
+            "%r does not provide %r." % (obj, interface))
+        self.assertTrue(
+            verifyObject(interface, obj),
+            "%r claims to provide %r but does not do so correctly."
+            % (obj, interface))
+
 
 def test_suite():
     names = [
         'server',
+        'volatile_filestore',
         ]
     module_names = ['wikkid.tests.test_' + name for name in names]
     loader = unittest.TestLoader()
