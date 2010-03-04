@@ -24,6 +24,7 @@ from wikkid.volatile.filestore import FileStore
 
 
 class TestVolatileFileStore(TestCase):
+    """Tests for the volatile filestore and files."""
 
     def test_filestore_provides_IFileStore(self):
         filestore = FileStore()
