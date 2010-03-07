@@ -28,8 +28,6 @@ from twisted.web.server import Site
 from twisted.web.resource import Resource
 from twisted.internet import reactor
 
-from wikkid.server import Server
-
 
 class TwistedPage(Resource):
 
@@ -41,36 +39,36 @@ class TwistedPage(Resource):
     def getChild(self, name, request):
         # Yay for logging...
         self.logger.debug('getChild: %r' % name)
-        return TwistedPage(self.server)
+        return TwistedPage(self.server, self.logger)
 
     @property
     def filepath(self):
         return '/'.join(self.path)
 
     def render_file(self, request):
-        content = self.filestore.file_contents(self.filepath)
+        # content = self.filestore.file_contents(self.filepath)
         # Munge the content.
         request.setHeader('Content-Type', 'text/plain')
-        return content
+        return 'Hello world'
 
     def render_GET(self, request):
-        import pdb; pdb.set_trace()
-        request.args
-        self.logger.debug(request.path)
+        self.logger.debug('args: %s', request.args)
+        self.logger.debug('path: %s', request.path)
         return self.render_file(request)
 
 
 class TwistedServer(object):
     """Wraps the twisted stuff..."""
 
-    def __init__(self, filestore, user_factory, port=8080, logger=None):
+    def __init__(self, server, port=8080, logger=None):
         if logger is None:
             logger = logging.getLogger('wikkid')
-        self.server = Server(filestore, user_factory, logger=logger)
+        self.server = server
         self.port = port
         self.logger = logger
 
     def run(self):
+        self.logger.info('Listening on port %d' % self.port)
         root = TwistedPage(self.server, self.logger)
         factory = Site(root)
         reactor.listenTCP(self.port, factory)
