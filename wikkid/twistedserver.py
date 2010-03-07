@@ -48,8 +48,10 @@ class TwistedPage(Resource):
     def render_file(self, request):
         # content = self.filestore.file_contents(self.filepath)
         # Munge the content.
-        request.setHeader('Content-Type', 'text/plain')
-        return 'Hello world'
+        page = self.server.get_page(request.path)
+        content_type, content = page.render()
+        request.setHeader('Content-Type', content_type)
+        return content
 
     def render_GET(self, request):
         self.logger.debug('args: %s', request.args)
@@ -60,12 +62,10 @@ class TwistedPage(Resource):
 class TwistedServer(object):
     """Wraps the twisted stuff..."""
 
-    def __init__(self, server, port=8080, logger=None):
-        if logger is None:
-            logger = logging.getLogger('wikkid')
+    def __init__(self, server, port=8080):
         self.server = server
         self.port = port
-        self.logger = logger
+        self.logger = logging.getLogger('wikkid')
 
     def run(self):
         self.logger.info('Listening on port %d' % self.port)
