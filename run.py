@@ -23,7 +23,11 @@ import logging
 import optparse
 import sys
 
+from bzrlib.branch import Branch
+
+from wikkid.bzr.filestore import FileStore
 from wikkid.server import Server
+from wikkid.twistedserver import TwistedServer
 
 
 def setup_logging():
@@ -44,11 +48,22 @@ def main(args):
     parser.add_option('--port', type='int', default=8080,
                       help='The port to listen on.  Defaults to 8080.')
     options, args = parser.parse_args(sys.argv[1:])
+    if len(args):
+        print "Unexpected positional args:", args
+        sys.exit(1)
     setup_logging()
     logger = logging.getLogger('wikkid')
-    logger.setLevel(logging.INFO)
-    logger.info('All systems go.')
+    logger.setLevel(logging.DEBUG)
 
+    branch = Branch.open(options.branch)
+    logger.info('Using branch: %s', branch)
+    filestore = FileStore(branch)
+    # Don't use the user factory yet...
+    user_factory = None
+    server = TwistedServer(
+        Server(filestore, user_factory, logger=logger),
+        port=options.port, logger=logger)
+    server.run()
 
 
 if __name__ == "__main__":
