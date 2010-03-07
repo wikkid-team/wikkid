@@ -16,32 +16,30 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""The server class for the wiki."""
-
 import logging
 
-from wikkid.page import Page
+from wikkid.interfaces import IFile
 
+class Page(object):
+    """A page is found at a particular location.
 
-class Server(object):
-    """The Wikkid wiki server.
+    A page may refer to an existing file, or it may render the "couldn't find
+    the page you asked for" page.  The page may be a wiki page to render, or
+    the page may be an image (ick - change this soon).
     """
 
-    def __init__(self, filestore, user_factory, skin=None):
-        """Construct the Wikkid Wiki server.
-
-        :param filestore: An `IFileStore` instance.
-        :param user_factory: A factory to create users.
-        :param skin: A particular skin to use.
-        """
-        self.filestore = filestore
-        self.user_factory = user_factory
-        # Need to load the initial templates for the skin.
-        self.skin = skin
+    def __init__(self, path, file_):
+        self.path = path
         self.logger = logging.getLogger('wikkid')
+        # Make sure that the file param implements IFile, or is nothing.
+        self.file = IFile(file_, None)
 
-    def load_templates(self):
-        """Load the wiki template for the skin."""
+    def render(self):
+        """Render the page.
 
-    def get_page(self, path):
-        return Page(path, self.filestore.get_file(path))
+        Return a tuple of content type and content.
+        """
+        if self.file is None:
+            return ('text/plain', '%s Not found' % self.path)
+        else:
+            return ('text/plain', self.file.get_content())

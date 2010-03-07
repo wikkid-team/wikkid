@@ -44,7 +44,7 @@ class File(object):
     def __init__(self, branch, path):
         self.branch = branch
         self.path = path
-        self.file_id = branch.basis_tree.path2id(path)
+        self.file_id = branch.basis_tree().path2id(path)
 
     def get_content(self):
         if self.file_id is None:
