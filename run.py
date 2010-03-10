@@ -23,7 +23,7 @@ import logging
 import optparse
 import sys
 
-from bzrlib.branch import Branch
+from bzrlib.workingtree import WorkingTree
 
 from wikkid.bzr.filestore import FileStore
 from wikkid.server import Server
@@ -55,9 +55,9 @@ def main(args):
     logger = logging.getLogger('wikkid')
     logger.setLevel(logging.DEBUG)
 
-    branch = Branch.open(options.branch)
-    logger.info('Using branch: %s', branch)
-    filestore = FileStore(branch)
+    working_tree = WorkingTree.open(options.branch)
+    logger.info('Using: %s', working_tree)
+    filestore = FileStore(working_tree)
     # Don't use the user factory yet...
     user_factory = None
     server = TwistedServer(

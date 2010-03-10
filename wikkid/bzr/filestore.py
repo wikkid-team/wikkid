@@ -28,12 +28,12 @@ class FileStore(object):
 
     implements(IFileStore)
 
-    def __init__(self, branch):
-        self.branch = branch
+    def __init__(self, working_tree):
+        self.working_tree = working_tree
 
     def get_file(self, path):
         """Return an object representing the file at specified path."""
-        return File(self.branch, path)
+        return File(self.working_tree, path)
 
 
 class File(object):
@@ -41,20 +41,24 @@ class File(object):
 
     implements(IFile)
 
-    def __init__(self, branch, path):
-        self.branch = branch
+    def __init__(self, working_tree, path):
+        self.working_tree = working_tree
         self.path = path
-        self.file_id = branch.basis_tree().path2id(path)
+        self.file_id = self.working_tree.path2id(path)
 
     def get_content(self):
         if self.file_id is None:
             return None
-        self.branch.lock_read()
+        branch = self.working_tree.branch
+        branch.lock_read()
         try:
-            tree = self.branch.basis_tree()
-            return tree.get_file_text(self.file_id)
+            # basis_tree is a revision tree, queries the repositry.
+            # to get the stuff off the filesystem use the working tree
+            # which needs to start with that.  WorkingTree.open('.').
+            # branch = tree.branch.
+            return self.working_tree.get_file_text(self.file_id)
         finally:
-            self.branch.unlock()
+            branch.unlock()
 
     def update(self, content, user):
         raise NotImplementedError()
