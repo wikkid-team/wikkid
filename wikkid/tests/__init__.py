@@ -24,8 +24,7 @@ import testtools
 from zope.interface.verify import verifyObject
 
 
-class TestCase(testtools.TestCase):
-    """Add some zope interface helpers."""
+class ProvidesMixin(object):
 
     def assertProvides(self, obj, interface):
         """Assert 'obj' correctly provides 'interface'."""
@@ -38,10 +37,15 @@ class TestCase(testtools.TestCase):
             % (obj, interface))
 
 
+class TestCase(testtools.TestCase, ProvidesMixin):
+    """Add some zope interface helpers."""
+
+
 def test_suite():
     names = [
         'server',
         'volatile_filestore',
+        'bzr_filestore',
         ]
     module_names = ['wikkid.tests.test_' + name for name in names]
     loader = unittest.TestLoader()

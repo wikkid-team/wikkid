@@ -20,6 +20,9 @@
 
 from zope.interface import implements
 
+from bzrlib.errors import BinaryFile
+from bzrlib.textfile import check_text_path
+
 from wikkid.interfaces import IFile, IFileStore
 
 
@@ -35,6 +38,13 @@ class FileStore(object):
         """Return an object representing the file at specified path."""
         return File(self.working_tree, path)
 
+    def update_file(self, path, content, user):
+        """Update the file at the specified path with the content.
+
+        This is going to be really interesting when we need to deal with
+        conflicts.
+        """
+
 
 class File(object):
     """Represents a file in the Bazaar branch."""
@@ -49,8 +59,7 @@ class File(object):
     def get_content(self):
         if self.file_id is None:
             return None
-        branch = self.working_tree.branch
-        branch.lock_read()
+        self.working_tree.lock_read()
         try:
             # basis_tree is a revision tree, queries the repositry.
             # to get the stuff off the filesystem use the working tree
@@ -58,7 +67,23 @@ class File(object):
             # branch = tree.branch.
             return self.working_tree.get_file_text(self.file_id)
         finally:
-            branch.unlock()
+            self.working_tree.unlock()
+
+    @property
+    def is_binary(self):
+        """True if the file is binary."""
+        if self.is_directory:
+            return True
+        try:
+            check_text_path(self.working_tree.abspath(self.path))
+            return False
+        except BinaryFile:
+            return True
+
+    @property
+    def is_directory(self):
+        """Is this file a directory?"""
+        return 'directory' == self.working_tree.kind(self.file_id)
 
     def update(self, content, user):
         raise NotImplementedError()
