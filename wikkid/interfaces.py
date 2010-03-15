@@ -36,12 +36,18 @@ class IFileStore(Interface):
     def get_file(path):
         """Return an object representing the file at specified path."""
 
-    def update_file(path, content, user):
+    def update_file(path, content, user, parent_revision,
+                    commit_message=None):
         """Update the file at the given path with the content.
 
         :param path: The path of the file.
         :param content: The content of the file.
         :param user: Who is doing the updating.
+        :param parent_revision: The revision that the user was editing when
+           they made the changes.  For a new revision this parameter will be
+           None.
+        :param commit_message: An optional commit message.  If one isn't
+           provided, then some sensible default will be used.
         """
 
 

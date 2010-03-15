@@ -73,7 +73,7 @@ class TestVolatileFileStore(TestCase):
     def test_updating_file_adds_directories(self):
         filestore = FileStore()
         user = None
-        filestore.update_file('first/second/third', 'content', user)
+        filestore.update_file('first/second/third', 'content', user, None)
         self.assertDirectory(filestore, 'first')
         self.assertDirectory(filestore, 'first/second')
         third = filestore.get_file('first/second/third')
@@ -84,4 +84,4 @@ class TestVolatileFileStore(TestCase):
         user = None
         self.assertRaises(
             FileExists, filestore.update_file,
-            'first/second', 'content', user)
+            'first/second', 'content', user, None)

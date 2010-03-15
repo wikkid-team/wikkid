@@ -38,12 +38,34 @@ class FileStore(object):
         """Return an object representing the file at specified path."""
         return File(self.working_tree, path)
 
-    def update_file(self, path, content, user):
+    def update_file(self, path, content, user, parent_revision,
+                    commit_message=None):
         """Update the file at the specified path with the content.
 
         This is going to be really interesting when we need to deal with
         conflicts.
         """
+        # Firstly we want to lock the tree for writing.
+        self.working_tree.lock_write()
+        try:
+            # Look to see if the path is there.  If it is then we are doing an
+            # update.  If it isn't we are doing an add.
+            file_id = self.working_tree.path2id(path)
+            if file_id is None:
+                self._add_file(path, content, user, commit_message)
+            else:
+                self._update_file(
+                    file_id, path, content, user, parent_revision,
+                    commit_message)
+        finally:
+            self.working_tree.unlock()
+
+    def _add_file(self, path, content, user, commit_message):
+        """Add a new file at the specified path with the content.
+
+        Then commit this new file with the specified commit_message.
+        """
+        
 
 
 class File(object):
