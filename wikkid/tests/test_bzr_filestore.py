@@ -66,15 +66,19 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin):
         self.assertTrue(filestore.get_file('lib').is_binary)
         self.assertTrue(filestore.get_file('image.png').is_binary)
 
+    def test_nonexistant_file(self):
+        filestore = self.make_filestore()
+        readme = filestore.get_file('README')
+        self.assertIs(None, readme)
+
     def assertDirectory(self, filestore, path):
         """The filestore should have a directory at path."""
         location = filestore.get_file(path)
         self.assertTrue(location.is_directory)
 
     def test_updating_file_adds_directories(self):
-        self.skip('not done yet')
         filestore = self.make_filestore()
-        user = None
+        user = 'Eric the viking <eric@example.com>'
         filestore.update_file('first/second/third', 'content', user,
                               None)
         self.assertDirectory(filestore, 'first')
@@ -83,7 +87,7 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin):
         self.assertEqual('content', third.get_content())
 
     def test_updating_file_with_directory_clash(self):
-        self.skip('not done yet')
+        self.skip('not yet done')
         filestore = self.make_filestore(
             [('first', 'content')])
         user = None

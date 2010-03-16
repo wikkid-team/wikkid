@@ -36,9 +36,13 @@ class FileStore(object):
 
     def get_file(self, path):
         """Return an object representing the file at specified path."""
-        return File(self.working_tree, path)
+        file_id = self.working_tree.path2id(path)
+        if file_id is None:
+            return None
+        else:
+            return File(self.working_tree, path, file_id)
 
-    def update_file(self, path, content, user, parent_revision,
+    def update_file(self, path, content, author, parent_revision,
                     commit_message=None):
         """Update the file at the specified path with the content.
 
@@ -52,10 +56,10 @@ class FileStore(object):
             # update.  If it isn't we are doing an add.
             file_id = self.working_tree.path2id(path)
             if file_id is None:
-                self._add_file(path, content, user, commit_message)
+                self._add_file(path, content, author, commit_message)
             else:
                 self._update_file(
-                    file_id, path, content, user, parent_revision,
+                    file_id, path, content, author, parent_revision,
                     commit_message)
         finally:
             self.working_tree.unlock()
@@ -73,10 +77,10 @@ class File(object):
 
     implements(IFile)
 
-    def __init__(self, working_tree, path):
+    def __init__(self, working_tree, path, file_id):
         self.working_tree = working_tree
         self.path = path
-        self.file_id = self.working_tree.path2id(path)
+        self.file_id = file_id
 
     def get_content(self):
         if self.file_id is None:

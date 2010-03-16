@@ -49,6 +49,11 @@ class TestVolatileFileStore(TestCase):
         readme = filestore.get_file('README')
         self.assertEqual('Content', readme.get_content())
 
+    def test_nonexistant_file(self):
+        filestore = FileStore({})
+        readme = filestore.get_file('README')
+        self.assertIs(None, readme)
+
     def test_file_is_directory(self):
         filestore = FileStore({
                 'README': 'Content',
