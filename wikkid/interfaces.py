@@ -43,9 +43,11 @@ class IFileStore(Interface):
         :param path: The path of the file.
         :param content: The content of the file.
         :param user: Who is doing the updating.
+        :type user: String
         :param parent_revision: The revision that the user was editing when
            they made the changes.  For a new revision this parameter will be
            None.
+        :type parent_revision: String
         :param commit_message: An optional commit message.  If one isn't
            provided, then some sensible default will be used.
         """

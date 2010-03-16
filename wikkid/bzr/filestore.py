@@ -18,10 +18,13 @@
 
 """A bzr backed filestore."""
 
+from cStringIO import StringIO
+
 from zope.interface import implements
 
 from bzrlib.errors import BinaryFile
 from bzrlib.textfile import check_text_path
+from bzrlib.urlutils import basename, dirname
 
 from wikkid.interfaces import IFile, IFileStore
 
@@ -64,12 +67,24 @@ class FileStore(object):
         finally:
             self.working_tree.unlock()
 
-    def _add_file(self, path, content, user, commit_message):
+    def _add_file(self, path, content, author, commit_message):
         """Add a new file at the specified path with the content.
 
         Then commit this new file with the specified commit_message.
         """
-        
+        t = self.working_tree.bzrdir.root_transport
+        # Get a transport for the path we want.
+        t = t.clone(dirname(path))
+        t.create_prefix()
+        # Put the file there.
+        # TODO: UTF-8 encode text files?
+        t.put_file(basename(path), StringIO(content))
+        self.working_tree.smart_add('.')
+        if commit_message is None:
+            commit_message = 'Hello world.'
+        self.working_tree.commit(
+            message=commit_message,
+            authors=[author])
 
 
 class File(object):
