@@ -87,7 +87,6 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin):
         self.assertEqual('content', third.get_content())
 
     def test_updating_file_with_directory_clash(self):
-        self.skip('not yet done')
         filestore = self.make_filestore(
             [('first', 'content')])
         user = None

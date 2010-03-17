@@ -26,6 +26,7 @@ from bzrlib.errors import BinaryFile
 from bzrlib.textfile import check_text_path
 from bzrlib.urlutils import basename, dirname
 
+from wikkid.errors import FileExists
 from wikkid.interfaces import IFile, IFileStore
 
 
@@ -67,6 +68,24 @@ class FileStore(object):
         finally:
             self.working_tree.unlock()
 
+    def _ensure_directory_or_nonexistant(self, dir_path):
+        """Ensure the dir_path defines a directory or doesn't exist.
+
+        Walk up the dir_path and make sure that the path either doesn't exist
+        at all, or is a directory.  The purpose of this is to make sure we
+        don't try to add a file in a directory where the directory has the
+        same name as an existing file.
+        """
+        check = []
+        while dir_path:
+            check.append(dir_path)
+            dir_path = dirname(dir_path)
+        while len(check):
+            f = self.get_file(check.pop())
+            if f is not None:
+                if not f.is_directory:
+                    raise FileExists('%s exists and is not a directory' % f.path)
+
     def _add_file(self, path, content, author, commit_message):
         """Add a new file at the specified path with the content.
 
@@ -74,6 +93,7 @@ class FileStore(object):
         """
         t = self.working_tree.bzrdir.root_transport
         # Get a transport for the path we want.
+        self._ensure_directory_or_nonexistant(dirname(path))
         t = t.clone(dirname(path))
         t.create_prefix()
         # Put the file there.
