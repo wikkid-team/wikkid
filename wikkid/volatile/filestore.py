@@ -50,7 +50,8 @@ class FileStore(object):
         else:
             return None
 
-    def update_file(self, path, content, user):
+    def update_file(self, path, content, user, parent_revision,
+                    commit_message=None):
         """The `user` is updating the file at `path` with `content`."""
         # Split the path, and make sure there are directories registered.
         dirs = path.split('/')
@@ -78,6 +79,8 @@ class File(object):
     def __init__(self, path, content):
         self.path = path
         self.content = content
+        self.last_modified_in_revision = None
+        self.last_modified_by = None
 
     def get_content(self):
         return self.content
