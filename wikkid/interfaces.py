@@ -61,6 +61,15 @@ class IFile(Interface):
             u"The full path of the page with respect to the root of the "
             "file store."))
 
+    last_modified_in_revision = TextLine(
+        description=(
+            u"The revision id of the last revision that this file was "
+            "modified in."))
+
+    last_modified_by = TextLine(
+        description=(
+            u"The person who last modified the file."))
+
     is_binary = Bool(
         description=(
             u"True if the file is a binary file, like an image or pdf. "

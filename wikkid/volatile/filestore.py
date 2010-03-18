@@ -79,6 +79,8 @@ class File(object):
     def __init__(self, path, content):
         self.path = path
         self.content = content
+        self.last_modified_in_revision = None
+        self.last_modified_by = None
 
     def get_content(self):
         return self.content

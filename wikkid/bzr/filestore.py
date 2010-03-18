@@ -18,8 +18,6 @@
 
 """A bzr backed filestore."""
 
-from cStringIO import StringIO
-
 from zope.interface import implements
 
 from bzrlib.errors import BinaryFile
@@ -98,7 +96,7 @@ class FileStore(object):
         t.create_prefix()
         # Put the file there.
         # TODO: UTF-8 encode text files?
-        t.put_file(basename(path), StringIO(content))
+        t.put_bytes(basename(path), content)
         self.working_tree.smart_add('.')
         if commit_message is None:
             commit_message = 'Hello world.'
@@ -116,6 +114,13 @@ class File(object):
         self.working_tree = working_tree
         self.path = path
         self.file_id = file_id
+        bt = self.working_tree.basis_tree()
+        bt.lock_read()
+        try:
+            inv_file = bt.inventory[self.file_id]
+            self.last_modified_in_revision = inv_file.revision
+        finally:
+            bt.unlock()
 
     def get_content(self):
         if self.file_id is None:
@@ -129,6 +134,13 @@ class File(object):
             return self.working_tree.get_file_text(self.file_id)
         finally:
             self.working_tree.unlock()
+
+    @property
+    def last_modified_by(self):
+        """Return the first author for the revision."""
+        repo = self.working_tree.branch.repository
+        rev = repo.get_revision(self.last_modified_in_revision)
+        return rev.get_apparent_authors()[0]
 
     @property
     def is_binary(self):
