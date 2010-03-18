@@ -96,14 +96,11 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin):
             'first/second', 'content', user, None)
 
     def test_updating_existing_file(self):
-        self.skip('not done yet')
         filestore = self.make_filestore(
             [('README', 'Content'),
              ])
         user = 'Eric the viking <eric@example.com>'
         filestore.update_file('README', 'new content', user,
                               None)
-        self.assertDirectory(filestore, 'first')
-        self.assertDirectory(filestore, 'first/second')
-        third = filestore.get_file('first/second/third')
-        self.assertEqual('content', third.get_content())
+        readme = filestore.get_file('README')
+        self.assertEqual('new content', readme.get_content())
