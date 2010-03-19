@@ -21,6 +21,7 @@
 import logging
 
 from wikkid.page import Page
+from jinja2 import Environment, PackageLoader
 
 
 class Server(object):
@@ -37,11 +38,13 @@ class Server(object):
         self.filestore = filestore
         self.user_factory = user_factory
         # Need to load the initial templates for the skin.
-        self.skin = skin
+        if skin is None:
+            skin = 'default'
         self.logger = logging.getLogger('wikkid')
-
-    def load_templates(self):
-        """Load the wiki template for the skin."""
+        self.env = Environment(loader=PackageLoader('wikkid.skins', skin))
+        self.page_template = self.env.get_template('page.html')
+        self.edit_template = self.env.get_template('edit.html')
+        self.missing_page_template = self.env.get_template('missing-page.html')
 
     def get_page(self, path):
         return Page(path, self.filestore.get_file(path))
