@@ -21,30 +21,27 @@
 import logging
 
 from wikkid.page import Page
-from jinja2 import Environment, PackageLoader
+from wikkid.skin import Skin
 
 
 class Server(object):
     """The Wikkid wiki server.
     """
 
-    def __init__(self, filestore, user_factory, skin=None):
+    def __init__(self, filestore, user_factory, skin_name=None):
         """Construct the Wikkid Wiki server.
 
         :param filestore: An `IFileStore` instance.
         :param user_factory: A factory to create users.
-        :param skin: A particular skin to use.
+        :param skin_name: The name of a skin to use.
         """
         self.filestore = filestore
         self.user_factory = user_factory
         # Need to load the initial templates for the skin.
-        if skin is None:
-            skin = 'default'
+        if skin_name is None:
+            skin_name = 'default'
         self.logger = logging.getLogger('wikkid')
-        self.env = Environment(loader=PackageLoader('wikkid.skins', skin))
-        self.page_template = self.env.get_template('page.html')
-        self.edit_template = self.env.get_template('edit.html')
-        self.missing_page_template = self.env.get_template('missing-page.html')
+        self.skin = Skin(skin_name)
 
     def get_page(self, path):
         return Page(path, self.filestore.get_file(path))

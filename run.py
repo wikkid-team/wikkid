@@ -61,7 +61,8 @@ def main(args):
     # Don't use the user factory yet...
     user_factory = None
     server = TwistedServer(
-        Server(filestore, user_factory), port=options.port)
+        Server(filestore, user_factory),
+        port=options.port)
     server.run()
 
 
