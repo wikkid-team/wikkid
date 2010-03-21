@@ -75,6 +75,9 @@ class TwistedServer(object):
         if skin.favicon is not None:
             root.putChild('favicon.ico', File(skin.favicon))
         if skin.static_dir is not None:
+            # Perhaps have the 'static' name configurable to avoid potential
+            # conflict with a static directory in a branch that the user cares
+            # about.
             root.putChild('static', File(skin.static_dir))
         factory = Site(root)
         reactor.listenTCP(self.port, factory)
