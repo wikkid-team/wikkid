@@ -1,0 +1,12 @@
+Installing Wikkid Wiki
+======================
+
+Hopefully we'll get this packaged for at least Ubuntu and Debian, and some
+setup tools for those that like it like that.
+
+Dependancies
+------------
+
+python-twisted or the twisted.web libraries
+bzr for the filestore and merging
+python-jinja2 for the templating

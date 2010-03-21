@@ -26,6 +26,7 @@ import logging
 
 from twisted.web.server import Site
 from twisted.web.resource import Resource
+from twisted.web.static import File
 from twisted.internet import reactor
 
 
@@ -70,6 +71,14 @@ class TwistedServer(object):
     def run(self):
         self.logger.info('Listening on port %d' % self.port)
         root = TwistedPage(self.server, self.logger)
+        skin = self.server.skin
+        if skin.favicon is not None:
+            root.putChild('favicon.ico', File(skin.favicon))
+        if skin.static_dir is not None:
+            # Perhaps have the 'static' name configurable to avoid potential
+            # conflict with a static directory in a branch that the user cares
+            # about.
+            root.putChild('static', File(skin.static_dir))
         factory = Site(root)
         reactor.listenTCP(self.port, factory)
         reactor.run()
