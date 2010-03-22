@@ -10,3 +10,6 @@ Dependancies
 python-twisted or the twisted.web libraries
 bzr for the filestore and merging
 python-jinja2 for the templating
+
+
+NOTE: package lazr.enum.
