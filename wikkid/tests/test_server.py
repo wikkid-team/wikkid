@@ -76,7 +76,7 @@ class TestServer(TestCase):
         server = self.make_server({
                 'readme.txt': 'A readme file.'})
         info = server.get_info('readme.txt')
-        self.assertEqual(ResourceStatus.OTHER_TEXT, info.status)
+        self.assertEqual(ResourceStatus.TEXT_FILE, info.status)
         self.assertEqual('readme.txt', info.path)
         self.assertEqual('readme.txt', info.display_name)
         self.assertEqual('text/plain', info.mimetype)
@@ -87,7 +87,7 @@ class TestServer(TestCase):
         server = self.make_server({
                 'somedir/readme.txt': 'A readme file.'})
         info = server.get_info('somedir/readme.txt')
-        self.assertEqual(ResourceStatus.OTHER_TEXT, info.status)
+        self.assertEqual(ResourceStatus.TEXT_FILE, info.status)
         self.assertEqual('somedir/readme.txt', info.path)
         self.assertEqual('readme.txt', info.display_name)
         self.assertEqual('text/plain', info.mimetype)
@@ -97,7 +97,7 @@ class TestServer(TestCase):
         server = self.make_server({
                 'test.cpp': '// This is a comment.'})
         info = server.get_info('test.cpp')
-        self.assertEqual(ResourceStatus.OTHER_TEXT, info.status)
+        self.assertEqual(ResourceStatus.TEXT_FILE, info.status)
         self.assertEqual('text/x-c++src', info.mimetype)
 
     def test_image(self):

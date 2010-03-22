@@ -33,7 +33,7 @@ class ResourceStatus(object):
     MISSING = 1 # The file at the address does not exist.
     WIKI_PAGE = 2 # The resource is a wiki page.
     DIRECTORY = 3 # The resource is a directory.
-    OTHER_TEXT = 4 # A text file that isn't a wiki page.
+    TEXT_FILE = 4 # A text file that isn't a wiki page.
     BINARY_FILE = 5 # A (most likely) binary file.
 
 
@@ -74,8 +74,15 @@ class Server(object):
         if resource is None:
             return ResourceInfo(ResourceStatus.MISSING, path, None, None)
         else:
+            # It is about now that I'm thinking the base name, status, and
+            # mimetype should be part of the IFile interface.  I'll come back
+            # and do that later.
+            # TODO: move name, mimetype and type to the IFile interface.
             display_name = urlutils.basename(path)
             mimetype = mimetypes.guess_type(display_name)[0]
-            return ResourceInfo(
-                ResourceStatus.OTHER_TEXT, path, display_name, mimetype)
+            if mimetype.startswith('text/'):
+                status = ResourceStatus.TEXT_FILE
+            else:
+                status = ResourceStatus.BINARY_FILE
+            return ResourceInfo(status, path, display_name, mimetype)
 
