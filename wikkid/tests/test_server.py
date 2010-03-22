@@ -100,3 +100,11 @@ class TestServer(TestCase):
         self.assertEqual(ResourceStatus.OTHER_TEXT, info.status)
         self.assertEqual('text/x-c++src', info.mimetype)
 
+    def test_image(self):
+        # An image is binary.
+        server = self.make_server({
+                'test.jpg': 'Some\0binary\0content'})
+        info = server.get_info('test.jpg')
+        self.assertEqual(ResourceStatus.BINARY_FILE, info.status)
+        self.assertEqual('image/jpeg', info.mimetype)
+
