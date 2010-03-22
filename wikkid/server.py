@@ -27,7 +27,6 @@ from wikkid.page import Page
 from wikkid.skin import Skin
 
 
-
 class ResourceStatus(object):
     """Package lazr.enum and use an Enumerated Type."""
     MISSING = 1 # The file at the address does not exist.
