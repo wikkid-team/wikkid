@@ -22,6 +22,31 @@ from testtools import TestCase
 
 
 class TestServer(TestCase):
+    """Tests for the Wikkid Server.
+
+    I'm going to write a few notes here.  I want to make sure that the server
+    has meaningful names, but also is functional enough.  I have been thinking
+    over the last few days that the IFile inteface needs to expose the file-id
+    of the underlying file for those cases where the file is moved by one
+    person, and edited by another.  I makes sense to use the functionality of
+    bzr here to have good editing while moving the file.
+
+    Also since I want this designed in a way that it will integrate well into
+    Launchpad, we need to expose partial rendering of the underlying files
+    through the interface.  There may well be images or binaries stored as
+    part of the branch that need to be served directly (or as directly as
+    possible), but also we need to be able to access the rendered page before
+    any rendering into a skin.
+
+    I want to provide meaningful directory type listings, but that also means
+    doing the on-the-fly conversion of files to 'wiki pages'.  We then want to
+    be able to traverse a directory, and product a list of tuples (or objects)
+    which define the display name, filename, and mimetype.
+
+    Wiki pages are going to be quite tightly defined.  Must have a wiki name
+    (Sentence case joined word), ending in '.txt'.
+    """
+
 
     def test_something(self):
         pass
