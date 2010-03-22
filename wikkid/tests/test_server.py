@@ -67,7 +67,7 @@ class TestServer(TestCase):
         server = self.make_server()
         info = server.get_info('a-file')
         self.assertEqual(ResourceStatus.MISSING, info.status)
-        self.assertIs('a-file', info.path)
+        self.assertEqual('a-file', info.path)
         self.assertIs(None, info.display_name)
         self.assertIs(None, info.mimetype)
 
@@ -78,7 +78,7 @@ class TestServer(TestCase):
                 'readme.txt': 'A readme file.'})
         info = server.get_info('readme.txt')
         self.assertEqual(ResourceStatus.OTHER_TEXT, info.status)
-        self.assertIs('readme.txt', info.path)
-        self.assertIs('readme.txt', info.display_name)
-        self.assertIs('text/plain', info.mimetype)
+        self.assertEqual('readme.txt', info.path)
+        self.assertEqual('readme.txt', info.display_name)
+        self.assertEqual('text/plain', info.mimetype)
 

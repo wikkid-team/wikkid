@@ -67,5 +67,9 @@ class Server(object):
         return Page(path, self.filestore.get_file(path))
 
     def get_info(self, path):
-        return ResourceInfo(ResourceStatus.MISSING, path, None, None)
+        resource = self.filestore.get_file(path)
+        if resource is None:
+            return ResourceInfo(ResourceStatus.MISSING, path, None, None)
+        else:
+            return ResourceInfo(ResourceStatus.OTHER_TEXT, path, path, 'text/plain')
 
