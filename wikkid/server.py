@@ -20,6 +20,8 @@
 
 import logging
 
+import bzrlib.urlutils as urlutils
+
 from wikkid.page import Page
 from wikkid.skin import Skin
 
@@ -71,5 +73,7 @@ class Server(object):
         if resource is None:
             return ResourceInfo(ResourceStatus.MISSING, path, None, None)
         else:
-            return ResourceInfo(ResourceStatus.OTHER_TEXT, path, path, 'text/plain')
+            display_name = urlutils.basename(path)
+            return ResourceInfo(
+                ResourceStatus.OTHER_TEXT, path, display_name, 'text/plain')
 
