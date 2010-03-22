@@ -70,3 +70,15 @@ class TestServer(TestCase):
         self.assertIs('a-file', info.path)
         self.assertIs(None, info.display_name)
         self.assertIs(None, info.mimetype)
+
+    def test_text_file(self):
+        # If the path doesn't exist in the filestore, then the resoruce info
+        # shows a missing status.
+        server = self.make_server({
+                'readme.txt': 'A readme file.'})
+        info = server.get_info('readme.txt')
+        self.assertEqual(ResourceStatus.OTHER_TEXT, info.status)
+        self.assertIs('readme.txt', info.path)
+        self.assertIs('readme.txt', info.display_name)
+        self.assertIs('text/plain', info.mimetype)
+
