@@ -19,6 +19,7 @@
 """The server class for the wiki."""
 
 import logging
+import mimetypes
 
 import bzrlib.urlutils as urlutils
 
@@ -74,6 +75,7 @@ class Server(object):
             return ResourceInfo(ResourceStatus.MISSING, path, None, None)
         else:
             display_name = urlutils.basename(path)
+            mimetype = mimetypes.guess_type(display_name)[0]
             return ResourceInfo(
-                ResourceStatus.OTHER_TEXT, path, display_name, 'text/plain')
+                ResourceStatus.OTHER_TEXT, path, display_name, mimetype)
 

@@ -92,3 +92,11 @@ class TestServer(TestCase):
         self.assertEqual('readme.txt', info.display_name)
         self.assertEqual('text/plain', info.mimetype)
 
+    def test_cpp_file(self):
+        # A C++ source file has a specific mime type.
+        server = self.make_server({
+                'test.cpp': '// This is a comment.'})
+        info = server.get_info('test.cpp')
+        self.assertEqual(ResourceStatus.OTHER_TEXT, info.status)
+        self.assertEqual('text/x-c++src', info.mimetype)
+
