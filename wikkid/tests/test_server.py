@@ -20,6 +20,13 @@
 
 from testtools import TestCase
 
+from wikkid.server import ResourceStatus, Server
+from wikkid.tests.fakes import TestUserFactory
+from wikkid.volatile.filestore import FileStore
+
+# TODO: make a testing filestore that can produce either a volatile filestore
+# or a bzr filestore.
+
 
 class TestServer(TestCase):
     """Tests for the Wikkid Server.
@@ -45,8 +52,21 @@ class TestServer(TestCase):
 
     Wiki pages are going to be quite tightly defined.  Must have a wiki name
     (Sentence case joined word), ending in '.txt'.
+
+    What should we do about HTML files that are stored in the branch?
     """
 
+    def make_server(self, content=None):
+        """Make a server with a volatile filestore."""
+        filestore = FileStore(content)
+        return Server(filestore, TestUserFactory())
 
-    def test_something(self):
-        pass
+    def test_missing_resource(self):
+        # If the path doesn't exist in the filestore, then the resoruce info
+        # shows a missing status.
+        server = self.make_server()
+        info = server.get_info('a-file')
+        self.assertEqual(ResourceStatus.MISSING, info.status)
+        self.assertIs('a-file', info.path)
+        self.assertIs(None, info.display_name)
+        self.assertIs(None, info.mimetype)

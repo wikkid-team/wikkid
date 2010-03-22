@@ -37,9 +37,9 @@ class ResourceStatus(object):
 class ResourceInfo(object):
     """Information about a resource."""
 
-    def __init__(self, status, filename, display_name, mimetype):
+    def __init__(self, status, path, display_name, mimetype):
         self.status = status
-        self.filename = filename
+        self.path = path
         self.display_name = display_name
         self.mimetype = mimetype
 
@@ -67,4 +67,5 @@ class Server(object):
         return Page(path, self.filestore.get_file(path))
 
     def get_info(self, path):
-        return None
+        return ResourceInfo(ResourceStatus.MISSING, path, None, None)
+
