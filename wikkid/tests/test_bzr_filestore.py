@@ -20,7 +20,7 @@
 
 from wikkid.bzr.filestore import FileStore
 from wikkid.errors import FileExists
-from wikkid.interfaces import IFile, IFileStore
+from wikkid.interfaces import FileType, IFile, IFileStore
 from wikkid.tests import ProvidesMixin
 
 from bzrlib.tests import TestCaseWithTransport
@@ -51,21 +51,29 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin):
         readme = filestore.get_file('README')
         self.assertEqual('Content', readme.get_content())
 
-    def test_file_is_directory(self):
-        filestore = self.make_filestore(
-            [('README', 'Content'),
-             ('lib/', None)])
-        self.assertFalse(filestore.get_file('README').is_directory)
-        self.assertTrue(filestore.get_file('lib').is_directory)
+    def assertDirectoryFileType(self, f):
+        self.assertEqual(FileType.DIRECTORY, f.file_type)
 
-    def test_file_is_binary(self):
+    def assertTextFileType(self, f):
+        self.assertEqual(FileType.TEXT_FILE, f.file_type)
+
+    def assertBinaryFileType(self, f):
+        self.assertEqual(FileType.BINARY_FILE, f.file_type)
+
+    def test_file_type(self):
         filestore = self.make_filestore(
             [('README', 'Content'),
-             ('image.png', 'some\0zero\0containing\0string'),
-             ('lib/', None)])
-        self.assertFalse(filestore.get_file('README').is_binary)
-        self.assertTrue(filestore.get_file('lib').is_binary)
-        self.assertTrue(filestore.get_file('image.png').is_binary)
+             ('lib/', None),
+             ('image.jpg', 'pretend image'),
+             ('binary-file', 'a\0binary\0file'),
+             ('simple.txt', 'A text file'),
+             ('source.cpp', 'A cpp file')])
+        self.assertDirectoryFileType(filestore.get_file('lib'))
+        self.assertTextFileType(filestore.get_file('README'))
+        self.assertTextFileType(filestore.get_file('simple.txt'))
+        self.assertTextFileType(filestore.get_file('source.cpp'))
+        self.assertBinaryFileType(filestore.get_file('image.jpg'))
+        self.assertBinaryFileType(filestore.get_file('binary-file'))
 
     def test_nonexistant_file(self):
         filestore = self.make_filestore()
@@ -75,7 +83,7 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin):
     def assertDirectory(self, filestore, path):
         """The filestore should have a directory at path."""
         location = filestore.get_file(path)
-        self.assertTrue(location.is_directory)
+        self.assertDirectoryFileType(location)
 
     def test_updating_file_adds_directories(self):
         filestore = self.make_filestore()
