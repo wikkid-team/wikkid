@@ -70,11 +70,19 @@ class IFile(Interface):
             u"The full path of the page with respect to the root of the "
             "file store."))
 
+    base_name = TextLine(
+        description=(u"The last part of the path."))
+
     file_id = TextLine(
         description=(
             u"The unique identifier for the file in the filestore."))
 
     file_type = Attribute("Soon to be a Choice with a lazr.enum.")
+
+    mimetype = TextLine(
+        description=(
+            u"The guessed mimetype for the file. Directories don't have a "
+            "mimetype."))
 
     last_modified_in_revision = TextLine(
         description=(

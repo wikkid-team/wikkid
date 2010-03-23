@@ -28,7 +28,8 @@ from bzrlib.textfile import check_text_path
 from bzrlib.urlutils import basename, dirname
 
 from wikkid.errors import FileExists, UpdateConflicts
-from wikkid.interfaces import IFile, IFileStore
+from wikkid.filestore import BaseFile
+from wikkid.interfaces import FileType, IFile, IFileStore
 
 
 class FileStore(object):
@@ -139,15 +140,15 @@ class FileStore(object):
             wt.unlock()
 
 
-class File(object):
+class File(BaseFile):
     """Represents a file in the Bazaar branch."""
 
     implements(IFile)
 
     def __init__(self, working_tree, path, file_id):
+        BaseFile.__init__(self, path, file_id)
         self.working_tree = working_tree
-        self.path = path
-        self.file_id = file_id
+        self.file_type = self._get_filetype()
         bt = self.working_tree.basis_tree()
         bt.lock_read()
         try:
@@ -155,6 +156,22 @@ class File(object):
             self.last_modified_in_revision = inv_file.revision
         finally:
             bt.unlock()
+
+    def _get_filetype(self):
+        """Work out the filetype based on the mimetype if possible."""
+        is_directory = ('directory' == self.working_tree.kind(self.file_id))
+        if is_directory:
+            self.file_type = FileType.DIRECTORY
+        else:
+            if self._mimetype is None:
+                binary = self._is_binary
+            else:
+                binary = not self._mimetype.startswith('text/')
+            if binary:
+                self.file_type = FileType.BINARY_FILE
+            else:
+                self.file_type = FileType.TEXT_FILE
+
 
     def get_content(self):
         if self.file_id is None:
@@ -177,10 +194,8 @@ class File(object):
         return rev.get_apparent_authors()[0]
 
     @property
-    def is_binary(self):
+    def _is_binary(self):
         """True if the file is binary."""
-        if self.is_directory:
-            return True
         try:
             check_text_path(self.working_tree.abspath(self.path))
             return False
