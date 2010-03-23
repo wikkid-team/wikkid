@@ -20,7 +20,8 @@
 
 from testtools import TestCase
 
-from wikkid.server import ResourceStatus, Server
+from wikkid.interfaces import FileType
+from wikkid.server import Server
 from wikkid.tests.fakes import TestUserFactory
 from wikkid.volatile.filestore import FileStore
 
@@ -66,7 +67,7 @@ class TestServer(TestCase):
         # shows a missing status.
         server = self.make_server()
         info = server.get_info('a-file')
-        self.assertEqual(ResourceStatus.MISSING, info.status)
+        self.assertEqual(FileType.MISSING, info.status)
         self.assertEqual('a-file', info.path)
         self.assertIs(None, info.display_name)
         self.assertIs(None, info.mimetype)
@@ -76,7 +77,7 @@ class TestServer(TestCase):
         server = self.make_server({
                 'readme.txt': 'A readme file.'})
         info = server.get_info('readme.txt')
-        self.assertEqual(ResourceStatus.TEXT_FILE, info.status)
+        self.assertEqual(FileType.TEXT_FILE, info.status)
         self.assertEqual('readme.txt', info.path)
         self.assertEqual('readme.txt', info.display_name)
         self.assertEqual('text/plain', info.mimetype)
@@ -87,7 +88,7 @@ class TestServer(TestCase):
         server = self.make_server({
                 'somedir/readme.txt': 'A readme file.'})
         info = server.get_info('somedir/readme.txt')
-        self.assertEqual(ResourceStatus.TEXT_FILE, info.status)
+        self.assertEqual(FileType.TEXT_FILE, info.status)
         self.assertEqual('somedir/readme.txt', info.path)
         self.assertEqual('readme.txt', info.display_name)
         self.assertEqual('text/plain', info.mimetype)
@@ -97,7 +98,7 @@ class TestServer(TestCase):
         server = self.make_server({
                 'test.cpp': '// This is a comment.'})
         info = server.get_info('test.cpp')
-        self.assertEqual(ResourceStatus.TEXT_FILE, info.status)
+        self.assertEqual(FileType.TEXT_FILE, info.status)
         self.assertEqual('text/x-c++src', info.mimetype)
 
     def test_image(self):
@@ -105,6 +106,6 @@ class TestServer(TestCase):
         server = self.make_server({
                 'test.jpg': 'Some\0binary\0content'})
         info = server.get_info('test.jpg')
-        self.assertEqual(ResourceStatus.BINARY_FILE, info.status)
+        self.assertEqual(FileType.BINARY_FILE, info.status)
         self.assertEqual('image/jpeg', info.mimetype)
 

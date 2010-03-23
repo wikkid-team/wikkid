@@ -23,17 +23,9 @@ import mimetypes
 
 import bzrlib.urlutils as urlutils
 
+from wikkid.interfaces import FileType
 from wikkid.page import Page
 from wikkid.skin import Skin
-
-
-class ResourceStatus(object):
-    """Package lazr.enum and use an Enumerated Type."""
-    MISSING = 1 # The file at the address does not exist.
-    WIKI_PAGE = 2 # The resource is a wiki page.
-    DIRECTORY = 3 # The resource is a directory.
-    TEXT_FILE = 4 # A text file that isn't a wiki page.
-    BINARY_FILE = 5 # A (most likely) binary file.
 
 
 class ResourceInfo(object):
@@ -71,7 +63,7 @@ class Server(object):
     def get_info(self, path):
         resource = self.filestore.get_file(path)
         if resource is None:
-            return ResourceInfo(ResourceStatus.MISSING, path, None, None)
+            return ResourceInfo(FileType.MISSING, path, None, None)
         else:
             # It is about now that I'm thinking the base name, status, and
             # mimetype should be part of the IFile interface.  I'll come back
@@ -80,8 +72,8 @@ class Server(object):
             display_name = urlutils.basename(path)
             mimetype = mimetypes.guess_type(display_name)[0]
             if mimetype.startswith('text/'):
-                status = ResourceStatus.TEXT_FILE
+                status = FileType.TEXT_FILE
             else:
-                status = ResourceStatus.BINARY_FILE
+                status = FileType.BINARY_FILE
             return ResourceInfo(status, path, display_name, mimetype)
 
