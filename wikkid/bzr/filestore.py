@@ -172,7 +172,6 @@ class File(BaseFile):
             else:
                 return FileType.TEXT_FILE
 
-
     def get_content(self):
         if self.file_id is None:
             return None

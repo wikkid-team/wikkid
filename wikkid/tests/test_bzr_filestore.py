@@ -18,15 +18,14 @@
 
 """Tests for the wikkid.bzr.FileStore."""
 
-from wikkid.bzr.filestore import FileStore
-from wikkid.errors import FileExists
-from wikkid.interfaces import FileType, IFile, IFileStore
-from wikkid.tests import ProvidesMixin
-
 from bzrlib.tests import TestCaseWithTransport
 
+from wikkid.bzr.filestore import FileStore
+from wikkid.tests import ProvidesMixin
+from wikkid.tests.filestore import TestFileStore
 
-class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin):
+
+class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin, TestFileStore):
     """Tests for the bzr filestore and files."""
 
     def make_filestore(self, contents=None):
@@ -37,78 +36,3 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin):
         tree.commit(message='Initial commit', authors=['test@example.com'])
         return FileStore(tree)
 
-    def test_filestore_provides_IFileStore(self):
-        filestore = self.make_filestore()
-        self.assertProvides(filestore, IFileStore)
-
-    def test_file_provides_IFile(self):
-        filestore = self.make_filestore([('README', 'not much')])
-        readme = filestore.get_file('README')
-        self.assertProvides(readme, IFile)
-
-    def test_file_gives_content(self):
-        filestore = self.make_filestore([('README', 'Content')])
-        readme = filestore.get_file('README')
-        self.assertEqual('Content', readme.get_content())
-
-    def assertDirectoryFileType(self, f):
-        self.assertEqual(FileType.DIRECTORY, f.file_type)
-
-    def assertTextFileType(self, f):
-        self.assertEqual(FileType.TEXT_FILE, f.file_type)
-
-    def assertBinaryFileType(self, f):
-        self.assertEqual(FileType.BINARY_FILE, f.file_type)
-
-    def test_file_type(self):
-        filestore = self.make_filestore(
-            [('README', 'Content'),
-             ('lib/', None),
-             ('image.jpg', 'pretend image'),
-             ('binary-file', 'a\0binary\0file'),
-             ('simple.txt', 'A text file'),
-             ('source.cpp', 'A cpp file')])
-        self.assertDirectoryFileType(filestore.get_file('lib'))
-        self.assertTextFileType(filestore.get_file('README'))
-        self.assertTextFileType(filestore.get_file('simple.txt'))
-        self.assertTextFileType(filestore.get_file('source.cpp'))
-        self.assertBinaryFileType(filestore.get_file('image.jpg'))
-        self.assertBinaryFileType(filestore.get_file('binary-file'))
-
-    def test_nonexistant_file(self):
-        filestore = self.make_filestore()
-        readme = filestore.get_file('README')
-        self.assertIs(None, readme)
-
-    def assertDirectory(self, filestore, path):
-        """The filestore should have a directory at path."""
-        location = filestore.get_file(path)
-        self.assertDirectoryFileType(location)
-
-    def test_updating_file_adds_directories(self):
-        filestore = self.make_filestore()
-        user = 'Eric the viking <eric@example.com>'
-        filestore.update_file('first/second/third', 'content', user,
-                              None)
-        self.assertDirectory(filestore, 'first')
-        self.assertDirectory(filestore, 'first/second')
-        third = filestore.get_file('first/second/third')
-        self.assertEqual('content', third.get_content())
-
-    def test_updating_file_with_directory_clash(self):
-        filestore = self.make_filestore(
-            [('first', 'content')])
-        user = None
-        self.assertRaises(
-            FileExists, filestore.update_file,
-            'first/second', 'content', user, None)
-
-    def test_updating_existing_file(self):
-        filestore = self.make_filestore(
-            [('README', 'Content'),
-             ])
-        user = 'Eric the viking <eric@example.com>'
-        filestore.update_file('README', 'new content', user,
-                              None)
-        readme = filestore.get_file('README')
-        self.assertEqual('new content', readme.get_content())
