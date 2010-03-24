@@ -67,45 +67,15 @@ class TestServer(TestCase):
         # shows a missing status.
         server = self.make_server()
         info = server.get_info('a-file')
-        self.assertEqual(FileType.MISSING, info.status)
+        self.assertEqual(FileType.MISSING, info.file_type)
         self.assertEqual('a-file', info.path)
-        self.assertIs(None, info.display_name)
-        self.assertIs(None, info.mimetype)
+        self.assertIs(None, info.resource)
 
     def test_text_file(self):
         # A normal text file is text/plain.
         server = self.make_server([
                 ('readme.txt', 'A readme file.')])
         info = server.get_info('readme.txt')
-        self.assertEqual(FileType.TEXT_FILE, info.status)
+        self.assertEqual(FileType.TEXT_FILE, info.file_type)
         self.assertEqual('readme.txt', info.path)
-        self.assertEqual('readme.txt', info.display_name)
-        self.assertEqual('text/plain', info.mimetype)
-
-    def test_text_file_non_root_dir(self):
-        # The path of the info is the full path, but the display name is the
-        # filename.
-        server = self.make_server([
-                ('somedir/readme.txt', 'A readme file.')])
-        info = server.get_info('somedir/readme.txt')
-        self.assertEqual(FileType.TEXT_FILE, info.status)
-        self.assertEqual('somedir/readme.txt', info.path)
-        self.assertEqual('readme.txt', info.display_name)
-        self.assertEqual('text/plain', info.mimetype)
-
-    def test_cpp_file(self):
-        # A C++ source file has a specific mime type.
-        server = self.make_server([
-                ('test.cpp', '// This is a comment.')])
-        info = server.get_info('test.cpp')
-        self.assertEqual(FileType.TEXT_FILE, info.status)
-        self.assertEqual('text/x-c++src', info.mimetype)
-
-    def test_image(self):
-        # An image is binary.
-        server = self.make_server([
-                ('test.jpg', 'Some\0binary\0content')])
-        info = server.get_info('test.jpg')
-        self.assertEqual(FileType.BINARY_FILE, info.status)
-        self.assertEqual('image/jpeg', info.mimetype)
-
+        self.assertIsNot(None, info.resource)
