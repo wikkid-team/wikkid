@@ -17,3 +17,7 @@
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
 """The wikkid tests and test only code."""
+
+
+class TestUserFactory(object):
+    """Right now, user factories don't do anything."""

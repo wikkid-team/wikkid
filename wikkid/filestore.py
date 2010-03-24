@@ -16,15 +16,28 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Tests for the wikkid.volatile.FileStore."""
+"""Base classes for other filestores to use."""
 
-from wikkid.tests import TestCase
-from wikkid.tests.filestore import TestFileStore
-from wikkid.volatile.filestore import FileStore
+import mimetypes
+
+import bzrlib.urlutils as urlutils
+
+from wikkid.interfaces import FileType
 
 
-class TestVolatileFileStore(TestCase, TestFileStore):
-    """Tests for the volatile filestore and files."""
+class BaseFile(object):
+    """Provide common fields and methods and properties for files."""
 
-    def make_filestore(self, contents=None):
-        return FileStore(contents)
+    def __init__(self, path, file_id):
+        self.path = path
+        self.file_id = file_id
+        self.base_name = urlutils.basename(path)
+        self._mimetype = mimetypes.guess_type(self.base_name)[0]
+
+    @property
+    def mimetype(self):
+        """If the file_type is a directory, return None."""
+        if self.file_type == FileType.DIRECTORY:
+            return None
+        else:
+            return self._mimetype

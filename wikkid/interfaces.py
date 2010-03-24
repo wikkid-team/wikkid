@@ -21,7 +21,7 @@
 
 """
 
-from zope.interface import Interface
+from zope.interface import Attribute, Interface
 from zope.schema import Bool, TextLine
 
 
@@ -53,6 +53,15 @@ class IFileStore(Interface):
         """
 
 
+class FileType(object):
+    """Package lazr.enum and use an Enumerated Type."""
+    MISSING = 1 # The file at the address does not exist.
+    WIKI_PAGE = 2 # The resource is a wiki page.
+    DIRECTORY = 3 # The resource is a directory.
+    TEXT_FILE = 4 # A text file that isn't a wiki page.
+    BINARY_FILE = 5 # A (most likely) binary file.
+
+
 class IFile(Interface):
     """A file from the file store."""
 
@@ -60,6 +69,20 @@ class IFile(Interface):
         description=(
             u"The full path of the page with respect to the root of the "
             "file store."))
+
+    base_name = TextLine(
+        description=(u"The last part of the path."))
+
+    file_id = TextLine(
+        description=(
+            u"The unique identifier for the file in the filestore."))
+
+    file_type = Attribute("Soon to be a Choice with a lazr.enum.")
+
+    mimetype = TextLine(
+        description=(
+            u"The guessed mimetype for the file. Directories don't have a "
+            "mimetype."))
 
     last_modified_in_revision = TextLine(
         description=(
@@ -70,31 +93,12 @@ class IFile(Interface):
         description=(
             u"The person who last modified the file."))
 
-    is_binary = Bool(
-        description=(
-            u"True if the file is a binary file, like an image or pdf. "
-            "Directories are considered binary."),
-        readonly=True)
-
-    is_directory = Bool(
-        description=(
-            u"True if the path specifies a directory."
-            ),
-        readonly=True)
-
     def get_content():
         """Get the contents of the file.
 
         :return: None if the file doesn't yet exist, or u'' if the file is
             empty, otherwise the unicode content of the file.
         """
-
-    # def update(content, user):
-    #     """The content is being updated by the user.
-
-    #     :param content: A unicode string with the content.
-    #     :param user: An `IUser`.
-    #     """
 
 
 class IUserFactory(Interface):

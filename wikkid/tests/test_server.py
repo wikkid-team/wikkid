@@ -20,8 +20,62 @@
 
 from testtools import TestCase
 
+from wikkid.interfaces import FileType
+from wikkid.server import Server
+from wikkid.tests.fakes import TestUserFactory
+from wikkid.volatile.filestore import FileStore
+
+# TODO: make a testing filestore that can produce either a volatile filestore
+# or a bzr filestore.
+
 
 class TestServer(TestCase):
+    """Tests for the Wikkid Server.
 
-    def test_something(self):
-        pass
+    I'm going to write a few notes here.  I want to make sure that the server
+    has meaningful names, but also is functional enough.  I have been thinking
+    over the last few days that the IFile inteface needs to expose the file-id
+    of the underlying file for those cases where the file is moved by one
+    person, and edited by another.  I makes sense to use the functionality of
+    bzr here to have good editing while moving the file.
+
+    Also since I want this designed in a way that it will integrate well into
+    Launchpad, we need to expose partial rendering of the underlying files
+    through the interface.  There may well be images or binaries stored as
+    part of the branch that need to be served directly (or as directly as
+    possible), but also we need to be able to access the rendered page before
+    any rendering into a skin.
+
+    I want to provide meaningful directory type listings, but that also means
+    doing the on-the-fly conversion of files to 'wiki pages'.  We then want to
+    be able to traverse a directory, and product a list of tuples (or objects)
+    which define the display name, filename, and mimetype.
+
+    Wiki pages are going to be quite tightly defined.  Must have a wiki name
+    (Sentence case joined word), ending in '.txt'.
+
+    What should we do about HTML files that are stored in the branch?
+    """
+
+    def make_server(self, content=None):
+        """Make a server with a volatile filestore."""
+        filestore = FileStore(content)
+        return Server(filestore, TestUserFactory())
+
+    def test_missing_resource(self):
+        # If the path doesn't exist in the filestore, then the resoruce info
+        # shows a missing status.
+        server = self.make_server()
+        info = server.get_info('a-file')
+        self.assertEqual(FileType.MISSING, info.file_type)
+        self.assertEqual('a-file', info.path)
+        self.assertIs(None, info.resource)
+
+    def test_text_file(self):
+        # A normal text file is text/plain.
+        server = self.make_server([
+                ('readme.txt', 'A readme file.')])
+        info = server.get_info('readme.txt')
+        self.assertEqual(FileType.TEXT_FILE, info.file_type)
+        self.assertEqual('readme.txt', info.path)
+        self.assertIsNot(None, info.resource)

@@ -20,8 +20,18 @@
 
 import logging
 
+from wikkid.interfaces import FileType
 from wikkid.page import Page
 from wikkid.skin import Skin
+
+
+class ResourceInfo(object):
+    """Information about a resource."""
+
+    def __init__(self, file_type, path, resource):
+        self.file_type = file_type
+        self.path = path
+        self.resource = resource
 
 
 class Server(object):
@@ -44,4 +54,14 @@ class Server(object):
         self.skin = Skin(skin_name)
 
     def get_page(self, path):
-        return Page(path, self.filestore.get_file(path))
+        return Page(self.skin, self.get_info(path))
+
+    def get_info(self, path):
+        if path == '':
+            path = 'FrontPage'
+        resource = self.filestore.get_file(path)
+        if resource is None:
+            return ResourceInfo(FileType.MISSING, path, None)
+        else:
+            # Here is where we need to check for a 'wiki' page.
+            return ResourceInfo(resource.file_type, path, resource)
