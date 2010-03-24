@@ -63,6 +63,24 @@ class TestFileStore:
         self.assertBinaryFileType(filestore.get_file('image.jpg'))
         self.assertBinaryFileType(filestore.get_file('binary-file'))
 
+    def test_mimetype(self):
+        filestore = self.make_filestore(
+            [('README', 'Content'),
+             ('lib/', None),
+             ('image.jpg', 'pretend image'),
+             ('binary-file', 'a\0binary\0file'),
+             ('simple.txt', 'A text file'),
+             ('source.cpp', 'A cpp file')])
+        self.assertIs(None, filestore.get_file('lib').mimetype)
+        self.assertIs(None, filestore.get_file('README').mimetype)
+        self.assertEqual(
+            'text/plain', filestore.get_file('simple.txt').mimetype)
+        self.assertEqual(
+            'text/x-c++src', filestore.get_file('source.cpp').mimetype)
+        self.assertEqual(
+            'image/jpeg', filestore.get_file('image.jpg').mimetype)
+        self.assertIs(None, filestore.get_file('binary-file').mimetype)
+
     def test_nonexistant_file(self):
         filestore = self.make_filestore()
         readme = filestore.get_file('README')
