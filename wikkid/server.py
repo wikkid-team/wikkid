@@ -19,9 +19,6 @@
 """The server class for the wiki."""
 
 import logging
-import mimetypes
-
-import bzrlib.urlutils as urlutils
 
 from wikkid.interfaces import FileType
 from wikkid.page import Page
@@ -31,11 +28,10 @@ from wikkid.skin import Skin
 class ResourceInfo(object):
     """Information about a resource."""
 
-    def __init__(self, status, path, display_name, mimetype):
-        self.status = status
+    def __init__(self, file_type, path, resource):
+        self.file_type = file_type
         self.path = path
-        self.display_name = display_name
-        self.mimetype = mimetype
+        self.resource = resource
 
 
 class Server(object):
@@ -58,22 +54,14 @@ class Server(object):
         self.skin = Skin(skin_name)
 
     def get_page(self, path):
-        return Page(path, self.filestore.get_file(path))
+        return Page(self.skin, self.get_info(path))
 
     def get_info(self, path):
+        if path == '':
+            path = 'FrontPage'
         resource = self.filestore.get_file(path)
         if resource is None:
-            return ResourceInfo(FileType.MISSING, path, None, None)
+            return ResourceInfo(FileType.MISSING, path, None)
         else:
-            # It is about now that I'm thinking the base name, status, and
-            # mimetype should be part of the IFile interface.  I'll come back
-            # and do that later.
-            # TODO: move name, mimetype and type to the IFile interface.
-            display_name = urlutils.basename(path)
-            mimetype = mimetypes.guess_type(display_name)[0]
-            if mimetype.startswith('text/'):
-                status = FileType.TEXT_FILE
-            else:
-                status = FileType.BINARY_FILE
-            return ResourceInfo(status, path, display_name, mimetype)
-
+            # Here is where we need to check for a 'wiki' page.
+            return ResourceInfo(resource.file_type, path, resource)

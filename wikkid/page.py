@@ -18,7 +18,8 @@
 
 import logging
 
-from wikkid.interfaces import IFile
+from wikkid.interfaces import FileType
+
 
 class Page(object):
     """A page is found at a particular location.
@@ -28,18 +29,23 @@ class Page(object):
     the page may be an image (ick - change this soon).
     """
 
-    def __init__(self, path, file_):
-        self.path = path
+    def __init__(self, skin, resource_info):
+        self.skin = skin
+        self.resource = resource_info.resource
+        self.file_type = resource_info.file_type
+        self.path = resource_info.path
         self.logger = logging.getLogger('wikkid')
-        # Make sure that the file param implements IFile, or is nothing.
-        self.file = IFile(file_, None)
 
     def render(self):
         """Render the page.
 
         Return a tuple of content type and content.
         """
-        if self.file is None:
+        if self.file_type == FileType.BINARY_FILE:
+            return self.resource.mimetype, self.resource.get_content()
+        elif self.file_type == FileType.MISSING:
             return ('text/plain', '%s Not found' % self.path)
+        elif self.file_type == FileType.DIRECTORY:
+            return ('text/plain', 'Directory listing for %s' % self.path)
         else:
-            return ('text/plain', self.file.get_content())
+            return ('text/plain', self.resource.get_content())
