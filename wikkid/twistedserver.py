@@ -49,8 +49,13 @@ class TwistedPage(Resource):
     def render_file(self, request):
         # content = self.filestore.file_contents(self.filepath)
         # Munge the content.
-        page = self.server.get_page(request.path)
+        # Strip the leading / from the path.
+        path = request.path.lstrip('/')
+        page = self.server.get_page(path)
         content_type, content = page.render()
+        if content_type.startswith('text/'):
+            content_type = "%s; charset=utf-8" % content_type
+            content = content.encode('utf-8')
         request.setHeader('Content-Type', content_type)
         return content
 
