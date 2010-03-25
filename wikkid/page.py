@@ -48,4 +48,7 @@ class Page(object):
         elif self.file_type == FileType.DIRECTORY:
             return ('text/plain', 'Directory listing for %s' % self.path)
         else:
-            return ('text/plain', self.resource.get_content())
+            rendered = self.skin.page_template.render(
+                title=self.path,
+                content=self.resource.get_content())
+            return ('text/html', rendered)
