@@ -16,6 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
+"""Classes to control the rendering of the content.
+
+Just by the current feel of what is going in here, I feel that I may well end
+up making a 'wikkid.views' package and move the classes in there, as that is
+effectively what this is going to be.
+"""
+
 import logging
 
 from wikkid.interfaces import FileType
@@ -52,3 +59,30 @@ class Page(object):
                 title=self.path,
                 content=self.resource.get_content())
             return ('text/html', rendered)
+
+
+class WikiPage(Page):
+    """A wiki page is a page that is going to be rendered for viewing."""
+
+    template = 'view_page'
+
+
+class EditWikiPage(Page):
+    """The page shows the wiki content in a large edit field."""
+
+    template = 'edit_page'
+
+
+class DirectoryListingPage(Page):
+    """The directory listing shows the content in the directory.
+
+    This view is shown if there is no matching wiki apge the same name as the
+    directory (i.e. with '.txt' on the end).
+    """
+
+    template = 'view_directory'
+
+
+class BinaryFile(Page):
+    """Renders a binary file with its mimetype."""
+
