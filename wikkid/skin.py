@@ -45,11 +45,17 @@ class Skin(object):
         # where we'd use a different loader.
         loader = PackageLoader('wikkid.skins', skin_name)
         self.env = Environment(loader=loader)
-        self.page_template = self.env.get_template('page.html')
-        self.edit_template = self.env.get_template('edit.html')
-        self.missing_page_template = self.env.get_template('missing-page.html')
+        self.templates = {
+            'view_page': self.env.get_template('page.html'),
+            'edit_page': self.env.get_template('edit.html'),
+            'view_directory': self.env.get_template('page.html'),
+            'missing': self.env.get_template('missing-page.html'),
+            }
         module_location = urlutils.dirname(wikkid.skins.__file__)
         self.dir_name = urlutils.joinpath(module_location, skin_name)
+
+    def get_template(self, template_name):
+        return self.templates[template_name]
 
     @property
     def favicon(self):

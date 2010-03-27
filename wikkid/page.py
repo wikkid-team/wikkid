@@ -43,22 +43,33 @@ class Page(object):
         self.path = resource_info.path
         self.logger = logging.getLogger('wikkid')
 
+    def template_args(self):
+        """Needs to be implemented in the derived classes.
+
+        :returns: A dict of values.
+        """
+        raise NotImplementedError(self.template_args)
+
     def render(self):
         """Render the page.
 
         Return a tuple of content type and content.
         """
-        if self.file_type == FileType.BINARY_FILE:
-            return self.resource.mimetype, self.resource.get_content()
-        elif self.file_type == FileType.MISSING:
-            return ('text/plain', '%s Not found' % self.path)
-        elif self.file_type == FileType.DIRECTORY:
-            return ('text/plain', 'Directory listing for %s' % self.path)
-        else:
-            rendered = self.skin.page_template.render(
-                title=self.path,
-                content=self.resource.get_content())
-            return ('text/html', rendered)
+        template = self.skin.get_template(self.tempalte)
+        rendered = template.render(**self.template_args())
+        return ('text/html', rendered)
+
+
+class MissingPage(Page):
+    """A wiki page that does not exist."""
+
+    template = 'missing'
+
+    def template_args(self):
+        return {
+            'title': '',
+            'content': '%s Not found' % self.path
+            }
 
 
 class WikiPage(Page):
@@ -66,11 +77,23 @@ class WikiPage(Page):
 
     template = 'view_page'
 
+    def template_args(self):
+        return {
+            'title': self.path,
+            'content': self.resource.get_content()
+            }
+
 
 class EditWikiPage(Page):
     """The page shows the wiki content in a large edit field."""
 
     template = 'edit_page'
+
+    def template_args(self):
+        return {
+            'title': self.path,
+            'content': self.resource.get_content()
+            }
 
 
 class DirectoryListingPage(Page):
@@ -80,9 +103,18 @@ class DirectoryListingPage(Page):
     directory (i.e. with '.txt' on the end).
     """
 
-    template = 'view_directory'
+    # template = 'view_directory'
+    template = 'view_page'
+
+    def template_args(self):
+        return {
+            'title': self.path,
+            'content': 'Directory listing for %s' % self.path
+            }
 
 
 class BinaryFile(Page):
     """Renders a binary file with its mimetype."""
 
+    def render(self):
+        return self.resource.mimetype, self.resource.get_content()
