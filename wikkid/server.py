@@ -62,8 +62,8 @@ class Server(object):
         self.skin = Skin(skin_name)
 
     def get_page(self, path):
-        if path == '':
-            path = 'FrontPage'
+        if path == '/':
+            path = '/FrontPage'
 
         page_name = basename(path)
         if '.' not in page_name:
@@ -87,6 +87,14 @@ class Server(object):
         return WikiPage(self.skin, self.get_info(path))
 
     def get_info(self, path):
+        """Get the resource from the filestore for the specified path.
+
+        The path starts with a slash as proveded through the url traversal,
+        the filestore does not expect nor want a leading slash.  It is the
+        responsibility of this method to remove the leading slash.
+        """
+        assert path.startswith('/')
+        path = path[1:]
         resource = self.filestore.get_file(path)
         if resource is None:
             return ResourceInfo(FileType.MISSING, path, None)

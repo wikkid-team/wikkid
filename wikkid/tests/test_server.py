@@ -72,7 +72,7 @@ class TestServer(TestCase):
         # If the path doesn't exist in the filestore, then the resoruce info
         # shows a missing status.
         server = self.make_server()
-        info = server.get_info('a-file')
+        info = server.get_info('/a-file')
         self.assertEqual(FileType.MISSING, info.file_type)
         self.assertEqual('a-file', info.path)
         self.assertIs(None, info.resource)
@@ -81,7 +81,7 @@ class TestServer(TestCase):
         # A normal text file is text/plain.
         server = self.make_server([
                 ('readme.txt', 'A readme file.')])
-        info = server.get_info('readme.txt')
+        info = server.get_info('/readme.txt')
         self.assertEqual(FileType.TEXT_FILE, info.file_type)
         self.assertEqual('readme.txt', info.path)
         self.assertIsNot(None, info.resource)
@@ -91,7 +91,7 @@ class TestServer(TestCase):
         server = self.make_server([
                 ('some-dir/', None),
                 ])
-        page = server.get_page('some-dir')
+        page = server.get_page('/some-dir')
         self.assertIsInstance(page, DirectoryListingPage)
 
     def test_get_page_source_file(self):
@@ -99,7 +99,7 @@ class TestServer(TestCase):
         server = self.make_server([
                 ('test.cpp', '// Some source'),
                 ])
-        page = server.get_page('test.cpp')
+        page = server.get_page('/test.cpp')
         self.assertIsInstance(page, OtherTextPage)
 
     def test_get_page_wiki_page(self):
@@ -107,13 +107,13 @@ class TestServer(TestCase):
         server = self.make_server([
                 ('a-wiki-page.txt', "Doesn't need caps."),
                 ])
-        page = server.get_page('a-wiki-page.txt')
+        page = server.get_page('/a-wiki-page.txt')
         self.assertIsInstance(page, WikiPage)
 
     def test_get_page_missing_page(self):
         # A missing file renders a missing page view.
         server = self.make_server()
-        page = server.get_page('Missing')
+        page = server.get_page('/Missing')
         self.assertIsInstance(page, MissingPage)
 
     def test_get_page_wiki_no_suffix(self):
@@ -121,7 +121,7 @@ class TestServer(TestCase):
         server = self.make_server([
                 ('WikiPage.txt', "Works with caps too."),
                 ])
-        page = server.get_page('WikiPage')
+        page = server.get_page('/WikiPage')
         self.assertIsInstance(page, WikiPage)
 
     def test_get_page_wiki_with_matching_dir(self):
@@ -131,7 +131,7 @@ class TestServer(TestCase):
                 ('WikiPage.txt', "Works with caps too."),
                 ('WikiPage/SubPage.txt', "A sub page."),
                 ])
-        page = server.get_page('WikiPage')
+        page = server.get_page('/WikiPage')
         self.assertIsInstance(page, WikiPage)
 
     def test_get_page_wiki_in_subdir(self):
@@ -140,6 +140,6 @@ class TestServer(TestCase):
         server = self.make_server([
                 ('WikiPage/SubPage.txt', "A sub page."),
                 ])
-        page = server.get_page('WikiPage/SubPage')
+        page = server.get_page('/WikiPage/SubPage')
         self.assertIsInstance(page, WikiPage)
 
