@@ -84,8 +84,9 @@ class Server(object):
                 return WikiPage(self.skin, info, path)
             else:
                 return OtherTextPage(self.skin, info, path)
-        # This line is known to be wrong!
-        return WikiPage(self.skin, self.get_info(path), path)
+        elif info.file_type == FileType.BINARY_FILE:
+            return BinaryFile(self.skin, self.get_info(path), path)
+        raise AssertionError('Unknown file type')
 
     def get_info(self, path):
         """Get the resource from the filestore for the specified path.

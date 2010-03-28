@@ -22,6 +22,7 @@ from testtools import TestCase
 
 from wikkid.interfaces import FileType
 from wikkid.page import (
+    BinaryFile,
     DirectoryListingPage,
     MissingPage,
     OtherTextPage,
@@ -164,3 +165,10 @@ class TestServer(TestCase):
         self.assertEqual('/FrontPage', page.path)
         self.assertEqual('FrontPage.txt', page.resource.path)
 
+    def test_get_page_binary_file(self):
+        # Images are served as binary files.
+        server = self.make_server([
+                ('image.png', "An image."),
+                ])
+        page = server.get_page('/image.png')
+        self.assertIsInstance(page, BinaryFile)
