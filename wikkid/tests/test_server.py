@@ -124,3 +124,22 @@ class TestServer(TestCase):
         page = server.get_page('WikiPage')
         self.assertIsInstance(page, WikiPage)
 
+    def test_get_page_wiki_with_matching_dir(self):
+        # If the path matches a directory, but the .txt file exists with the
+        # same name, then return return the wiki page.
+        server = self.make_server([
+                ('WikiPage.txt', "Works with caps too."),
+                ('WikiPage/SubPage.txt', "A sub page."),
+                ])
+        page = server.get_page('WikiPage')
+        self.assertIsInstance(page, WikiPage)
+
+    def test_get_page_wiki_in_subdir(self):
+        # If the path matches a directory, but the .txt file exists with the
+        # same name, then return return the wiki page.
+        server = self.make_server([
+                ('WikiPage/SubPage.txt', "A sub page."),
+                ])
+        page = server.get_page('WikiPage/SubPage')
+        self.assertIsInstance(page, WikiPage)
+

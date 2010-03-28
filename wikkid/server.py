@@ -75,7 +75,10 @@ class Server(object):
             else:
                 return MissingPage(self.skin, info)
         elif info.file_type == FileType.DIRECTORY:
-            return DirectoryListingPage(self.skin, info)
+            if txt_info.file_type != FileType.MISSING:
+                return WikiPage(self.skin, info)
+            else:
+                return DirectoryListingPage(self.skin, info)
         elif info.file_type == FileType.TEXT_FILE:
             if info.path.endswith('.txt'):
                 return WikiPage(self.skin, info)
