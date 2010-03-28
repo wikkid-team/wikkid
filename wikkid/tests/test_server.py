@@ -143,3 +143,22 @@ class TestServer(TestCase):
         page = server.get_page('/WikiPage/SubPage')
         self.assertIsInstance(page, WikiPage)
 
+    def test_get_page_root_path_no_front_page(self):
+        # If the path matches a directory, but the .txt file exists with the
+        # same name, then return return the wiki page.
+        server = self.make_server()
+        page = server.get_page('/')
+        self.assertIsInstance(page, MissingPage)
+        self.assertEqual('/FrontPage', page.path)
+
+    def test_get_page_root_file_exists(self):
+        # If the path matches a directory, but the .txt file exists with the
+        # same name, then return return the wiki page.
+        server = self.make_server([
+                ('FrontPage.txt', "The first page."),
+                ])
+        page = server.get_page('/')
+        self.assertIsInstance(page, WikiPage)
+        self.assertEqual('/FrontPage', page.path)
+        self.assertEqual('FrontPage.txt', page.resource.path)
+

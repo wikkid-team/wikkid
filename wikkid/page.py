@@ -25,8 +25,6 @@ effectively what this is going to be.
 
 import logging
 
-from wikkid.interfaces import FileType
-
 
 class Page(object):
     """A page is found at a particular location.
@@ -36,11 +34,11 @@ class Page(object):
     the page may be an image (ick - change this soon).
     """
 
-    def __init__(self, skin, resource_info):
+    def __init__(self, skin, resource_info, path):
         self.skin = skin
         self.resource = resource_info.resource
         self.file_type = resource_info.file_type
-        self.path = resource_info.path
+        self.path = path
         self.logger = logging.getLogger('wikkid')
 
     def template_args(self):

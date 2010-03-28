@@ -71,20 +71,21 @@ class Server(object):
         info = self.get_info(path)
         if info.file_type == FileType.MISSING:
             if txt_info.file_type != FileType.MISSING:
-                return WikiPage(self.skin, info)
+                return WikiPage(self.skin, txt_info, path)
             else:
-                return MissingPage(self.skin, info)
+                return MissingPage(self.skin, info, path)
         elif info.file_type == FileType.DIRECTORY:
             if txt_info.file_type != FileType.MISSING:
-                return WikiPage(self.skin, info)
+                return WikiPage(self.skin, txt_info, path)
             else:
-                return DirectoryListingPage(self.skin, info)
+                return DirectoryListingPage(self.skin, info, path)
         elif info.file_type == FileType.TEXT_FILE:
             if info.path.endswith('.txt'):
-                return WikiPage(self.skin, info)
+                return WikiPage(self.skin, info, path)
             else:
-                return OtherTextPage(self.skin, info)
-        return WikiPage(self.skin, self.get_info(path))
+                return OtherTextPage(self.skin, info, path)
+        # This line is known to be wrong!
+        return WikiPage(self.skin, self.get_info(path), path)
 
     def get_info(self, path):
         """Get the resource from the filestore for the specified path.
