@@ -20,8 +20,16 @@
 
 import logging
 
+from bzrlib.urlutils import basename
+
 from wikkid.interfaces import FileType
-from wikkid.page import Page
+from wikkid.page import (
+    BinaryFile,
+    DirectoryListingPage,
+    MissingPage,
+    OtherTextPage,
+    WikiPage,
+    )
 from wikkid.skin import Skin
 
 
@@ -54,11 +62,41 @@ class Server(object):
         self.skin = Skin(skin_name)
 
     def get_page(self, path):
-        return Page(self.skin, self.get_info(path))
+        if path == '/':
+            path = '/FrontPage'
+
+        page_name = basename(path)
+        if '.' not in page_name:
+            txt_info = self.get_info(path + '.txt')
+        info = self.get_info(path)
+        if info.file_type == FileType.MISSING:
+            if txt_info.file_type != FileType.MISSING:
+                return WikiPage(self.skin, txt_info, path)
+            else:
+                return MissingPage(self.skin, info, path)
+        elif info.file_type == FileType.DIRECTORY:
+            if txt_info.file_type != FileType.MISSING:
+                return WikiPage(self.skin, txt_info, path)
+            else:
+                return DirectoryListingPage(self.skin, info, path)
+        elif info.file_type == FileType.TEXT_FILE:
+            if info.path.endswith('.txt'):
+                return WikiPage(self.skin, info, path)
+            else:
+                return OtherTextPage(self.skin, info, path)
+        elif info.file_type == FileType.BINARY_FILE:
+            return BinaryFile(self.skin, self.get_info(path), path)
+        raise AssertionError('Unknown file type')
 
     def get_info(self, path):
-        if path == '':
-            path = 'FrontPage'
+        """Get the resource from the filestore for the specified path.
+
+        The path starts with a slash as proveded through the url traversal,
+        the filestore does not expect nor want a leading slash.  It is the
+        responsibility of this method to remove the leading slash.
+        """
+        assert path.startswith('/')
+        path = path[1:]
         resource = self.filestore.get_file(path)
         if resource is None:
             return ResourceInfo(FileType.MISSING, path, None)

@@ -16,9 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-import logging
+"""Classes to control the rendering of the content.
 
-from wikkid.interfaces import FileType
+Just by the current feel of what is going in here, I feel that I may well end
+up making a 'wikkid.views' package and move the classes in there, as that is
+effectively what this is going to be.
+"""
+
+import logging
 
 
 class Page(object):
@@ -29,26 +34,100 @@ class Page(object):
     the page may be an image (ick - change this soon).
     """
 
-    def __init__(self, skin, resource_info):
+    def __init__(self, skin, resource_info, path):
         self.skin = skin
         self.resource = resource_info.resource
         self.file_type = resource_info.file_type
-        self.path = resource_info.path
+        self.path = path
         self.logger = logging.getLogger('wikkid')
+
+    def template_args(self):
+        """Needs to be implemented in the derived classes.
+
+        :returns: A dict of values.
+        """
+        raise NotImplementedError(self.template_args)
 
     def render(self):
         """Render the page.
 
         Return a tuple of content type and content.
         """
-        if self.file_type == FileType.BINARY_FILE:
-            return self.resource.mimetype, self.resource.get_content()
-        elif self.file_type == FileType.MISSING:
-            return ('text/plain', '%s Not found' % self.path)
-        elif self.file_type == FileType.DIRECTORY:
-            return ('text/plain', 'Directory listing for %s' % self.path)
-        else:
-            rendered = self.skin.page_template.render(
-                title=self.path,
-                content=self.resource.get_content())
-            return ('text/html', rendered)
+        template = self.skin.get_template(self.template)
+        rendered = template.render(**self.template_args())
+        return ('text/html', rendered)
+
+
+class MissingPage(Page):
+    """A wiki page that does not exist."""
+
+    template = 'missing'
+
+    def template_args(self):
+        return {
+            'title': '',
+            'content': '%s Not found' % self.path
+            }
+
+
+class WikiPage(Page):
+    """A wiki page is a page that is going to be rendered for viewing."""
+
+    template = 'view_page'
+
+    def template_args(self):
+        return {
+            'title': self.path,
+            'content': self.resource.get_content()
+            }
+
+
+class OtherTextPage(Page):
+    """Any other non-binary file is considered other text.
+
+    Will be rendered using pygments.
+    """
+
+    template = 'view_page'
+
+    def template_args(self):
+        return {
+            'title': self.path,
+            'content': self.resource.get_content()
+            }
+
+
+class EditWikiPage(Page):
+    """The page shows the wiki content in a large edit field."""
+
+    template = 'edit_page'
+
+    def template_args(self):
+        return {
+            'title': self.path,
+            'content': self.resource.get_content()
+            }
+
+
+class DirectoryListingPage(Page):
+    """The directory listing shows the content in the directory.
+
+    This view is shown if there is no matching wiki apge the same name as the
+    directory (i.e. with '.txt' on the end).
+    """
+
+    # template = 'view_directory'
+    template = 'view_page'
+
+    def template_args(self):
+        return {
+            'title': self.path,
+            'content': 'Directory listing for %s' % self.path
+            }
+
+
+class BinaryFile(Page):
+    """Renders a binary file with its mimetype."""
+
+    def render(self):
+        return self.resource.mimetype, self.resource.get_content()
