@@ -61,7 +61,10 @@ class Server(object):
 
     def get_page(self, path):
         info = self.get_info(path)
-        if info.file_type == FileType.DIRECTORY:
+        file_type = info.file_type
+        if file_type == FileType.MISSING:
+            return MissingPage(self.skin, info)
+        elif info.file_type == FileType.DIRECTORY:
             return DirectoryListingPage(self.skin, info)
         elif info.file_type == FileType.TEXT_FILE:
             if info.path.endswith('.txt'):

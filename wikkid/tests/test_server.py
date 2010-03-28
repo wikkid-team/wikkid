@@ -23,6 +23,7 @@ from testtools import TestCase
 from wikkid.interfaces import FileType
 from wikkid.page import (
     DirectoryListingPage,
+    MissingPage,
     OtherTextPage,
     WikiPage,
     )
@@ -102,9 +103,15 @@ class TestServer(TestCase):
         self.assertIsInstance(page, OtherTextPage)
 
     def test_get_page_wiki_page(self):
-        # A text file that isn't .txt
+        # wiki pages end with a .txt
         server = self.make_server([
                 ('a-wiki-page.txt', "Doesn't need caps."),
                 ])
         page = server.get_page('a-wiki-page.txt')
         self.assertIsInstance(page, WikiPage)
+
+    def test_get_page_missing_page(self):
+        # A missing file renders a missing page view.
+        server = self.make_server()
+        page = server.get_page('Missing')
+        self.assertIsInstance(page, MissingPage)
