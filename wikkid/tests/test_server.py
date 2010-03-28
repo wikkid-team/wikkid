@@ -21,6 +21,7 @@
 from testtools import TestCase
 
 from wikkid.interfaces import FileType
+from wikkid.page import DirectoryListingPage
 from wikkid.server import Server
 from wikkid.tests.fakes import TestUserFactory
 from wikkid.volatile.filestore import FileStore
@@ -79,3 +80,11 @@ class TestServer(TestCase):
         self.assertEqual(FileType.TEXT_FILE, info.file_type)
         self.assertEqual('readme.txt', info.path)
         self.assertIsNot(None, info.resource)
+
+    def test_get_page_directory(self):
+        # A directory
+        server = self.make_server([
+                ('some-dir/', None),
+                ])
+        page = server.get_page('some-dir')
+        self.assertIsInstance(page, DirectoryListingPage)
