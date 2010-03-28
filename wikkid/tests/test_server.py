@@ -115,3 +115,12 @@ class TestServer(TestCase):
         server = self.make_server()
         page = server.get_page('Missing')
         self.assertIsInstance(page, MissingPage)
+
+    def test_get_page_wiki_no_suffix(self):
+        # A wiki page can be accessed without the .txt
+        server = self.make_server([
+                ('WikiPage.txt', "Works with caps too."),
+                ])
+        page = server.get_page('WikiPage')
+        self.assertIsInstance(page, WikiPage)
+

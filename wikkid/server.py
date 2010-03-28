@@ -20,6 +20,8 @@
 
 import logging
 
+from bzrlib.urlutils import basename
+
 from wikkid.interfaces import FileType
 from wikkid.page import (
     BinaryFile,
@@ -60,10 +62,18 @@ class Server(object):
         self.skin = Skin(skin_name)
 
     def get_page(self, path):
+        if path == '':
+            path = 'FrontPage'
+
+        page_name = basename(path)
+        if '.' not in page_name:
+            txt_info = self.get_info(path + '.txt')
         info = self.get_info(path)
-        file_type = info.file_type
-        if file_type == FileType.MISSING:
-            return MissingPage(self.skin, info)
+        if info.file_type == FileType.MISSING:
+            if txt_info.file_type != FileType.MISSING:
+                return WikiPage(self.skin, info)
+            else:
+                return MissingPage(self.skin, info)
         elif info.file_type == FileType.DIRECTORY:
             return DirectoryListingPage(self.skin, info)
         elif info.file_type == FileType.TEXT_FILE:
@@ -74,8 +84,6 @@ class Server(object):
         return WikiPage(self.skin, self.get_info(path))
 
     def get_info(self, path):
-        if path == '':
-            path = 'FrontPage'
         resource = self.filestore.get_file(path)
         if resource is None:
             return ResourceInfo(FileType.MISSING, path, None)
