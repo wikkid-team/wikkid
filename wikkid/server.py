@@ -63,7 +63,11 @@ class Server(object):
         info = self.get_info(path)
         if info.file_type == FileType.DIRECTORY:
             return DirectoryListingPage(self.skin, info)
-        
+        elif info.file_type == FileType.TEXT_FILE:
+            if info.path.endswith('.txt'):
+                return WikiPage(self.skin, info)
+            else:
+                return OtherTextPage(self.skin, info)
         return WikiPage(self.skin, self.get_info(path))
 
     def get_info(self, path):

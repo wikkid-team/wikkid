@@ -21,7 +21,10 @@
 from testtools import TestCase
 
 from wikkid.interfaces import FileType
-from wikkid.page import DirectoryListingPage
+from wikkid.page import (
+    DirectoryListingPage,
+    OtherTextPage,
+    )
 from wikkid.server import Server
 from wikkid.tests.fakes import TestUserFactory
 from wikkid.volatile.filestore import FileStore
@@ -88,3 +91,11 @@ class TestServer(TestCase):
                 ])
         page = server.get_page('some-dir')
         self.assertIsInstance(page, DirectoryListingPage)
+
+    def test_get_page_source_file(self):
+        # A text file that isn't .txt
+        server = self.make_server([
+                ('test.cpp', '// Some source'),
+                ])
+        page = server.get_page('test.cpp')
+        self.assertIsInstance(page, OtherTextPage)
