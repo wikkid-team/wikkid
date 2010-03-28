@@ -18,3 +18,5 @@
 
 """A text to html formatter using reStuctured Text."""
 
+from docutils.core import publish_parts
+
