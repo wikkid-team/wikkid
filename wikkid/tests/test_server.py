@@ -24,6 +24,7 @@ from wikkid.interfaces import FileType
 from wikkid.page import (
     DirectoryListingPage,
     OtherTextPage,
+    WikiPage,
     )
 from wikkid.server import Server
 from wikkid.tests.fakes import TestUserFactory
@@ -99,3 +100,11 @@ class TestServer(TestCase):
                 ])
         page = server.get_page('test.cpp')
         self.assertIsInstance(page, OtherTextPage)
+
+    def test_get_page_wiki_page(self):
+        # A text file that isn't .txt
+        server = self.make_server([
+                ('a-wiki-page.txt', "Doesn't need caps."),
+                ])
+        page = server.get_page('a-wiki-page.txt')
+        self.assertIsInstance(page, WikiPage)
