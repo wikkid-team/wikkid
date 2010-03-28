@@ -53,7 +53,7 @@ class Page(object):
 
         Return a tuple of content type and content.
         """
-        template = self.skin.get_template(self.tempalte)
+        template = self.skin.get_template(self.template)
         rendered = template.render(**self.template_args())
         return ('text/html', rendered)
 
