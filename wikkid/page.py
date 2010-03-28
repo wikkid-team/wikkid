@@ -84,6 +84,21 @@ class WikiPage(Page):
             }
 
 
+class OtherTextPage(Page):
+    """Any other non-binary file is considered other text.
+
+    Will be rendered using pygments.
+    """
+
+    template = 'view_page'
+
+    def template_args(self):
+        return {
+            'title': self.path,
+            'content': self.resource.get_content()
+            }
+
+
 class EditWikiPage(Page):
     """The page shows the wiki content in a large edit field."""
 
