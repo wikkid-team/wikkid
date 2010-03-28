@@ -133,6 +133,8 @@ class TestServer(TestCase):
                 ])
         page = server.get_page('/WikiPage')
         self.assertIsInstance(page, WikiPage)
+        self.assertEqual('/WikiPage', page.path)
+        self.assertEqual('WikiPage.txt', page.resource.path)
 
     def test_get_page_wiki_in_subdir(self):
         # If the path matches a directory, but the .txt file exists with the
