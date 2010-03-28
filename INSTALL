@@ -10,4 +10,5 @@ Dependancies
 python-twisted or the twisted.web libraries
 bzr for the filestore and merging
 python-jinja2 for the templating
-python-lazr.enum for lazr.enum
+python-lazr.enum for lazr.enum (actually not used yet)
+python-docutils for the ReST formatter
