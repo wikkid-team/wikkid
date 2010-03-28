@@ -21,7 +21,13 @@
 import logging
 
 from wikkid.interfaces import FileType
-from wikkid.page import Page
+from wikkid.page import (
+    BinaryFile,
+    DirectoryListingPage,
+    MissingPage,
+    OtherTextPage,
+    WikiPage,
+    )
 from wikkid.skin import Skin
 
 
@@ -54,7 +60,11 @@ class Server(object):
         self.skin = Skin(skin_name)
 
     def get_page(self, path):
-        return Page(self.skin, self.get_info(path))
+        info = self.get_info(path)
+        if info.file_type == FileType.DIRECTORY:
+            return DirectoryListingPage(self.skin, info)
+        
+        return WikiPage(self.skin, self.get_info(path))
 
     def get_info(self, path):
         if path == '':
