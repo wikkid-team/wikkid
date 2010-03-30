@@ -153,3 +153,10 @@ class IWikiPage(Interface):
 
         TODO: How do we determine the type of rendering?
         """
+
+
+class ITextFormatter(Interface):
+    """A text formatter takes plain text and makes HTML of some form."""
+
+    def format(text):
+        """Takes text, and returns HTML."""

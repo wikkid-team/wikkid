@@ -46,6 +46,7 @@ def test_suite():
         'server',
         'volatile_filestore',
         'bzr_filestore',
+        'rest_formatter',
         ]
     module_names = ['wikkid.tests.test_' + name for name in names]
     loader = unittest.TestLoader()
