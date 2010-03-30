@@ -26,6 +26,7 @@ from wikkid.interfaces import FileType
 from wikkid.page import (
     BinaryFile,
     DirectoryListingPage,
+    EditWikiPage,
     MissingPage,
     OtherTextPage,
     WikiPage,
@@ -60,6 +61,30 @@ class Server(object):
             skin_name = 'default'
         self.logger = logging.getLogger('wikkid')
         self.skin = Skin(skin_name)
+
+    def edit_page(self, path):
+        if path == '/':
+            path = '/FrontPage'
+
+        page_name = basename(path)
+        if '.' not in page_name:
+            txt_info = self.get_info(path + '.txt')
+        info = self.get_info(path)
+        if info.file_type == FileType.MISSING:
+            if txt_info.file_type != FileType.MISSING:
+                return EditWikiPage(self.skin, txt_info, path)
+            else:
+                return EditWikiPage(self.skin, info, path)
+        elif info.file_type == FileType.DIRECTORY:
+            if txt_info.file_type != FileType.MISSING:
+                return EditWikiPage(self.skin, txt_info, path)
+            else:
+                return EditWikiPage(self.skin, info, path)
+        elif info.file_type == FileType.TEXT_FILE:
+            return EditWikiPage(self.skin, info, path)
+        elif info.file_type == FileType.BINARY_FILE:
+            raise NotImplementedError('Binary files are not editable yet.')
+        raise AssertionError('Unknown file type')
 
     def get_page(self, path):
         if path == '/':

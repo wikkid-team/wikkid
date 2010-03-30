@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
   <title>{{ title }}</title>
+  <style media="screen, print" type="text/css">
+   @import url(/static/default.css)
+  </style>
 </head>
 <body>
   <div id="header">Some header</div>
   <div id="content">
     <form>
-      <textarea>
-        {{ content }}
-      </textarea>
+      <textarea>{{ content }}</textarea>
       <input type="Submit" value="Save" />
     </form>
   </div>

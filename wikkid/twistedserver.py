@@ -50,7 +50,10 @@ class TwistedPage(Resource):
         # content = self.filestore.file_contents(self.filepath)
         # Munge the content.
         path = request.path
-        page = self.server.get_page(path)
+        if request.args.get('action') == ['edit']:
+            page = self.server.edit_page(path)
+        else:
+            page = self.server.get_page(path)
         content_type, content = page.render()
         if content_type.startswith('text/'):
             content_type = "%s; charset=utf-8" % content_type
