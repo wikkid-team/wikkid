@@ -25,6 +25,8 @@ effectively what this is going to be.
 
 import logging
 
+from wikkid.formatter.rest import RestructuredTextFormatter
+
 
 class Page(object):
     """A page is found at a particular location.
@@ -76,9 +78,12 @@ class WikiPage(Page):
     template = 'view_page'
 
     def template_args(self):
+        # Format the content.  Right not this is hard coded to ReST, although
+        # I want to offer multiple ways to do this.
+        formatter = RestructuredTextFormatter()
         return {
             'title': self.path,
-            'content': self.resource.get_content()
+            'content': formatter.format(self.resource.get_content())
             }
 
 
