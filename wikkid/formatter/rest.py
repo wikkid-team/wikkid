@@ -19,4 +19,20 @@
 """A text to html formatter using reStuctured Text."""
 
 from docutils.core import publish_parts
+from zope.interface import implements
 
+from wikkid.interfaces import ITextFormatter
+
+
+class RestructuredTextFormatter(object):
+    """Format text as HTML using restructured text."""
+
+    implements(ITextFormatter)
+
+    def format(self, text):
+        """Format the text.
+
+        I'm almost 100% positive that this method needs more args.
+        """
+        parts = publish_parts(text, writer_name='html')
+        return parts['html_title'] + parts['body']

@@ -12,3 +12,4 @@ bzr for the filestore and merging
 python-jinja2 for the templating
 python-lazr.enum for lazr.enum (actually not used yet)
 python-docutils for the ReST formatter
+python-beautifulsoup - for testing of html
