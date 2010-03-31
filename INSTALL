@@ -13,3 +13,4 @@ python-jinja2 for the templating
 python-lazr.enum for lazr.enum (actually not used yet)
 python-docutils for the ReST formatter
 python-beautifulsoup - for testing of html
+python-testtools - for running the test suite (optional)
