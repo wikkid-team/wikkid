@@ -9,8 +9,12 @@
 <body>
   <div id="header">Some header</div>
   <div id="content">
-    <form>
+    <form method="post">
       <textarea>{{ content }}</textarea>
+      Describe the change: <input type="text" name="message" value=""/>
+      {% if rev_id %}
+      <input type="text" name="rev-id" value="{{ rev_id }}"/>
+      {% endif %}
       <input type="Submit" value="Save" />
     </form>
   </div>

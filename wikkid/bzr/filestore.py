@@ -64,6 +64,7 @@ class FileStore(object):
             if file_id is None:
                 self._add_file(path, content, author, commit_message)
             else:
+                # What if a parent_revision hasn't been set?
                 self._update_file(
                     file_id, path, content, author, parent_revision,
                     commit_message)
