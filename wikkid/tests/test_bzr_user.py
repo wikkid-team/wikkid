@@ -38,3 +38,13 @@ class TestBzrUser(TestCaseWithTransport, ProvidesMixin):
         factory =  UserFactory(tree.branch)
         user = factory.create(None)
         self.assertProvides(user, IUser)
+
+    def test_user_attributes(self):
+        branch = self.make_branch_and_tree('.').branch
+        branch.get_config().set_user_option(
+            'email', 'Test User <test@example.com>')
+        user = UserFactory(branch).create(None)
+        self.assertEqual(
+            'Test User <test@example.com>', user.committer_id)
+        self.assertEqual('Test User', user.display_name)
+        self.assertEqual('test@example.com', user.email)
