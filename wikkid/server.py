@@ -23,8 +23,8 @@ import logging
 from bzrlib.urlutils import basename
 
 from wikkid.interfaces import FileType
-from wikkid.page import (
-    BinaryFile,
+from wikkid.views.binary import BinaryFile
+from wikkid.views.pages import (
     DirectoryListingPage,
     EditWikiPage,
     MissingPage,
@@ -47,6 +47,8 @@ class Server(object):
     """The Wikkid wiki server.
     """
 
+    DEFAULT_PATH = 'Home'
+
     def __init__(self, filestore, user_factory, skin_name=None):
         """Construct the Wikkid Wiki server.
 
@@ -64,53 +66,59 @@ class Server(object):
 
     def edit_page(self, path):
         if path == '/':
-            path = '/FrontPage'
+            path = '/' + self.DEFAULT_PATH
 
+        user = self.user_factory()
         page_name = basename(path)
         if '.' not in page_name:
             txt_info = self.get_info(path + '.txt')
+            txt_params = (self.skin, txt_info, path, user)
         info = self.get_info(path)
+        page_params = (self.skin, info, path, user)
         if info.file_type == FileType.MISSING:
             if txt_info.file_type != FileType.MISSING:
-                return EditWikiPage(self.skin, txt_info, path)
+                return EditWikiPage(*txt_params)
             else:
-                return EditWikiPage(self.skin, info, path)
+                return EditWikiPage(*page_params)
         elif info.file_type == FileType.DIRECTORY:
             if txt_info.file_type != FileType.MISSING:
-                return EditWikiPage(self.skin, txt_info, path)
+                return EditWikiPage(*txt_params)
             else:
-                return EditWikiPage(self.skin, info, path)
+                return EditWikiPage(*page_params)
         elif info.file_type == FileType.TEXT_FILE:
-            return EditWikiPage(self.skin, info, path)
+            return EditWikiPage(*page_params)
         elif info.file_type == FileType.BINARY_FILE:
             raise NotImplementedError('Binary files are not editable yet.')
         raise AssertionError('Unknown file type')
 
     def get_page(self, path):
         if path == '/':
-            path = '/FrontPage'
+            path = '/' + self.DEFAULT_PATH
 
+        user = self.user_factory()
         page_name = basename(path)
         if '.' not in page_name:
             txt_info = self.get_info(path + '.txt')
+            txt_params = (self.skin, txt_info, path, user)
         info = self.get_info(path)
+        page_params = (self.skin, info, path, user)
         if info.file_type == FileType.MISSING:
             if txt_info.file_type != FileType.MISSING:
-                return WikiPage(self.skin, txt_info, path)
+                return WikiPage(*txt_params)
             else:
-                return MissingPage(self.skin, info, path)
+                return MissingPage(*page_params)
         elif info.file_type == FileType.DIRECTORY:
             if txt_info.file_type != FileType.MISSING:
-                return WikiPage(self.skin, txt_info, path)
+                return WikiPage(*txt_params)
             else:
-                return DirectoryListingPage(self.skin, info, path)
+                return DirectoryListingPage(*page_params)
         elif info.file_type == FileType.TEXT_FILE:
             if info.path.endswith('.txt'):
-                return WikiPage(self.skin, info, path)
+                return WikiPage(*page_params)
             else:
-                return OtherTextPage(self.skin, info, path)
+                return OtherTextPage(*page_params)
         elif info.file_type == FileType.BINARY_FILE:
-            return BinaryFile(self.skin, self.get_info(path), path)
+            return BinaryFile(*page_params)
         raise AssertionError('Unknown file type')
 
     def get_info(self, path):
