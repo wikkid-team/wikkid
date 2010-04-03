@@ -18,6 +18,21 @@
 
 """The wikkid tests and test only code."""
 
+from zope.interface import implements
+
+from wikkid.interfaces import IUser
+
 
 class TestUserFactory(object):
     """Right now, user factories don't do anything."""
+
+
+class TestUser(object):
+    """A test user that implements the interface."""
+
+    implements(IUser)
+
+    def __init__(self, email, display_name):
+        self.email = email
+        self.display_name = display_name
+        self.committer_id = "{0} <{1}>".format(email, display_name)

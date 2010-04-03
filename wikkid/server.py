@@ -49,7 +49,7 @@ class Server(object):
 
     DEFAULT_PATH = 'Home'
 
-    def __init__(self, filestore, user_factory, skin_name=None):
+    def __init__(self, filestore, skin_name=None):
         """Construct the Wikkid Wiki server.
 
         :param filestore: An `IFileStore` instance.
@@ -57,18 +57,16 @@ class Server(object):
         :param skin_name: The name of a skin to use.
         """
         self.filestore = filestore
-        self.user_factory = user_factory
         # Need to load the initial templates for the skin.
         if skin_name is None:
             skin_name = 'default'
         self.logger = logging.getLogger('wikkid')
         self.skin = Skin(skin_name)
 
-    def edit_page(self, path):
+    def edit_page(self, path, user):
         if path == '/':
             path = '/' + self.DEFAULT_PATH
 
-        user = self.user_factory()
         page_name = basename(path)
         if '.' not in page_name:
             txt_info = self.get_info(path + '.txt')
@@ -91,11 +89,10 @@ class Server(object):
             raise NotImplementedError('Binary files are not editable yet.')
         raise AssertionError('Unknown file type')
 
-    def get_page(self, path):
+    def get_page(self, path, user):
         if path == '/':
             path = '/' + self.DEFAULT_PATH
 
-        user = self.user_factory()
         page_name = basename(path)
         if '.' not in page_name:
             txt_info = self.get_info(path + '.txt')

@@ -23,10 +23,9 @@ from bzrlib.tests import TestCaseWithTransport
 from wikkid.bzr.user import UserFactory
 from wikkid.interfaces import IUser, IUserFactory
 from wikkid.tests import ProvidesMixin
-from wikkid.tests.filestore import TestFileStore
 
 
-class TestBzrUser(TestCaseWithTransport, ProvidesMixin, TestFileStore):
+class TestBzrUser(TestCaseWithTransport, ProvidesMixin):
     """Tests for the bzr filestore and files."""
 
     def test_userfactory_provides_IUserFactory(self):

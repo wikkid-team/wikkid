@@ -21,15 +21,15 @@
 from testtools import TestCase
 
 from wikkid.interfaces import FileType
-from wikkid.page import (
-    BinaryFile,
+from wikkid.views.binary import BinaryFile
+from wikkid.views.pages import (
     DirectoryListingPage,
     MissingPage,
     OtherTextPage,
     WikiPage,
     )
 from wikkid.server import Server
-from wikkid.tests.fakes import TestUserFactory
+from wikkid.tests.fakes import TestUser
 from wikkid.volatile.filestore import FileStore
 
 # TODO: make a testing filestore that can produce either a volatile filestore
@@ -64,10 +64,14 @@ class TestServer(TestCase):
     What should we do about HTML files that are stored in the branch?
     """
 
+    def setUp(self):
+        TestCase.setUp(self)
+        self.user = TestUser('test@emample.com', 'Test User')
+
     def make_server(self, content=None):
         """Make a server with a volatile filestore."""
         filestore = FileStore(content)
-        return Server(filestore, TestUserFactory())
+        return Server(filestore)
 
     def test_missing_resource(self):
         # If the path doesn't exist in the filestore, then the resoruce info
@@ -92,7 +96,7 @@ class TestServer(TestCase):
         server = self.make_server([
                 ('some-dir/', None),
                 ])
-        page = server.get_page('/some-dir')
+        page = server.get_page('/some-dir', self.user)
         self.assertIsInstance(page, DirectoryListingPage)
 
     def test_get_page_source_file(self):
@@ -100,7 +104,7 @@ class TestServer(TestCase):
         server = self.make_server([
                 ('test.cpp', '// Some source'),
                 ])
-        page = server.get_page('/test.cpp')
+        page = server.get_page('/test.cpp', self.user)
         self.assertIsInstance(page, OtherTextPage)
 
     def test_get_page_wiki_page(self):
@@ -108,13 +112,13 @@ class TestServer(TestCase):
         server = self.make_server([
                 ('a-wiki-page.txt', "Doesn't need caps."),
                 ])
-        page = server.get_page('/a-wiki-page.txt')
+        page = server.get_page('/a-wiki-page.txt', self.user)
         self.assertIsInstance(page, WikiPage)
 
     def test_get_page_missing_page(self):
         # A missing file renders a missing page view.
         server = self.make_server()
-        page = server.get_page('/Missing')
+        page = server.get_page('/Missing', self.user)
         self.assertIsInstance(page, MissingPage)
 
     def test_get_page_wiki_no_suffix(self):
@@ -122,7 +126,7 @@ class TestServer(TestCase):
         server = self.make_server([
                 ('WikiPage.txt', "Works with caps too."),
                 ])
-        page = server.get_page('/WikiPage')
+        page = server.get_page('/WikiPage', self.user)
         self.assertIsInstance(page, WikiPage)
 
     def test_get_page_wiki_with_matching_dir(self):
@@ -132,9 +136,9 @@ class TestServer(TestCase):
                 ('WikiPage.txt', "Works with caps too."),
                 ('WikiPage/SubPage.txt', "A sub page."),
                 ])
-        page = server.get_page('/WikiPage')
+        page = server.get_page('/WikiPage', self.user)
         self.assertIsInstance(page, WikiPage)
-        self.assertEqual('/WikiPage', page.path)
+        self.assertEqual('/WikiPage', page.request_path)
         self.assertEqual('WikiPage.txt', page.resource.path)
 
     def test_get_page_wiki_in_subdir(self):
@@ -143,32 +147,32 @@ class TestServer(TestCase):
         server = self.make_server([
                 ('WikiPage/SubPage.txt', "A sub page."),
                 ])
-        page = server.get_page('/WikiPage/SubPage')
+        page = server.get_page('/WikiPage/SubPage', self.user)
         self.assertIsInstance(page, WikiPage)
 
     def test_get_page_root_path_no_front_page(self):
         # If the path matches a directory, but the .txt file exists with the
         # same name, then return return the wiki page.
         server = self.make_server()
-        page = server.get_page('/')
+        page = server.get_page('/', self.user)
         self.assertIsInstance(page, MissingPage)
-        self.assertEqual('/FrontPage', page.path)
+        self.assertEqual('/Home', page.request_path)
 
     def test_get_page_root_file_exists(self):
         # If the path matches a directory, but the .txt file exists with the
         # same name, then return return the wiki page.
         server = self.make_server([
-                ('FrontPage.txt', "The first page."),
+                ('Home.txt', "The first page."),
                 ])
-        page = server.get_page('/')
+        page = server.get_page('/', self.user)
         self.assertIsInstance(page, WikiPage)
-        self.assertEqual('/FrontPage', page.path)
-        self.assertEqual('FrontPage.txt', page.resource.path)
+        self.assertEqual('/Home', page.request_path)
+        self.assertEqual('Home.txt', page.resource.path)
 
     def test_get_page_binary_file(self):
         # Images are served as binary files.
         server = self.make_server([
                 ('image.png', "An image."),
                 ])
-        page = server.get_page('/image.png')
+        page = server.get_page('/image.png', self.user)
         self.assertIsInstance(page, BinaryFile)
