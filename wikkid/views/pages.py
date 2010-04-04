@@ -77,7 +77,7 @@ class EditWikiPage(BaseView):
 
     @property
     def content(self):
-        if self.resouce is None:
+        if self.resource is None:
             return ''
         else:
             return self.resource.get_content()

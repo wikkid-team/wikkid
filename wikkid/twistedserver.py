@@ -32,15 +32,16 @@ from twisted.internet import reactor
 
 class TwistedPage(Resource):
 
-    def __init__(self, server, logger):
+    def __init__(self, server, logger, user_factory):
         Resource.__init__(self)
         self.server = server
         self.logger = logger
+        self.user_factory = user_factory
 
     def getChild(self, name, request):
         # Yay for logging...
         self.logger.debug('getChild: %r' % name)
-        return TwistedPage(self.server, self.logger)
+        return TwistedPage(self.server, self.logger, self.user_factory)
 
     @property
     def filepath(self):
@@ -50,10 +51,11 @@ class TwistedPage(Resource):
         # content = self.filestore.file_contents(self.filepath)
         # Munge the content.
         path = request.path
+        user = self.user_factory.create(request)
         if request.args.get('action') == ['edit']:
-            page = self.server.edit_page(path)
+            page = self.server.edit_page(path, user)
         else:
-            page = self.server.get_page(path)
+            page = self.server.get_page(path, user)
         content_type, content = page.render()
         if content_type.startswith('text/'):
             content_type = "%s; charset=utf-8" % content_type
@@ -70,14 +72,15 @@ class TwistedPage(Resource):
 class TwistedServer(object):
     """Wraps the twisted stuff..."""
 
-    def __init__(self, server, port=8080):
+    def __init__(self, server, user_factory, port=8080):
         self.server = server
         self.port = port
         self.logger = logging.getLogger('wikkid')
+        self.user_factory = user_factory
 
     def run(self):
         self.logger.info('Listening on port %d' % self.port)
-        root = TwistedPage(self.server, self.logger)
+        root = TwistedPage(self.server, self.logger, self.user_factory)
         skin = self.server.skin
         if skin.favicon is not None:
             root.putChild('favicon.ico', File(skin.favicon))

@@ -40,7 +40,7 @@ class BaseView(object):
 
         :returns: A dict of values.
         """
-        raise {
+        return {
             'view': self,
             'user': self.user,
             }
