@@ -66,30 +66,16 @@ class Server(object):
         self.skin = Skin(skin_name)
 
     def edit_page(self, path, user):
-        if path == '/':
-            path = '/' + self.DEFAULT_PATH
-
-        page_name = basename(path)
-        if '.' not in page_name:
-            txt_info = self.get_info(path + '.txt')
-            txt_params = (self.skin, txt_info, path, user)
         info = self.get_info(path)
-        page_params = (self.skin, info, path, user)
-        if info.file_type == FileType.MISSING:
-            if txt_info.file_type != FileType.MISSING:
-                return EditWikiPage(*txt_params)
-            else:
-                return EditWikiPage(*page_params)
-        elif info.file_type == FileType.DIRECTORY:
-            if txt_info.file_type != FileType.MISSING:
-                return EditWikiPage(*txt_params)
-            else:
-                return EditWikiPage(*page_params)
-        elif info.file_type == FileType.TEXT_FILE:
-            return EditWikiPage(*page_params)
-        elif info.file_type == FileType.BINARY_FILE:
-            raise NotImplementedError('Binary files are not editable yet.')
-        raise AssertionError('Unknown file type')
+
+        # If we have a file, and it isn't binary, edit it.
+        if info.file_resource is not None:
+            file_type = info.file_resource.file_type
+            if file_type == FileType.BINARY_FILE:
+                raise NotImplementedError(
+                    'Binary files are not editable yet.')
+
+        return EditWikiPage(self.skin, info, path, user)
 
     def update_page(self, path, user, rev_id, content, commit_msg):
         """Try to update the page with the specified content.
@@ -99,39 +85,32 @@ class Server(object):
         try:
             info = self.get_info(path)
             self.filestore.update_file(
-                info.path, content, user.committer_id, rev_id, commit_msg)
+                info.write_filename, content, user.committer_id,
+                rev_id, commit_msg)
         except UpdateConflicts:
             return "conficts, TODO..."
 
     def get_page(self, path, user):
-        if path == '/':
-            path = '/' + self.DEFAULT_PATH
-
-        page_name = basename(path)
-        check_txt = '.' not in page_name
-        if check_txt:
-            txt_info = self.get_info(path + '.txt')
-            txt_params = (self.skin, txt_info, path, user)
         info = self.get_info(path)
-        page_params = (self.skin, info, path, user)
-        if info.file_type == FileType.MISSING:
-            if check_txt and txt_info.file_type != FileType.MISSING:
-                return WikiPage(*txt_params)
+
+        if info.file_resource is not None:
+            # We are pointing at a file.
+            file_type = info.file_resource.file_type
+            if file_type == FileType.BINARY_FILE:
+                return BinaryFile(
+                    self.skin, info.file_resource, path, user)
+            if (info.file_resource.path.endswith('.txt') or
+                '.' not in info.file_resource.base_name):
+                return WikiPage(
+                    self.skin, info.file_resource, path, user)
             else:
-                return MissingPage(*page_params)
-        elif info.file_type == FileType.DIRECTORY:
-            if check_txt and txt_info.file_type != FileType.MISSING:
-                return WikiPage(*txt_params)
-            else:
-                return DirectoryListingPage(*page_params)
-        elif info.file_type == FileType.TEXT_FILE:
-            if info.path.endswith('.txt'):
-                return WikiPage(*page_params)
-            else:
-                return OtherTextPage(*page_params)
-        elif info.file_type == FileType.BINARY_FILE:
-            return BinaryFile(*page_params)
-        raise AssertionError('Unknown file type')
+                return OtherTextPage(
+                    self.skin, info.file_resource, path, user)
+        elif info.dir_resource is not None:
+            return DirectoryListingPage(
+                self.skin, info.dir_resource, path, user)
+        else:
+            return MissingPage(self.skin, None, path, user)
 
     def get_info(self, path):
         """Get the resource from the filestore for the specified path.

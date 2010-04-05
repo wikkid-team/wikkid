@@ -20,7 +20,6 @@
 
 from testtools import TestCase
 
-from wikkid.interfaces import FileType
 from wikkid.views.binary import BinaryFile
 from wikkid.views.pages import (
     DirectoryListingPage,
@@ -144,7 +143,7 @@ class TestServer(TestCase):
         server = self.make_server()
         page = server.get_page('/', self.user)
         self.assertIsInstance(page, MissingPage)
-        self.assertEqual('/Home', page.request_path)
+        self.assertEqual('/', page.request_path)
 
     def test_get_page_root_file_exists(self):
         # If the path matches a directory, but the .txt file exists with the
@@ -154,7 +153,7 @@ class TestServer(TestCase):
                 ])
         page = server.get_page('/', self.user)
         self.assertIsInstance(page, WikiPage)
-        self.assertEqual('/Home', page.request_path)
+        self.assertEqual('/', page.request_path)
         self.assertEqual('Home.txt', page.resource.path)
 
     def test_get_page_binary_file(self):

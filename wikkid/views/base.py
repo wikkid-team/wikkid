@@ -26,11 +26,9 @@ class BaseView(object):
     This is an abstract base class.
     """
 
-    def __init__(self, skin, resource_info, path, user):
+    def __init__(self, skin, resource, path, user):
         self.skin = skin
-        self.resource = resource_info.resource
-        self.file_type = resource_info.file_type
-        self.file_path = resource_info.path
+        self.resource = resource
         self.request_path = path
         self.user = user
         self.logger = logging.getLogger('wikkid')
