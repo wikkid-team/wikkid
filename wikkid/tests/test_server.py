@@ -166,7 +166,6 @@ class TestServer(TestCase):
 
     def test_update_page_new_file(self):
         # update_page will add a new file if it doesn't exist.
-        self.skip('Known to be broken right now.')
         server = self.make_server()
         server.update_page(
             '/NewPage', self.user, None, 'page content', 'add new page')
