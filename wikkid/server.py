@@ -150,7 +150,7 @@ class Server(object):
         # If the resource exists and is a file, we are done.
         if file_resource is not None:
             if file_resource.file_type != FileType.DIRECTORY:
-                ResourceInfo(path, file_path, file_resource, None)
+                return ResourceInfo(path, file_path, file_resource, None)
             else:
                 dir_resource = file_resource
                 file_resource = None
