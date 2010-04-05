@@ -180,6 +180,11 @@ class TestServer(TestCase):
 class TestServerGetInfo(TestCase):
     """Test the get_info method of the Server class."""
 
+    def make_server(self, content=None):
+        """Make a server with a volatile filestore."""
+        filestore = FileStore(content)
+        return Server(filestore)
+
     def test_get_info_root_no_content(self):
         # If the root file is selected, and there is no content, there is no
         # read_filename or file_resource, but there is a write_filename for
