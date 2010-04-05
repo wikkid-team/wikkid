@@ -121,6 +121,12 @@ class TestServer(TestCase):
         page = server.get_page('/Missing', self.user)
         self.assertIsInstance(page, MissingPage)
 
+    def test_get_page_missing_file_with_suffix(self):
+        # A missing file renders a missing page view.
+        server = self.make_server()
+        page = server.get_page('/missing.cpp', self.user)
+        self.assertIsInstance(page, MissingPage)
+
     def test_get_page_wiki_no_suffix(self):
         # A wiki page can be accessed without the .txt
         server = self.make_server([
@@ -176,3 +182,14 @@ class TestServer(TestCase):
                 ])
         page = server.get_page('/image.png', self.user)
         self.assertIsInstance(page, BinaryFile)
+
+    def test_update_page_new_file(self):
+        # update_page will add a new file if it doesn't exist.
+        self.skip('Known to be broken right now.')
+        server = self.make_server()
+        server.update_page(
+            '/NewPage', self.user, None, 'page content', 'add new page')
+        page = server.get_page('/NewPage', self.user)
+        self.assertIsInstance(page, WikiPage)
+        self.assertEqual('/NewPage', page.request_path)
+        self.assertEqual('NewPage.txt', page.resource.path)

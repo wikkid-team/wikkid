@@ -22,6 +22,7 @@ import logging
 
 from bzrlib.urlutils import basename
 
+from wikkid.errors import UpdateConflicts
 from wikkid.interfaces import FileType
 from wikkid.views.binary import BinaryFile
 from wikkid.views.pages import (
@@ -89,23 +90,36 @@ class Server(object):
             raise NotImplementedError('Binary files are not editable yet.')
         raise AssertionError('Unknown file type')
 
+    def update_page(self, path, user, rev_id, content, commit_msg):
+        """Try to update the page with the specified content.
+
+        TODO: add in the file_id to handle page moves.
+        """
+        try:
+            info = self.get_info(path)
+            self.filestore.update_file(
+                info.path, content, user.committer_id, rev_id, commit_msg)
+        except UpdateConflicts:
+            return "conficts, TODO..."
+
     def get_page(self, path, user):
         if path == '/':
             path = '/' + self.DEFAULT_PATH
 
         page_name = basename(path)
-        if '.' not in page_name:
+        check_txt = '.' not in page_name
+        if check_txt:
             txt_info = self.get_info(path + '.txt')
             txt_params = (self.skin, txt_info, path, user)
         info = self.get_info(path)
         page_params = (self.skin, info, path, user)
         if info.file_type == FileType.MISSING:
-            if txt_info.file_type != FileType.MISSING:
+            if check_txt and txt_info.file_type != FileType.MISSING:
                 return WikiPage(*txt_params)
             else:
                 return MissingPage(*page_params)
         elif info.file_type == FileType.DIRECTORY:
-            if txt_info.file_type != FileType.MISSING:
+            if check_txt and txt_info.file_type != FileType.MISSING:
                 return WikiPage(*txt_params)
             else:
                 return DirectoryListingPage(*page_params)
