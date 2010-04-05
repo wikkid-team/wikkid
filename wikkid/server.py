@@ -38,10 +38,11 @@ from wikkid.skin import Skin
 class ResourceInfo(object):
     """Information about a resource."""
 
-    def __init__(self, file_type, path, resource):
-        self.file_type = file_type
+    def __init__(self, path, write_filename, file_resource, dir_resource):
         self.path = path
-        self.resource = resource
+        self.write_filename = write_filename
+        self.file_resource = file_resource
+        self.dir_resource = dir_resource
 
 
 class Server(object):
@@ -140,10 +141,22 @@ class Server(object):
         responsibility of this method to remove the leading slash.
         """
         assert path.startswith('/')
-        path = path[1:]
-        resource = self.filestore.get_file(path)
-        if resource is None:
-            return ResourceInfo(FileType.MISSING, path, None)
-        else:
-            # Here is where we need to check for a 'wiki' page.
-            return ResourceInfo(resource.file_type, path, resource)
+        file_path = path[1:]
+        if file_path == '':
+            file_path = self.DEFAULT_PATH
+
+        dir_resource = None
+        file_resource = self.filestore.get_file(file_path)
+        # If the resource exists and is a file, we are done.
+        if file_resource is not None:
+            if file_resource.file_type != FileType.DIRECTORY:
+                ResourceInfo(path, file_path, file_resource, None)
+            else:
+                dir_resource = file_resource
+                file_resource = None
+
+        if '.' not in basename(file_path):
+            file_path += '.txt'
+            file_resource = self.filestore.get_file(file_path)
+
+        return ResourceInfo(path, file_path, file_resource, dir_resource)
