@@ -73,24 +73,6 @@ class TestServer(TestCase):
         filestore = FileStore(content)
         return Server(filestore)
 
-    def test_missing_resource(self):
-        # If the path doesn't exist in the filestore, then the resoruce info
-        # shows a missing status.
-        server = self.make_server()
-        info = server.get_info('/a-file')
-        self.assertEqual(FileType.MISSING, info.file_type)
-        self.assertEqual('a-file', info.path)
-        self.assertIs(None, info.resource)
-
-    def test_text_file(self):
-        # A normal text file is text/plain.
-        server = self.make_server([
-                ('readme.txt', 'A readme file.')])
-        info = server.get_info('/readme.txt')
-        self.assertEqual(FileType.TEXT_FILE, info.file_type)
-        self.assertEqual('readme.txt', info.path)
-        self.assertIsNot(None, info.resource)
-
     def test_get_page_directory(self):
         # A directory
         server = self.make_server([
