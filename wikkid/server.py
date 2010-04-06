@@ -22,10 +22,12 @@ import logging
 
 from bzrlib.urlutils import basename
 
+from wikkid.errors import UpdateConflicts
 from wikkid.interfaces import FileType
-from wikkid.page import (
-    BinaryFile,
+from wikkid.views.binary import BinaryFile
+from wikkid.views.pages import (
     DirectoryListingPage,
+    EditWikiPage,
     MissingPage,
     OtherTextPage,
     WikiPage,
@@ -36,17 +38,20 @@ from wikkid.skin import Skin
 class ResourceInfo(object):
     """Information about a resource."""
 
-    def __init__(self, file_type, path, resource):
-        self.file_type = file_type
+    def __init__(self, path, write_filename, file_resource, dir_resource):
         self.path = path
-        self.resource = resource
+        self.write_filename = write_filename
+        self.file_resource = file_resource
+        self.dir_resource = dir_resource
 
 
 class Server(object):
     """The Wikkid wiki server.
     """
 
-    def __init__(self, filestore, user_factory, skin_name=None):
+    DEFAULT_PATH = 'Home'
+
+    def __init__(self, filestore, skin_name=None):
         """Construct the Wikkid Wiki server.
 
         :param filestore: An `IFileStore` instance.
@@ -54,39 +59,58 @@ class Server(object):
         :param skin_name: The name of a skin to use.
         """
         self.filestore = filestore
-        self.user_factory = user_factory
         # Need to load the initial templates for the skin.
         if skin_name is None:
             skin_name = 'default'
         self.logger = logging.getLogger('wikkid')
         self.skin = Skin(skin_name)
 
-    def get_page(self, path):
-        if path == '/':
-            path = '/FrontPage'
-
-        page_name = basename(path)
-        if '.' not in page_name:
-            txt_info = self.get_info(path + '.txt')
+    def edit_page(self, path, user):
         info = self.get_info(path)
-        if info.file_type == FileType.MISSING:
-            if txt_info.file_type != FileType.MISSING:
-                return WikiPage(self.skin, txt_info, path)
+
+        # If we have a file, and it isn't binary, edit it.
+        if info.file_resource is not None:
+            file_type = info.file_resource.file_type
+            if file_type == FileType.BINARY_FILE:
+                raise NotImplementedError(
+                    'Binary files are not editable yet.')
+
+        return EditWikiPage(self.skin, info, path, user)
+
+    def update_page(self, path, user, rev_id, content, commit_msg):
+        """Try to update the page with the specified content.
+
+        TODO: add in the file_id to handle page moves.
+        """
+        try:
+            info = self.get_info(path)
+            self.filestore.update_file(
+                info.write_filename, content, user.committer_id,
+                rev_id, commit_msg)
+        except UpdateConflicts:
+            return "conficts, TODO..."
+
+    def get_page(self, path, user):
+        info = self.get_info(path)
+
+        if info.file_resource is not None:
+            # We are pointing at a file.
+            file_type = info.file_resource.file_type
+            if file_type == FileType.BINARY_FILE:
+                return BinaryFile(
+                    self.skin, info.file_resource, path, user)
+            if (info.file_resource.path.endswith('.txt') or
+                '.' not in info.file_resource.base_name):
+                return WikiPage(
+                    self.skin, info.file_resource, path, user)
             else:
-                return MissingPage(self.skin, info, path)
-        elif info.file_type == FileType.DIRECTORY:
-            if txt_info.file_type != FileType.MISSING:
-                return WikiPage(self.skin, txt_info, path)
-            else:
-                return DirectoryListingPage(self.skin, info, path)
-        elif info.file_type == FileType.TEXT_FILE:
-            if info.path.endswith('.txt'):
-                return WikiPage(self.skin, info, path)
-            else:
-                return OtherTextPage(self.skin, info, path)
-        elif info.file_type == FileType.BINARY_FILE:
-            return BinaryFile(self.skin, self.get_info(path), path)
-        raise AssertionError('Unknown file type')
+                return OtherTextPage(
+                    self.skin, info.file_resource, path, user)
+        elif info.dir_resource is not None:
+            return DirectoryListingPage(
+                self.skin, info.dir_resource, path, user)
+        else:
+            return MissingPage(self.skin, None, path, user)
 
     def get_info(self, path):
         """Get the resource from the filestore for the specified path.
@@ -96,10 +120,22 @@ class Server(object):
         responsibility of this method to remove the leading slash.
         """
         assert path.startswith('/')
-        path = path[1:]
-        resource = self.filestore.get_file(path)
-        if resource is None:
-            return ResourceInfo(FileType.MISSING, path, None)
-        else:
-            # Here is where we need to check for a 'wiki' page.
-            return ResourceInfo(resource.file_type, path, resource)
+        file_path = path[1:]
+        if file_path == '':
+            file_path = self.DEFAULT_PATH
+
+        dir_resource = None
+        file_resource = self.filestore.get_file(file_path)
+        # If the resource exists and is a file, we are done.
+        if file_resource is not None:
+            if file_resource.file_type != FileType.DIRECTORY:
+                return ResourceInfo(path, file_path, file_resource, None)
+            else:
+                dir_resource = file_resource
+                file_resource = None
+
+        if '.' not in basename(file_path):
+            file_path += '.txt'
+            file_resource = self.filestore.get_file(file_path)
+
+        return ResourceInfo(path, file_path, file_resource, dir_resource)

@@ -20,16 +20,15 @@
 
 from testtools import TestCase
 
-from wikkid.interfaces import FileType
-from wikkid.page import (
-    BinaryFile,
+from wikkid.views.binary import BinaryFile
+from wikkid.views.pages import (
     DirectoryListingPage,
     MissingPage,
     OtherTextPage,
     WikiPage,
     )
 from wikkid.server import Server
-from wikkid.tests.fakes import TestUserFactory
+from wikkid.tests.fakes import TestUser
 from wikkid.volatile.filestore import FileStore
 
 # TODO: make a testing filestore that can produce either a volatile filestore
@@ -64,35 +63,21 @@ class TestServer(TestCase):
     What should we do about HTML files that are stored in the branch?
     """
 
+    def setUp(self):
+        TestCase.setUp(self)
+        self.user = TestUser('test@emample.com', 'Test User')
+
     def make_server(self, content=None):
         """Make a server with a volatile filestore."""
         filestore = FileStore(content)
-        return Server(filestore, TestUserFactory())
-
-    def test_missing_resource(self):
-        # If the path doesn't exist in the filestore, then the resoruce info
-        # shows a missing status.
-        server = self.make_server()
-        info = server.get_info('/a-file')
-        self.assertEqual(FileType.MISSING, info.file_type)
-        self.assertEqual('a-file', info.path)
-        self.assertIs(None, info.resource)
-
-    def test_text_file(self):
-        # A normal text file is text/plain.
-        server = self.make_server([
-                ('readme.txt', 'A readme file.')])
-        info = server.get_info('/readme.txt')
-        self.assertEqual(FileType.TEXT_FILE, info.file_type)
-        self.assertEqual('readme.txt', info.path)
-        self.assertIsNot(None, info.resource)
+        return Server(filestore)
 
     def test_get_page_directory(self):
         # A directory
         server = self.make_server([
                 ('some-dir/', None),
                 ])
-        page = server.get_page('/some-dir')
+        page = server.get_page('/some-dir', self.user)
         self.assertIsInstance(page, DirectoryListingPage)
 
     def test_get_page_source_file(self):
@@ -100,7 +85,7 @@ class TestServer(TestCase):
         server = self.make_server([
                 ('test.cpp', '// Some source'),
                 ])
-        page = server.get_page('/test.cpp')
+        page = server.get_page('/test.cpp', self.user)
         self.assertIsInstance(page, OtherTextPage)
 
     def test_get_page_wiki_page(self):
@@ -108,13 +93,19 @@ class TestServer(TestCase):
         server = self.make_server([
                 ('a-wiki-page.txt', "Doesn't need caps."),
                 ])
-        page = server.get_page('/a-wiki-page.txt')
+        page = server.get_page('/a-wiki-page.txt', self.user)
         self.assertIsInstance(page, WikiPage)
 
     def test_get_page_missing_page(self):
         # A missing file renders a missing page view.
         server = self.make_server()
-        page = server.get_page('/Missing')
+        page = server.get_page('/Missing', self.user)
+        self.assertIsInstance(page, MissingPage)
+
+    def test_get_page_missing_file_with_suffix(self):
+        # A missing file renders a missing page view.
+        server = self.make_server()
+        page = server.get_page('/missing.cpp', self.user)
         self.assertIsInstance(page, MissingPage)
 
     def test_get_page_wiki_no_suffix(self):
@@ -122,7 +113,7 @@ class TestServer(TestCase):
         server = self.make_server([
                 ('WikiPage.txt', "Works with caps too."),
                 ])
-        page = server.get_page('/WikiPage')
+        page = server.get_page('/WikiPage', self.user)
         self.assertIsInstance(page, WikiPage)
 
     def test_get_page_wiki_with_matching_dir(self):
@@ -132,9 +123,9 @@ class TestServer(TestCase):
                 ('WikiPage.txt', "Works with caps too."),
                 ('WikiPage/SubPage.txt', "A sub page."),
                 ])
-        page = server.get_page('/WikiPage')
+        page = server.get_page('/WikiPage', self.user)
         self.assertIsInstance(page, WikiPage)
-        self.assertEqual('/WikiPage', page.path)
+        self.assertEqual('/WikiPage', page.request_path)
         self.assertEqual('WikiPage.txt', page.resource.path)
 
     def test_get_page_wiki_in_subdir(self):
@@ -143,32 +134,175 @@ class TestServer(TestCase):
         server = self.make_server([
                 ('WikiPage/SubPage.txt', "A sub page."),
                 ])
-        page = server.get_page('/WikiPage/SubPage')
+        page = server.get_page('/WikiPage/SubPage', self.user)
         self.assertIsInstance(page, WikiPage)
 
     def test_get_page_root_path_no_front_page(self):
         # If the path matches a directory, but the .txt file exists with the
         # same name, then return return the wiki page.
         server = self.make_server()
-        page = server.get_page('/')
+        page = server.get_page('/', self.user)
         self.assertIsInstance(page, MissingPage)
-        self.assertEqual('/FrontPage', page.path)
+        self.assertEqual('/', page.request_path)
 
     def test_get_page_root_file_exists(self):
         # If the path matches a directory, but the .txt file exists with the
         # same name, then return return the wiki page.
         server = self.make_server([
-                ('FrontPage.txt', "The first page."),
+                ('Home.txt', "The first page."),
                 ])
-        page = server.get_page('/')
+        page = server.get_page('/', self.user)
         self.assertIsInstance(page, WikiPage)
-        self.assertEqual('/FrontPage', page.path)
-        self.assertEqual('FrontPage.txt', page.resource.path)
+        self.assertEqual('/', page.request_path)
+        self.assertEqual('Home.txt', page.resource.path)
 
     def test_get_page_binary_file(self):
         # Images are served as binary files.
         server = self.make_server([
                 ('image.png', "An image."),
                 ])
-        page = server.get_page('/image.png')
+        page = server.get_page('/image.png', self.user)
         self.assertIsInstance(page, BinaryFile)
+
+    def test_update_page_new_file(self):
+        # update_page will add a new file if it doesn't exist.
+        server = self.make_server()
+        server.update_page(
+            '/NewPage', self.user, None, 'page content', 'add new page')
+        page = server.get_page('/NewPage', self.user)
+        self.assertIsInstance(page, WikiPage)
+        self.assertEqual('/NewPage', page.request_path)
+        self.assertEqual('NewPage.txt', page.resource.path)
+
+
+class TestServerGetInfo(TestCase):
+    """Test the get_info method of the Server class."""
+
+    def make_server(self, content=None):
+        """Make a server with a volatile filestore."""
+        filestore = FileStore(content)
+        return Server(filestore)
+
+    def test_get_info_root_no_content(self):
+        # If the root file is selected, and there is no content, there is no
+        # read_filename or file_resource, but there is a write_filename for
+        # the default home page.
+        server = self.make_server()
+        info = server.get_info('/')
+        self.assertEqual('/', info.path)
+        self.assertEqual('Home.txt', info.write_filename)
+        self.assertIs(None, info.file_resource)
+        self.assertIs(None, info.dir_resource)
+
+    def test_get_info_root_has_page(self):
+        # If the root file is selected, and there is a home page, this is
+        # returned.
+        server = self.make_server([
+                ('Home.txt', 'the home page'),
+                ])
+        info = server.get_info('/')
+        self.assertEqual('/', info.path)
+        self.assertEqual('Home.txt', info.write_filename)
+        self.assertEqual('Home.txt', info.file_resource.path)
+        self.assertIs(None, info.dir_resource)
+
+    def test_get_info_missing_file(self):
+        # A missing file as no read filename, nor resource, but does have
+        # a write file name.
+        server = self.make_server()
+        info = server.get_info('/missing-file')
+        self.assertEqual('/missing-file', info.path)
+        self.assertEqual('missing-file.txt', info.write_filename)
+        self.assertIs(None, info.file_resource)
+        self.assertIs(None, info.dir_resource)
+
+    def test_get_info_existing_file_no_suffix(self):
+        # If a file is requested that exists but has no suffix, it is returned
+        # unaltered.
+        server = self.make_server([
+                ('README', 'A readme file'),
+                ])
+        info = server.get_info('/README')
+        self.assertEqual('/README', info.path)
+        self.assertEqual('README', info.write_filename)
+        self.assertEqual('README', info.file_resource.path)
+        self.assertIs(None, info.dir_resource)
+
+    def test_get_info_missing_file_not_text(self):
+        # A missing file is requested, but has a suffix, don't attempt to add
+        # a .txt to it.
+        server = self.make_server()
+        info = server.get_info('/missing-file.cpp')
+        self.assertEqual('/missing-file.cpp', info.path)
+        self.assertEqual('missing-file.cpp', info.write_filename)
+        self.assertIs(None, info.file_resource)
+        self.assertIs(None, info.dir_resource)
+
+    def test_get_info_directory(self):
+        # A directory without a matching text file doesn't have a
+        # read_filename either, but does have a dir_resource.
+        server = self.make_server([
+                ('SomeDir/', None),
+                ])
+        info = server.get_info('/SomeDir')
+        self.assertEqual('/SomeDir', info.path)
+        self.assertEqual('SomeDir.txt', info.write_filename)
+        self.assertIs(None, info.file_resource)
+        self.assertEqual('SomeDir', info.dir_resource.path)
+
+    def test_get_info_directory_with_page(self):
+        # A directory with a matching text file has a text resource and a dir
+        # resource.
+        server = self.make_server([
+                ('SomeDir/', None),
+                ('SomeDir.txt', 'Some content'),
+                ])
+        info = server.get_info('/SomeDir')
+        self.assertEqual('/SomeDir', info.path)
+        self.assertEqual('SomeDir.txt', info.write_filename)
+        self.assertEqual('SomeDir.txt', info.file_resource.path)
+        self.assertIsNot('SomeDir', info.dir_resource)
+
+    def test_get_info_page_no_directory(self):
+        # A directory with a matching text file has a text resource and a dir
+        # resource.
+        server = self.make_server([
+                ('SomeDir.txt', 'Some content'),
+                ])
+        info = server.get_info('/SomeDir')
+        self.assertEqual('/SomeDir', info.path)
+        self.assertEqual('SomeDir.txt', info.write_filename)
+        self.assertEqual('SomeDir.txt', info.file_resource.path)
+        self.assertIs(None, info.dir_resource)
+
+    def test_get_info_subdirs_missing_file(self):
+        # The path info reflects the request path.
+        server = self.make_server()
+        info = server.get_info('/a/b/c/d')
+        self.assertEqual('/a/b/c/d', info.path)
+        self.assertEqual('a/b/c/d.txt', info.write_filename)
+        self.assertIs(None, info.file_resource)
+        self.assertIs(None, info.dir_resource)
+
+    def test_get_info_subdirs_existing_file(self):
+        # The path info reflects the request path.
+        server = self.make_server([
+                ('a/b/c/d.txt', 'a text file'),
+                ])
+        info = server.get_info('/a/b/c/d')
+        self.assertEqual('/a/b/c/d', info.path)
+        self.assertEqual('a/b/c/d.txt', info.write_filename)
+        self.assertEqual('a/b/c/d.txt', info.file_resource.path)
+        self.assertIs(None, info.dir_resource)
+
+    def test_get_info_subdirs_existing_file_and_dir(self):
+        # The path info reflects the request path.
+        server = self.make_server([
+                ('a/b/c/d.txt', 'a text file'),
+                ('a/b/c/d/e.txt', 'another text file'),
+                ])
+        info = server.get_info('/a/b/c/d')
+        self.assertEqual('/a/b/c/d', info.path)
+        self.assertEqual('a/b/c/d.txt', info.write_filename)
+        self.assertEqual('a/b/c/d.txt', info.file_resource.path)
+        self.assertEqual('a/b/c/d', info.dir_resource.path)

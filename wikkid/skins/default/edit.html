@@ -1,15 +1,20 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html lang="en">
 <head>
-  <title>{{ title }}</title>
+  <title>{{ view.title }}</title>
+  <style media="screen, print" type="text/css">
+   @import url(/static/default.css)
+  </style>
 </head>
 <body>
   <div id="header">Some header</div>
   <div id="content">
-    <form>
-      <textarea>
-        {{ content }}
-      </textarea>
+    <form method="post">
+      <textarea>{{ view.content }}</textarea>
+      Describe the change: <input type="text" name="message" value=""/>
+      {% if view.rev_id %}
+      <input type="text" name="rev-id" value="{{ view.rev_id }}"/>
+      {% endif %}
       <input type="Submit" value="Save" />
     </form>
   </div>

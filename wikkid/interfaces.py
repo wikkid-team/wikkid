@@ -122,6 +122,8 @@ class IUser(Interface):
         description=u"The user's email adderss.")
     display_name = TextLine(
         description=u"The name that is shown through the user interface.")
+    committer_id = TextLine(
+        description=u"The user's name and email address.")
 
 
 class IWikiPage(Interface):

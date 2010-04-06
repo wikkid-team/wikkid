@@ -33,7 +33,8 @@ class UserFactory(object):
     def __init__(self, branch):
         """Use the user config from the branch."""
         config = branch.get_config()
-        name, address = email.Utils.parseaddr(config.username())
+        self.committer_id = config.username()
+        name, address = email.Utils.parseaddr(self.committer_id)
         self.email = address
         if name:
             self.display_name = name
@@ -42,7 +43,7 @@ class UserFactory(object):
 
     def create(self, request):
         """Create a User."""
-        return User(self.email, self.display_name)
+        return User(self.email, self.display_name, self.committer_id)
 
 
 class User(object):
@@ -50,7 +51,8 @@ class User(object):
 
     implements(IUser)
 
-    def __init__(self, email, display_name):
+    def __init__(self, email, display_name, committer_id):
         self.email = email
         self.display_name = display_name
+        self.committer_id = committer_id
 

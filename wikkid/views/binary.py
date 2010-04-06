@@ -16,23 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""The wikkid tests and test only code."""
+"""Views associated with binary files."""
 
-from zope.interface import implements
-
-from wikkid.interfaces import IUser
+from wikkid.views.base import BaseView
 
 
-class TestUserFactory(object):
-    """Right now, user factories don't do anything."""
+class BinaryFile(BaseView):
+    """Renders a binary file with its mimetype."""
 
-
-class TestUser(object):
-    """A test user that implements the interface."""
-
-    implements(IUser)
-
-    def __init__(self, email, display_name):
-        self.email = email
-        self.display_name = display_name
-        self.committer_id = "{0} <{1}>".format(email, display_name)
+    def render(self):
+        return self.resource.mimetype, self.resource.get_content()
