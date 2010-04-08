@@ -26,6 +26,7 @@ from wikkid.errors import UpdateConflicts
 from wikkid.interfaces import FileType
 from wikkid.views.binary import BinaryFile
 from wikkid.views.pages import (
+    ConflictedEditWikiPage,
     DirectoryListingPage,
     EditWikiPage,
     MissingPage,
@@ -66,6 +67,7 @@ class Server(object):
         self.skin = Skin(skin_name)
 
     def edit_page(self, path, user):
+        self.logger.debug('edit_page: %s, %s', path, user.display_name)
         info = self.get_info(path)
 
         # If we have a file, and it isn't binary, edit it.
@@ -75,28 +77,34 @@ class Server(object):
                 raise NotImplementedError(
                     'Binary files are not editable yet.')
 
-        return EditWikiPage(self.skin, info, path, user)
+        return EditWikiPage(self.skin, info.file_resource, path, user)
 
     def update_page(self, path, user, rev_id, content, commit_msg):
         """Try to update the page with the specified content.
 
         TODO: add in the file_id to handle page moves.
         """
+        self.logger.debug('update_page: %s, %s', path, user.display_name)
+        info = self.get_info(path)
         try:
-            info = self.get_info(path)
             self.filestore.update_file(
                 info.write_filename, content, user.committer_id,
                 rev_id, commit_msg)
-        except UpdateConflicts:
-            return "conficts, TODO..."
+            return self.get_page(path, user)
+        except UpdateConflicts, e:
+            return ConflictedEditWikiPage(
+                self.skin, info.file_resource, path, user,
+                e.conflict_text, e.rev_id)
 
     def get_page(self, path, user):
+        self.logger.debug('get_page: %s, %s', path, user.display_name)
         info = self.get_info(path)
 
         if info.file_resource is not None:
             # We are pointing at a file.
             file_type = info.file_resource.file_type
             if file_type == FileType.BINARY_FILE:
+                self.logger.debug('%s is a binary file', path)
                 return BinaryFile(
                     self.skin, info.file_resource, path, user)
             if (info.file_resource.path.endswith('.txt') or

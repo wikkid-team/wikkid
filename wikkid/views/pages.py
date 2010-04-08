@@ -83,6 +83,18 @@ class EditWikiPage(BaseView):
             return self.resource.get_content()
 
 
+class ConflictedEditWikiPage(BaseView):
+    """The page shows the wiki content in a large edit field."""
+
+    template = 'edit_page'
+
+    def __init__(self, skin, resource, path, user, conflict_text,
+                 rev_id):
+        BaseView.__init__(self, skin, resource, path, user)
+        self.content = conflict_text
+        self.rev_id = rev_id
+
+
 class DirectoryListingPage(BaseView):
     """The directory listing shows the content in the directory.
 
