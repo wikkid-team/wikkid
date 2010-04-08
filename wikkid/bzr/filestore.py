@@ -103,7 +103,7 @@ class FileStore(object):
         # Put the file there.
         # TODO: UTF-8 encode text files?
         t.put_bytes(basename(path), content)
-        self.working_tree.smart_add('.')
+        self.working_tree.smart_add([t.local_abspath('.')])
         if commit_message is None:
             commit_message = 'Hello world.'
         self.working_tree.commit(

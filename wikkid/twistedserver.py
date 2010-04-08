@@ -74,7 +74,10 @@ class TwistedPage(Resource):
         if request.args.get('action') == ['save']:
             content = request.args['content'][0]
             message = request.args['message'][0]
-            rev_id = request.args['rev-id'][0]
+            if 'rev-id' in request.args:
+                rev_id = request.args['rev-id'][0]
+            else:
+                rev_id = None
             page = self.server.update_page(
                 path, user, rev_id, content, message)
             # Here is where we could check the page for a redirect following
