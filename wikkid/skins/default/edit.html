@@ -9,13 +9,13 @@
 <body>
   <div id="header">Some header</div>
   <div id="content">
-    <form method="post">
-      <textarea>{{ view.content }}</textarea>
+    <form method="post" action="{{ view.request_path }}">
+      <textarea name="content">{{ view.content }}</textarea>
       Describe the change: <input type="text" name="message" value=""/>
       {% if view.rev_id %}
       <input type="text" name="rev-id" value="{{ view.rev_id }}"/>
       {% endif %}
-      <input type="Submit" value="Save" />
+      <input type="Submit" name="action" value="save" />
     </form>
   </div>
   <div id="footer">Some footer</div>

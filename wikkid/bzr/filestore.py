@@ -133,7 +133,7 @@ class FileStore(object):
             raise UpdateConflicts('add text here', basis_rev)
         else:
             if commit_message is None:
-                commit_message = 'Hello world.'
+                commit_message = '<no commit message specified>'
             wt.bzrdir.root_transport.put_bytes(path, ''.join(result))
             wt.commit(
                 message=commit_message, authors=[author],
