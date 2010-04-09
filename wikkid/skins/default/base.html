@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+  {% block head %}
+  <title>{% block title %}{% endblock %} - Wikkid</title>
+  <style media="screen, print" type="text/css">
+   @import url(/static/default.css)
+  </style>
+  {% endblock %}
+</head>
+<body>
+  <div id="header">
+    <div id="user">
+      {% if view.user %}
+      {{ view.user.display_name }}
+      {% else %}
+      Login...
+      {% endif %}
+    </div>
+    <span class="wikkid">Wikkid</span>
+
+  </div>
+  <div id="location">
+    <div id="commands">{% block commands %}{% endblock %}</div>
+    Need some breadcrumbs: dir > dir > page
+    Need links for edit, home, et al.
+  </div>
+  <div id="content">{% block content %}{% endblock %}</div>
+  <div id="footer">
+    &copy; 2010
+    <a href="https://launchapd.net/~wikkid">Wikkid Developers</a>,
+    All rights reserved.
+  </div>
+</body>
+</html>
