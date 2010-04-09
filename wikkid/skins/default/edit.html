@@ -1,23 +1,15 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html lang="en">
-<head>
-  <title>{{ view.title }}</title>
-  <style media="screen, print" type="text/css">
-   @import url(/static/default.css)
-  </style>
-</head>
-<body>
-  <div id="header">Some header</div>
-  <div id="content">
-    <form method="post" action="{{ view.request_path }}">
-      <textarea name="content">{{ view.content }}</textarea>
-      Describe the change: <input type="text" name="message" value=""/>
-      {% if view.rev_id %}
-      <input type="text" name="rev-id" value="{{ view.rev_id }}"/>
-      {% endif %}
-      <input type="Submit" name="action" value="save" />
-    </form>
+{% extends "base.html" %}
+{% block title %}{{ view.title }}{% endblock %}
+{% block content %}
+<form method="post" action="{{ view.request_path }}">
+  <textarea name="content">{{ view.content }}</textarea>
+  Describe the change: <input type="text" name="message" value=""/>
+  {% if view.rev_id %}
+  <input type="hidden" name="rev-id" value="{{ view.rev_id }}"/>
+  {% endif %}
+  <div>
+  <input type="Submit" name="action" value="save" />
+  or <a href="{{ view.request_path }}">Cancel</a>
   </div>
-  <div id="footer">Some footer</div>
-</body>
-</html>
+</form>
+{% endblock %}
