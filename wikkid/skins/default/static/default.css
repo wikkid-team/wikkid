@@ -17,9 +17,48 @@
  * along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
  */
 
+body {
+    margin: 0;
+    padding: 0;
+}
+
 textarea {
     width: 95%;
     height: 400px;
     border: 3px solid #cccccc;
 	padding: 5px;
+}
+
+#header {
+    padding: 1em;
+    background: #ffdd20;
+}
+
+#location {
+    padding: 2px 1em;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+#commands {
+    float: right;
+}
+
+#content {
+    padding: 1em;
+}
+
+#footer {
+    background: #f8f8f8;
+    padding: 1em;
+    font-size: 80%;
+    border-top: 1px solid #eee;
+}
+
+.wikkid {
+    font-size: 30pt;
+}
+
+#user {
+    float: right;
 }
