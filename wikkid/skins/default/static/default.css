@@ -61,4 +61,10 @@ textarea {
 
 #user {
     float: right;
+    vertical-align: top;
+}
+
+.gravatar {
+    float: right;
+    margin-left: 0.5em;
 }

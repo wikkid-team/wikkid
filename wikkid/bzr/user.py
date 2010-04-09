@@ -20,10 +20,11 @@
 local bazaar config."""
 
 import email
+import logging
 from zope.interface import implements
 
 from wikkid.interfaces import IUser, IUserFactory
-
+from wikkid.user import BaseUser
 
 class UserFactory(object):
     """Generate a user from local bazaar config."""
@@ -40,13 +41,16 @@ class UserFactory(object):
             self.display_name = name
         else:
             self.display_name = address
+        logger = logging.getLogger('wikkid')
+        logger.info(
+            'Using bzr identity: "%s", "%s"', self.display_name, self.email)
 
     def create(self, request):
         """Create a User."""
         return User(self.email, self.display_name, self.committer_id)
 
 
-class User(object):
+class User(BaseUser):
     """A user from the local bazaar config."""
 
     implements(IUser)
