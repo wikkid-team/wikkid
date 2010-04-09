@@ -13,6 +13,7 @@
     <div id="user">
       {% if view.user %}
       {{ view.user.display_name }}
+      <img class="gravatar" src="{{ view.user.gravatar }}" />
       {% else %}
       Login...
       {% endif %}
