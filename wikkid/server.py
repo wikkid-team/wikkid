@@ -19,6 +19,7 @@
 """The server class for the wiki."""
 
 import logging
+import re
 
 from bzrlib.urlutils import basename
 
@@ -34,6 +35,23 @@ from wikkid.views.pages import (
     WikiPage,
     )
 from wikkid.skin import Skin
+
+
+WIKI_PAGE = re.compile('^([A-Z]+[a-z]*)+$')
+WIKI_PAGE_ELEMENTS = re.compile('([A-Z][a-z]+)')
+
+
+def expand_wiki_name(name):
+    """A wiki name like 'FrontPage' is expanded to 'Front Page'.
+
+    Names that don't match wiki names are unaltered.
+    """
+    if WIKI_PAGE.match(name):
+        name_parts = [
+            part for part in WIKI_PAGE_ELEMENTS.split(name) if part]
+        return ' '.join(name_parts)
+    else:
+        return name
 
 
 class ResourceInfo(object):

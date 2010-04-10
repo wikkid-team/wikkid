@@ -27,7 +27,7 @@ from wikkid.views.pages import (
     OtherTextPage,
     WikiPage,
     )
-from wikkid.server import Server
+from wikkid.server import expand_wiki_name, Server
 from wikkid.tests.fakes import TestUser
 from wikkid.volatile.filestore import FileStore
 
@@ -306,3 +306,20 @@ class TestServerGetInfo(TestCase):
         self.assertEqual('a/b/c/d.txt', info.write_filename)
         self.assertEqual('a/b/c/d.txt', info.file_resource.path)
         self.assertEqual('a/b/c/d', info.dir_resource.path)
+
+
+class TestExpandWikiName(TestCase):
+    """Tests for expand_wiki_name."""
+
+    def test_expand_wiki_name(self):
+        self.assertEqual('simple.txt', expand_wiki_name('simple.txt'))
+        self.assertEqual('nonMatching', expand_wiki_name('nonMatching'))
+        self.assertEqual('README', expand_wiki_name('README'))
+        self.assertEqual('Home', expand_wiki_name('Home'))
+        self.assertEqual('Front Page', expand_wiki_name('FrontPage'))
+        self.assertEqual('FrontPage.txt', expand_wiki_name('FrontPage.txt'))
+        self.assertEqual('A Simple Page', expand_wiki_name('ASimplePage'))
+        self.assertEqual('FTP Example', expand_wiki_name('FTPExample'))
+        self.assertEqual(
+            'A Simple FTP Example',
+            expand_wiki_name('ASimpleFTPExample'))
