@@ -55,6 +55,8 @@ class FileStore(object):
         This is going to be really interesting when we need to deal with
         conflicts.
         """
+        if commit_message is None or commit_message.strip() == '':
+            commit_message = 'No description of change given.'
         # Firstly we want to lock the tree for writing.
         self.working_tree.lock_write()
         try:
@@ -104,8 +106,6 @@ class FileStore(object):
         # TODO: UTF-8 encode text files?
         t.put_bytes(basename(path), content)
         self.working_tree.smart_add([t.local_abspath('.')])
-        if commit_message is None:
-            commit_message = 'Hello world.'
         self.working_tree.commit(
             message=commit_message,
             authors=[author])
@@ -132,8 +132,6 @@ class FileStore(object):
             wt.unlock()
             raise UpdateConflicts('add text here', basis_rev)
         else:
-            if commit_message is None:
-                commit_message = '<no commit message specified>'
             wt.bzrdir.root_transport.put_bytes(path, ''.join(result))
             wt.commit(
                 message=commit_message, authors=[author],
