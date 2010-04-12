@@ -1,0 +1,12 @@
+A location for general notes
+============================
+
+* Really should have a way to decouple the url generation from the
+Server class and the views themselves.  Probably want something like
+a method that takes a model object, and view class and generates an URL.
+
+* I have a feeling, just gut mainly, that we should have a model package,
+with different types of model objects like, WikiResource, TextResource,
+BinaryResource, DirectoryResource and MissingResource.  These different
+model objects can then have views upon them.  Classic model/view/controller
+with the controller being the Server class.
