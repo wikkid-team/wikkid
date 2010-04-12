@@ -342,7 +342,22 @@ class TestServerGetParentInfo(ServerTestCase):
         # The parent of root is None.
         server = self.make_server()
         info = server.get_info('/')
-        
+        self.assertIs(None, server.get_parent_info(info))
+
+    def test_get_parent_info_page(self):
+        # If a non default page in the root directory is asked for, the parent
+        # of that page is the default page.
+        server = self.make_server()
+        info = server.get_info('/MissingPage')
+        parent = server.get_parent_info(info)
+        self.assertEqual('/', parent.path)
+        self.assertEqual('Home', parent.title)
+
+    def test_get_parent_subdir(self):
+        server = self.make_server()
+        info = server.get_info('/SomePage/SubPage')
+        parent = server.get_parent_info(info)
+        self.assertEqual('/SomePage', parent.path)
 
 
 class TestExpandWikiName(TestCase):

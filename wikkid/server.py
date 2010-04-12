@@ -57,8 +57,9 @@ def expand_wiki_name(name):
 class ResourceInfo(object):
     """Information about a resource."""
 
-    def __init__(self, path, write_filename, file_resource, dir_resource):
+    def __init__(self, path, title, write_filename, file_resource, dir_resource):
         self.path = path
+        self.title = title
         self.write_filename = write_filename
         self.file_resource = file_resource
         self.dir_resource = dir_resource
@@ -150,6 +151,7 @@ class Server(object):
         if file_path == '':
             file_path = self.DEFAULT_PATH
         preferred_path = self.get_preferred_path(path)
+        title = expand_wiki_name(basename(file_path))
 
         dir_resource = None
         file_resource = self.filestore.get_file(file_path)
@@ -157,7 +159,7 @@ class Server(object):
         if file_resource is not None:
             if file_resource.file_type != FileType.DIRECTORY:
                 return ResourceInfo(
-                    preferred_path, file_path, file_resource, None)
+                    preferred_path, title, file_path, file_resource, None)
             else:
                 dir_resource = file_resource
                 file_resource = None
@@ -167,7 +169,7 @@ class Server(object):
             file_resource = self.filestore.get_file(file_path)
 
         return ResourceInfo(
-            preferred_path, file_path, file_resource, dir_resource)
+            preferred_path, title, file_path, file_resource, dir_resource)
 
     def get_preferred_path(self, path):
         """Get the preferred path for the path passed in.
@@ -192,10 +194,6 @@ class Server(object):
     def get_parent_info(self, resource_info):
         """Get the resource info for the parent of path."""
 
-        # By making sure that we have resource info on the way in, we know
-        # that the checking of the DEFAULT_PATH has been done already.
-        info = self.get_info(dirname(resource_info.file_path))
-        if info.path == resource_info.path:
-            # The resource_info is root or default one.
+        if resource_info.path == '/':
             return None
-        return info
+        return self.get_info(dirname(resource_info.path))
