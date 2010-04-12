@@ -149,13 +149,15 @@ class Server(object):
         file_path = path[1:]
         if file_path == '':
             file_path = self.DEFAULT_PATH
+        preferred_path = self.get_preferred_path(path)
 
         dir_resource = None
         file_resource = self.filestore.get_file(file_path)
         # If the resource exists and is a file, we are done.
         if file_resource is not None:
             if file_resource.file_type != FileType.DIRECTORY:
-                return ResourceInfo(path, file_path, file_resource, None)
+                return ResourceInfo(
+                    preferred_path, file_path, file_resource, None)
             else:
                 dir_resource = file_resource
                 file_resource = None
@@ -164,7 +166,8 @@ class Server(object):
             file_path += '.txt'
             file_resource = self.filestore.get_file(file_path)
 
-        return ResourceInfo(path, file_path, file_resource, dir_resource)
+        return ResourceInfo(
+            preferred_path, file_path, file_resource, dir_resource)
 
     def get_preferred_path(self, path):
         """Get the preferred path for the path passed in.
