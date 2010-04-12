@@ -17,9 +17,9 @@ I believe it is better to start with the ideals.  So here goes...
  * Use zope interfaces to define clean boundaries between the path traversal,
    rendering, and store access.
  * Have full test coverage.
- * Use twisted for serving over http.
+ * Use a WSGI server for serving over http.
  * Use an existing wiki rendering library so we don't roll our own.
-   Current likely contenter is the creoleparser.
+   Current likely contenter is the ReST and/or creoleparser.
 
 
 Authentication
