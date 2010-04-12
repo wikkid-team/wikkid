@@ -21,7 +21,7 @@
 import logging
 import re
 
-from bzrlib.urlutils import basename
+from bzrlib.urlutils import basename, dirname, joinpath
 
 from wikkid.errors import UpdateConflicts
 from wikkid.interfaces import FileType
@@ -165,3 +165,34 @@ class Server(object):
             file_resource = self.filestore.get_file(file_path)
 
         return ResourceInfo(path, file_path, file_resource, dir_resource)
+
+    def get_preferred_path(self, path):
+        """Get the preferred path for the path passed in.
+
+        If the path ends with '.txt' and doesn't have any other '.'s in the
+        basename, then we prefer to access that file without the '.txt'.
+
+        If the resulting path is the default path, then the preferred path
+        should be '/'.
+        """
+        filename = basename(path)
+        if filename.endswith('.txt'):
+            filename = filename[:-4]
+
+        if filename == self.DEFAULT_PATH and dirname(path) == '/':
+            return '/'
+        elif '.' in filename:
+            return path
+        else:
+            return joinpath(dirname(path), filename)
+
+    def get_parent_info(self, resource_info):
+        """Get the resource info for the parent of path."""
+
+        # By making sure that we have resource info on the way in, we know
+        # that the checking of the DEFAULT_PATH has been done already.
+        info = self.get_info(dirname(resource_info.file_path))
+        if info.path == resource_info.path:
+            # The resource_info is root or default one.
+            return None
+        return info

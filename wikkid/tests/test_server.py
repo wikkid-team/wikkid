@@ -34,8 +34,15 @@ from wikkid.volatile.filestore import FileStore
 # TODO: make a testing filestore that can produce either a volatile filestore
 # or a bzr filestore.
 
+class ServerTestCase(TestCase):
 
-class TestServer(TestCase):
+    def make_server(self, content=None):
+        """Make a server with a volatile filestore."""
+        filestore = FileStore(content)
+        return Server(filestore)
+
+
+class TestServer(ServerTestCase):
     """Tests for the Wikkid Server.
 
     I'm going to write a few notes here.  I want to make sure that the server
@@ -64,13 +71,8 @@ class TestServer(TestCase):
     """
 
     def setUp(self):
-        TestCase.setUp(self)
+        ServerTestCase.setUp(self)
         self.user = TestUser('test@emample.com', 'Test User')
-
-    def make_server(self, content=None):
-        """Make a server with a volatile filestore."""
-        filestore = FileStore(content)
-        return Server(filestore)
 
     def test_get_page_directory(self):
         # A directory
@@ -175,13 +177,8 @@ class TestServer(TestCase):
         self.assertEqual('NewPage.txt', page.resource.path)
 
 
-class TestServerGetInfo(TestCase):
+class TestServerGetInfo(ServerTestCase):
     """Test the get_info method of the Server class."""
-
-    def make_server(self, content=None):
-        """Make a server with a volatile filestore."""
-        filestore = FileStore(content)
-        return Server(filestore)
 
     def test_get_info_root_no_content(self):
         # If the root file is selected, and there is no content, there is no
@@ -306,6 +303,46 @@ class TestServerGetInfo(TestCase):
         self.assertEqual('a/b/c/d.txt', info.write_filename)
         self.assertEqual('a/b/c/d.txt', info.file_resource.path)
         self.assertEqual('a/b/c/d', info.dir_resource.path)
+
+
+class TestServerGetPreferredPath(ServerTestCase):
+    """Tests for the get_preferred_path method of the Server class."""
+
+    def test_home_preferred(self):
+        server = self.make_server()
+        self.assertEqual('/', server.get_preferred_path('/'))
+        self.assertEqual('/', server.get_preferred_path('/Home'))
+        self.assertEqual('/', server.get_preferred_path('/Home.txt'))
+
+    def test_default_preferred(self):
+        server = self.make_server()
+        server.DEFAULT_PATH = 'FrontPage'
+        self.assertEqual('/', server.get_preferred_path('/'))
+        self.assertEqual('/', server.get_preferred_path('/FrontPage'))
+        self.assertEqual('/', server.get_preferred_path('/FrontPage.txt'))
+
+    def test_image_preferred(self):
+        server = self.make_server()
+        self.assertEqual(
+            '/foo/bar.jpg',
+            server.get_preferred_path('/foo/bar.jpg'))
+
+    def test_text_preferred(self):
+        server = self.make_server()
+        self.assertEqual('/README', server.get_preferred_path('/README'))
+        self.assertEqual('/a.b.txt', server.get_preferred_path('/a.b.txt'))
+        self.assertEqual('/a', server.get_preferred_path('/a.txt'))
+        self.assertEqual('/a/b', server.get_preferred_path('/a/b.txt'))
+
+
+class TestServerGetParentInfo(ServerTestCase):
+    """Test the get_parent_info method of the Server class."""
+
+    def test_get_parent_info_root(self):
+        # The parent of root is None.
+        server = self.make_server()
+        info = server.get_info('/')
+        
 
 
 class TestExpandWikiName(TestCase):
