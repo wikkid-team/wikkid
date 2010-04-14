@@ -18,6 +18,9 @@ A location for general notes
   which modules to load?  I'm thinking that we have a factory object for
   creating the views and model objects.
 
+* Perhaps split out the get_info and get_parent_info methods out of the server
+  class.
+
 * General URL traversal:
   * /path/to/file always represents a server resource, missing or otherwise
   * ?view=XXX gets the defined view for the object, like view, edit, raw, diff
