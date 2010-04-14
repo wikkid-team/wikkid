@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Tests for the wikkid.server."""
+"""Tests for the wikkid.model.server."""
 
 from testtools import TestCase
 
@@ -27,7 +27,7 @@ from wikkid.view.pages import (
     OtherTextPage,
     WikiPage,
     )
-from wikkid.server import expand_wiki_name, Server
+from wikkid.model.server import expand_wiki_name, Server
 from wikkid.tests.fakes import TestUser
 from wikkid.volatile.filestore import FileStore
 
