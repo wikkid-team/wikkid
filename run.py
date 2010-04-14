@@ -26,9 +26,9 @@ import sys
 from bzrlib.workingtree import WorkingTree
 
 from wikkid.bzr.filestore import FileStore
-from wikkid.bzr.user import UserFactory
 from wikkid.model.server import Server
 from wikkid.twistedserver import TwistedServer
+from wikkid.user.bzr import UserFactory
 
 
 def setup_logging():
