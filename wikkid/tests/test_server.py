@@ -29,7 +29,7 @@ from wikkid.view.pages import (
     )
 from wikkid.model.server import expand_wiki_name, Server
 from wikkid.tests.fakes import TestUser
-from wikkid.volatile.filestore import FileStore
+from wikkid.filestore.volatile import FileStore
 
 # TODO: make a testing filestore that can produce either a volatile filestore
 # or a bzr filestore.

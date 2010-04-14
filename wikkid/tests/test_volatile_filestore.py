@@ -16,11 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Tests for the wikkid.volatile.FileStore."""
+"""Tests for the wikkid.filestore.volatile.FileStore."""
 
 from wikkid.tests import TestCase
 from wikkid.tests.filestore import TestFileStore
-from wikkid.volatile.filestore import FileStore
+from wikkid.filestore.volatile import FileStore
 
 
 class TestVolatileFileStore(TestCase, TestFileStore):
