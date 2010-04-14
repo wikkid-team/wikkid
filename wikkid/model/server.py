@@ -34,7 +34,7 @@ from wikkid.view.pages import (
     OtherTextPage,
     WikiPage,
     )
-from wikkid.skin import Skin
+from wikkid.skin.loader import Skin
 
 
 WIKI_PAGE = re.compile('^([A-Z]+[a-z]*)+$')
