@@ -25,7 +25,7 @@ import sys
 
 from bzrlib.workingtree import WorkingTree
 
-from wikkid.bzr.filestore import FileStore
+from wikkid.filestore.bzr import FileStore
 from wikkid.model.server import Server
 from wikkid.twistedserver import TwistedServer
 from wikkid.user.bzr import UserFactory
