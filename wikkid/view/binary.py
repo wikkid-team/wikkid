@@ -18,7 +18,7 @@
 
 """Views associated with binary files."""
 
-from wikkid.views.base import BaseView
+from wikkid.view.base import BaseView
 
 
 class BinaryFile(BaseView):

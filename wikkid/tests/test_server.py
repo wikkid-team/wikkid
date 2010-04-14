@@ -20,8 +20,8 @@
 
 from testtools import TestCase
 
-from wikkid.views.binary import BinaryFile
-from wikkid.views.pages import (
+from wikkid.view.binary import BinaryFile
+from wikkid.view.pages import (
     DirectoryListingPage,
     MissingPage,
     OtherTextPage,
