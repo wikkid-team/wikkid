@@ -28,7 +28,7 @@ from bzrlib.urlutils import dirname
 from zope.interface import implements
 
 from wikkid.errors import FileExists
-from wikkid.filestore import BaseFile
+from wikkid.filestore.basefile import BaseFile
 from wikkid.interfaces import FileType, IFile, IFileStore
 
 

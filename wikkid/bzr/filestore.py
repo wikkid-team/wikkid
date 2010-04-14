@@ -28,7 +28,7 @@ from bzrlib.textfile import check_text_path
 from bzrlib.urlutils import basename, dirname
 
 from wikkid.errors import FileExists, UpdateConflicts
-from wikkid.filestore import BaseFile
+from wikkid.filestore.basefile import BaseFile
 from wikkid.interfaces import FileType, IFile, IFileStore
 
 
