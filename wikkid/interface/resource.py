@@ -68,5 +68,9 @@ class IWikiTextFile(ITextFile):
     """A marker interface for a wiki text file."""
 
 
+class ISourceTextFile(ITextFile):
+    """A marker interface for a non-wiki text file."""
+
+
 class IMissingResource(IResource):
     """A resource that doesn't exist in the filestore."""
