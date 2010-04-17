@@ -20,11 +20,26 @@
 
 import logging
 
+from wikkid.view.dispatcher import register_view
+
+
+class BaseViewMetaClass(type):
+    """This metaclass registers the view with the view registry."""
+
+    def __new__(cls, classname, bases, classdict):
+        """Called when defining a new class."""
+        instance = type.__new__(cls, classname, bases, classdict)
+        register_view(instance)
+        return instance
+
+
 class BaseView(object):
     """The base view class.
 
     This is an abstract base class.
     """
+
+    __metaclass__ = BaseViewMetaClass
 
     def __init__(self, skin, resource, path, user):
         self.skin = skin
