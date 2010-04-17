@@ -16,29 +16,29 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Interfaces relating to users of the wiki."""
+"""Interfaces for the different resource types."""
 
 from zope.interface import Attribute, Interface
 
 
-class IUserFactory(Interface):
-    """A factory to create `IUser`s."""
+class IResource(Interface):
+    """The base resource interface."""
 
-    def create(request):
-        """Returns an `IUser`."""
+    path = Attribute('The full path for the resource.')
+
+    title = Attribute(
+        'The title of the resource. '
+        'The title is shown in the web title bar.')
+
+    write_filename = Attribute(
+        'The full path of the file to write to in the filestore. '
+        'This is either the filename as it directly corresponds to the '
+        'path, or a related wiki page location.')
 
 
-class IUser(Interface):
-    """Information about the editing user.
+class IFileResource(Interface):
+    """A resource that relates to a file in the filestore."""
 
-    Note: probably implementations
-     - test identity
-     - bzr identity
-     - anonymous identity
-     - launchpad identity
-     - session identity
-    """
-    email = Attribute("The user's email adderss.")
-    display_name = Attribute(
-        "The name that is shown through the user interface.")
-    committer_id = Attribute("The user's name and email address.")
+    # TODO: think of a better variable name.
+    file_resource = Attribute('An IFile ')
+
