@@ -71,3 +71,6 @@ def register_view(view_class):
 # So... when this module is loaded, we want to load the other modules in the
 # wikkid.view package so that when the classes are parsed, they register
 # themselves with the view registry.
+
+def _load_view_modules():
+    pass
