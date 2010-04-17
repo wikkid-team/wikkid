@@ -16,15 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Tests for the wikkid.filestore.volatile.FileStore."""
-
-from wikkid.tests import TestCase
-from wikkid.tests.filestore import TestFileStore
-from wikkid.filestore.volatile import FileStore
+"""Interface for the text formatters."""
 
 
-class TestVolatileFileStore(TestCase, TestFileStore):
-    """Tests for the volatile filestore and files."""
+from zope.interface import Interface
 
-    def make_filestore(self, contents=None):
-        return FileStore(contents)
+
+class ITextFormatter(Interface):
+    """A text formatter takes plain text and makes HTML of some form."""
+
+    def format(text):
+        """Takes text, and returns HTML."""

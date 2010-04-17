@@ -16,15 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Tests for the wikkid.filestore.volatile.FileStore."""
+"""Views associated with binary files."""
 
-from wikkid.tests import TestCase
-from wikkid.tests.filestore import TestFileStore
-from wikkid.filestore.volatile import FileStore
+from wikkid.view.base import BaseView
 
 
-class TestVolatileFileStore(TestCase, TestFileStore):
-    """Tests for the volatile filestore and files."""
+class BinaryFile(BaseView):
+    """Renders a binary file with its mimetype."""
 
-    def make_filestore(self, contents=None):
-        return FileStore(contents)
+    def render(self):
+        return self.resource.mimetype, self.resource.get_content()

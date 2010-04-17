@@ -20,9 +20,9 @@
 
 from bzrlib.tests import TestCaseWithTransport
 
-from wikkid.bzr.user import UserFactory
-from wikkid.interfaces import IUser, IUserFactory
+from wikkid.interface.user import IUser, IUserFactory
 from wikkid.tests import ProvidesMixin
+from wikkid.user.bzr import UserFactory
 
 
 class TestBzrUser(TestCaseWithTransport, ProvidesMixin):

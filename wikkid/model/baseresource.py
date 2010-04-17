@@ -16,15 +16,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Tests for the wikkid.filestore.volatile.FileStore."""
-
-from wikkid.tests import TestCase
-from wikkid.tests.filestore import TestFileStore
-from wikkid.filestore.volatile import FileStore
+"""The base resource class."""
 
 
-class TestVolatileFileStore(TestCase, TestFileStore):
-    """Tests for the volatile filestore and files."""
+class BaseResource(object):
+    """Information about a resource."""
 
-    def make_filestore(self, contents=None):
-        return FileStore(contents)
+    def __init__(self, server, path, title, write_filename,
+                 file_resource, dir_resource):
+        self.server = server
+        self.path = path
+        self.title = title
+        self.write_filename = write_filename
+        self.file_resource = file_resource
+        self.dir_resource = dir_resource
+

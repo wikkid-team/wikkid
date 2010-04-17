@@ -16,4 +16,29 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Implementations where everything is in memory."""
+"""Interfaces relating to users of the wiki."""
+
+from zope.interface import Attribute, Interface
+
+
+class IUserFactory(Interface):
+    """A factory to create `IUser`s."""
+
+    def create(request):
+        """Returns an `IUser`."""
+
+
+class IUser(Interface):
+    """Information about the editing user.
+
+    Note: probably implementations
+     - test identity
+     - bzr identity
+     - anonymous identity
+     - launchpad identity
+     - session identity
+    """
+    email = Attribute("The user's email adderss.")
+    display_name = Attribute(
+        "The name that is shown through the user interface.")
+    committer_id = Attribute("The user's name and email address.")

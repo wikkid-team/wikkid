@@ -1,0 +1,27 @@
+A location for general notes
+============================
+
+* Really should have a way to decouple the url generation from the
+  Server class and the views themselves.  Probably want something like
+  a method that takes a model object, and view class and generates an URL.
+
+* I have a feeling, just gut mainly, that we should have a model package,
+  with different types of model objects like, WikiResource, TextResource,
+  BinaryResource, DirectoryResource and MissingResource.  These different model
+  objects can then have views upon them.  Classic model/view/controller with the
+  controller being the Server class.
+
+* Thinking that I want a view registry.  Views connected to interfaces are
+  pretty clean.  However I'd rather avoid the config file style wiring
+  together that zope has.  The view should register itself using a metaclass.
+  In order for that to happen, the module needs to be loaded.  So who determins
+  which modules to load?  I'm thinking that we have a factory object for
+  creating the views and model objects.
+
+* Perhaps split out the get_info and get_parent_info methods out of the server
+  class.
+
+* General URL traversal:
+  * /path/to/file always represents a server resource, missing or otherwise
+  * ?view=XXX gets the defined view for the object, like view, edit, raw, diff
+  * ?action=XXX causes something to happen to the resource, like save, move

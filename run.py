@@ -19,20 +19,16 @@
 
 """The server class for the wiki."""
 
-import atexit
 import logging
 import optparse
-import os
-import shutil
 import sys
-import tempfile
 
 from bzrlib.workingtree import WorkingTree
 
-from wikkid.bzr.filestore import FileStore
-from wikkid.bzr.user import UserFactory
-from wikkid.server import Server
+from wikkid.filestore.bzr import FileStore
+from wikkid.model.server import Server
 from wikkid.twistedserver import TwistedServer
+from wikkid.user.bzr import UserFactory
 
 
 def setup_logging():
@@ -59,12 +55,6 @@ def main(args):
     setup_logging()
     logger = logging.getLogger('wikkid')
     logger.setLevel(logging.DEBUG)
-
-    # Overwrite the bzr home env.
-    temp_dir = tempfile.mkdtemp(prefix='wikkid')
-    logger.debug('Using %s for bzr home.', temp_dir)
-    os.environ['BZR_HOME'] = temp_dir
-    atexit.register(shutil.rmtree, temp_dir, True)
 
     working_tree = WorkingTree.open(options.branch)
     logger.info('Using: %s', working_tree)

@@ -23,8 +23,9 @@ import email
 import logging
 from zope.interface import implements
 
-from wikkid.interfaces import IUser, IUserFactory
-from wikkid.user import BaseUser
+from wikkid.interface.user import IUser, IUserFactory
+from wikkid.user.baseuser import BaseUser
+
 
 class UserFactory(object):
     """Generate a user from local bazaar config."""

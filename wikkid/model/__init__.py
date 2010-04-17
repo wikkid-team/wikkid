@@ -16,13 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Views associated with binary files."""
+"""Model classes for wikkid.
 
-from wikkid.views.base import BaseView
-
-
-class BinaryFile(BaseView):
-    """Renders a binary file with its mimetype."""
-
-    def render(self):
-        return self.resource.mimetype, self.resource.get_content()
+Model objects are those objects that the views hang off.
+"""

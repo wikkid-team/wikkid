@@ -16,11 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Tests for the wikkid.bzr.FileStore."""
+"""Tests for the wikkid.filestore.bzr.FileStore."""
 
 from bzrlib.tests import TestCaseWithTransport
 
-from wikkid.bzr.filestore import FileStore
+from wikkid.filestore.bzr import FileStore
 from wikkid.tests import ProvidesMixin
 from wikkid.tests.filestore import TestFileStore
 

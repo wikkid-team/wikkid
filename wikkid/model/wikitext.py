@@ -16,4 +16,19 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Implementations for the Bazaar DVCS."""
+"""The wiki text class.
+
+A text file that contains text that will be formatted into HTML using one of
+the formatters.
+"""
+
+from zope.interface import implements
+
+from wikkid.model.baseresource import BaseResource
+from wikkid.interface.resource import IWikiTextFile
+
+
+class WikiTextFile(BaseResource):
+    """A text file that represents a wiki page."""
+
+    implements(IWikiTextFile)

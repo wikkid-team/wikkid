@@ -16,15 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Classes to control the rendering of the content.
-
-Just by the current feel of what is going in here, I feel that I may well end
-up making a 'wikkid.views' package and move the classes in there, as that is
-effectively what this is going to be.
-"""
+"""View classes to control the rendering of the content."""
 
 from wikkid.formatter.rest import RestructuredTextFormatter
-from wikkid.views.base import BaseView
+from wikkid.view.base import BaseView
 
 
 class MissingPage(BaseView):

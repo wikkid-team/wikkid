@@ -16,26 +16,33 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Tests for the wikkid.server."""
+"""Tests for the wikkid.model.server."""
 
 from testtools import TestCase
 
-from wikkid.views.binary import BinaryFile
-from wikkid.views.pages import (
+from wikkid.view.binary import BinaryFile
+from wikkid.view.pages import (
     DirectoryListingPage,
     MissingPage,
     OtherTextPage,
     WikiPage,
     )
-from wikkid.server import Server
+from wikkid.model.server import expand_wiki_name, Server
 from wikkid.tests.fakes import TestUser
-from wikkid.volatile.filestore import FileStore
+from wikkid.filestore.volatile import FileStore
 
 # TODO: make a testing filestore that can produce either a volatile filestore
 # or a bzr filestore.
 
+class ServerTestCase(TestCase):
 
-class TestServer(TestCase):
+    def make_server(self, content=None):
+        """Make a server with a volatile filestore."""
+        filestore = FileStore(content)
+        return Server(filestore)
+
+
+class TestServer(ServerTestCase):
     """Tests for the Wikkid Server.
 
     I'm going to write a few notes here.  I want to make sure that the server
@@ -64,13 +71,8 @@ class TestServer(TestCase):
     """
 
     def setUp(self):
-        TestCase.setUp(self)
+        ServerTestCase.setUp(self)
         self.user = TestUser('test@emample.com', 'Test User')
-
-    def make_server(self, content=None):
-        """Make a server with a volatile filestore."""
-        filestore = FileStore(content)
-        return Server(filestore)
 
     def test_get_page_directory(self):
         # A directory
@@ -175,13 +177,8 @@ class TestServer(TestCase):
         self.assertEqual('NewPage.txt', page.resource.path)
 
 
-class TestServerGetInfo(TestCase):
+class TestServerGetInfo(ServerTestCase):
     """Test the get_info method of the Server class."""
-
-    def make_server(self, content=None):
-        """Make a server with a volatile filestore."""
-        filestore = FileStore(content)
-        return Server(filestore)
 
     def test_get_info_root_no_content(self):
         # If the root file is selected, and there is no content, there is no
@@ -306,3 +303,75 @@ class TestServerGetInfo(TestCase):
         self.assertEqual('a/b/c/d.txt', info.write_filename)
         self.assertEqual('a/b/c/d.txt', info.file_resource.path)
         self.assertEqual('a/b/c/d', info.dir_resource.path)
+
+
+class TestServerGetPreferredPath(ServerTestCase):
+    """Tests for the get_preferred_path method of the Server class."""
+
+    def test_home_preferred(self):
+        server = self.make_server()
+        self.assertEqual('/', server.get_preferred_path('/'))
+        self.assertEqual('/', server.get_preferred_path('/Home'))
+        self.assertEqual('/', server.get_preferred_path('/Home.txt'))
+
+    def test_default_preferred(self):
+        server = self.make_server()
+        server.DEFAULT_PATH = 'FrontPage'
+        self.assertEqual('/', server.get_preferred_path('/'))
+        self.assertEqual('/', server.get_preferred_path('/FrontPage'))
+        self.assertEqual('/', server.get_preferred_path('/FrontPage.txt'))
+
+    def test_image_preferred(self):
+        server = self.make_server()
+        self.assertEqual(
+            '/foo/bar.jpg',
+            server.get_preferred_path('/foo/bar.jpg'))
+
+    def test_text_preferred(self):
+        server = self.make_server()
+        self.assertEqual('/README', server.get_preferred_path('/README'))
+        self.assertEqual('/a.b.txt', server.get_preferred_path('/a.b.txt'))
+        self.assertEqual('/a', server.get_preferred_path('/a.txt'))
+        self.assertEqual('/a/b', server.get_preferred_path('/a/b.txt'))
+
+
+class TestServerGetParentInfo(ServerTestCase):
+    """Test the get_parent_info method of the Server class."""
+
+    def test_get_parent_info_root(self):
+        # The parent of root is None.
+        server = self.make_server()
+        info = server.get_info('/')
+        self.assertIs(None, server.get_parent_info(info))
+
+    def test_get_parent_info_page(self):
+        # If a non default page in the root directory is asked for, the parent
+        # of that page is the default page.
+        server = self.make_server()
+        info = server.get_info('/MissingPage')
+        parent = server.get_parent_info(info)
+        self.assertEqual('/', parent.path)
+        self.assertEqual('Home', parent.title)
+
+    def test_get_parent_subdir(self):
+        server = self.make_server()
+        info = server.get_info('/SomePage/SubPage')
+        parent = server.get_parent_info(info)
+        self.assertEqual('/SomePage', parent.path)
+
+
+class TestExpandWikiName(TestCase):
+    """Tests for expand_wiki_name."""
+
+    def test_expand_wiki_name(self):
+        self.assertEqual('simple.txt', expand_wiki_name('simple.txt'))
+        self.assertEqual('nonMatching', expand_wiki_name('nonMatching'))
+        self.assertEqual('README', expand_wiki_name('README'))
+        self.assertEqual('Home', expand_wiki_name('Home'))
+        self.assertEqual('Front Page', expand_wiki_name('FrontPage'))
+        self.assertEqual('FrontPage.txt', expand_wiki_name('FrontPage.txt'))
+        self.assertEqual('A Simple Page', expand_wiki_name('ASimplePage'))
+        self.assertEqual('FTP Example', expand_wiki_name('FTPExample'))
+        self.assertEqual(
+            'A Simple FTP Example',
+            expand_wiki_name('ASimpleFTPExample'))

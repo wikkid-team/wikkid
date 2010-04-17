@@ -16,10 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Tests for the wikkid.bzr.FileStore."""
+"""The base test class for filestores."""
 
 from wikkid.errors import FileExists
-from wikkid.interfaces import FileType, IFile, IFileStore
+from wikkid.interface.filestore import FileType, IFile, IFileStore
 
 
 class TestFileStore:

@@ -16,15 +16,27 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Tests for the wikkid.filestore.volatile.FileStore."""
+"""The root resource class.
 
-from wikkid.tests import TestCase
-from wikkid.tests.filestore import TestFileStore
-from wikkid.filestore.volatile import FileStore
+The root resource represents the object at the root of the wiki path.
+
+Currently this just refers to '/', but it is expected that at some stage in
+the not too distant future the server will support a wiki root where it is not
+the root path.
+"""
+
+from zope.interface import implements
+
+from wikkid.model.baseresource import BaseResource
+from wikkid.interface.resource import IRootResource
 
 
-class TestVolatileFileStore(TestCase, TestFileStore):
-    """Tests for the volatile filestore and files."""
+class RootResource(BaseResource):
+    """The root of the wiki.
 
-    def make_filestore(self, contents=None):
-        return FileStore(contents)
+    Some special wiki views hang off the root resource and not others.  A root
+    resource is also a directory resource where the directory is the root of
+    the filesystem.
+    """
+
+    implements(IRootResource)

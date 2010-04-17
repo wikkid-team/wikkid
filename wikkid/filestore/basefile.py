@@ -22,7 +22,7 @@ import mimetypes
 
 import bzrlib.urlutils as urlutils
 
-from wikkid.interfaces import FileType
+from wikkid.interface.filestore import FileType
 
 
 class BaseFile(object):

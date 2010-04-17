@@ -29,8 +29,6 @@ import os.path
 import bzrlib.urlutils as urlutils
 from jinja2 import Environment, PackageLoader
 
-import wikkid.skins
-
 
 class Skin(object):
     """A Wikkid wiki skin."""
@@ -43,7 +41,7 @@ class Skin(object):
         self.logger = logging.getLogger('wikkid')
         # TODO: if we are using a user defined directory for the skin, here is
         # where we'd use a different loader.
-        loader = PackageLoader('wikkid.skins', skin_name)
+        loader = PackageLoader('wikkid.skin', skin_name)
         self.env = Environment(loader=loader)
         self.templates = {
             'view_page': self.env.get_template('page.html'),
@@ -51,7 +49,7 @@ class Skin(object):
             'view_directory': self.env.get_template('page.html'),
             'missing': self.env.get_template('missing-page.html'),
             }
-        module_location = urlutils.dirname(wikkid.skins.__file__)
+        module_location = urlutils.dirname(__file__)
         self.dir_name = urlutils.joinpath(module_location, skin_name)
 
     def get_template(self, template_name):

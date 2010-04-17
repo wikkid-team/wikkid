@@ -16,13 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Interfaces for the Wikkid Wiki.
-
-
-"""
+"""Interfaces relating to filestores."""
 
 from zope.interface import Attribute, Interface
-from zope.schema import Bool, TextLine
+from zope.schema import TextLine
 
 
 class IFileStore(Interface):
@@ -99,66 +96,3 @@ class IFile(Interface):
         :return: None if the file doesn't yet exist, or u'' if the file is
             empty, otherwise the unicode content of the file.
         """
-
-
-class IUserFactory(Interface):
-    """An factory to create `IUser`s."""
-
-    def create(request):
-        """Returns an `IUser`."""
-
-
-class IUser(Interface):
-    """Information about the editing user.
-
-    Note: probably implementations
-     - test identity
-     - bzr identity
-     - anonymous identity
-     - launchpad identity
-     - session identity
-    """
-    email = TextLine(
-        description=u"The user's email adderss.")
-    display_name = TextLine(
-        description=u"The name that is shown through the user interface.")
-    committer_id = TextLine(
-        description=u"The user's name and email address.")
-
-
-class IWikiPage(Interface):
-    """Information about a wikipage."""
-
-    path = TextLine(
-        description=(
-            u"The full path of the page with respect to the root of the "
-            "file store."))
-
-    title = TextLine(
-        description=u"The last path segment of the path.  Case sensitive.")
-
-    def raw_text():
-        """Unicode raw text of the file."""
-
-    # TODO: page history
-
-    def update(content, user):
-        """The content is being updated by the user.
-
-        :param content: A unicode string with the content.
-        :param user: An `IUser`.
-        :raises: Unauthorized if the user is not allowed to update the content.
-        """
-
-    def render():
-        """Render the content of the page.
-
-        TODO: How do we determine the type of rendering?
-        """
-
-
-class ITextFormatter(Interface):
-    """A text formatter takes plain text and makes HTML of some form."""
-
-    def format(text):
-        """Takes text, and returns HTML."""

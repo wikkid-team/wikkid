@@ -7,6 +7,7 @@ setup tools for those that like it like that.
 Dependancies
 ------------
 
+python-zope.interface for the interfaces
 python-twisted or the twisted.web libraries
 bzr for the filestore and merging
 python-jinja2 for the templating

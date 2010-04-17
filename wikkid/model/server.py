@@ -19,13 +19,19 @@
 """The server class for the wiki."""
 
 import logging
+import re
 
-from bzrlib.urlutils import basename
+from bzrlib.urlutils import basename, dirname, joinpath
 
 from wikkid.errors import UpdateConflicts
-from wikkid.interfaces import FileType
-from wikkid.views.binary import BinaryFile
-from wikkid.views.pages import (
+from wikkid.interface.filestore import FileType
+from wikkid.model.binary import BinaryResource
+from wikkid.model.directory import DirectoryResource
+from wikkid.model.missing import MissingResource
+from wikkid.model.sourcetext import SourceTextFile
+from wikkid.model.wikitext import WikiTextFile
+from wikkid.view.binary import BinaryFile
+from wikkid.view.pages import (
     ConflictedEditWikiPage,
     DirectoryListingPage,
     EditWikiPage,
@@ -33,17 +39,24 @@ from wikkid.views.pages import (
     OtherTextPage,
     WikiPage,
     )
-from wikkid.skin import Skin
+from wikkid.skin.loader import Skin
 
 
-class ResourceInfo(object):
-    """Information about a resource."""
+WIKI_PAGE = re.compile('^([A-Z]+[a-z]*)+$')
+WIKI_PAGE_ELEMENTS = re.compile('([A-Z][a-z]+)')
 
-    def __init__(self, path, write_filename, file_resource, dir_resource):
-        self.path = path
-        self.write_filename = write_filename
-        self.file_resource = file_resource
-        self.dir_resource = dir_resource
+
+def expand_wiki_name(name):
+    """A wiki name like 'FrontPage' is expanded to 'Front Page'.
+
+    Names that don't match wiki names are unaltered.
+    """
+    if WIKI_PAGE.match(name):
+        name_parts = [
+            part for part in WIKI_PAGE_ELEMENTS.split(name) if part]
+        return ' '.join(name_parts)
+    else:
+        return name
 
 
 class Server(object):
@@ -120,6 +133,32 @@ class Server(object):
         else:
             return MissingPage(self.skin, None, path, user)
 
+    def _get_resource(self, preferred_path, title, file_path,
+                      file_resource, dir_resource):
+        """Return the correct type of resource based on the params."""
+        if file_resource is not None:
+            # We are pointing at a file.
+            file_type = file_resource.file_type
+            if file_type == FileType.BINARY_FILE:
+                # Binary resources have no associated directory.
+                return BinaryResource(
+                    self, preferred_path, title, file_path, file_resource, None)
+            # This is known to be not entirely right.
+            if (file_resource.path.endswith('.txt') or
+                '.' not in file_resource.base_name):
+                return WikiTextFile(
+                    self, preferred_path, title, file_path, file_resource,
+                    dir_resource)
+            else:
+                return SourceTextFile(
+                    self, preferred_path, title, file_path, file_resource, None)
+        elif dir_resource is not None:
+            return DirectoryResource(
+                self, preferred_path, title, file_path, None, dir_resource)
+        else:
+            return MissingResource(
+                self, preferred_path, title, file_path, None, None)
+
     def get_info(self, path):
         """Get the resource from the filestore for the specified path.
 
@@ -131,13 +170,16 @@ class Server(object):
         file_path = path[1:]
         if file_path == '':
             file_path = self.DEFAULT_PATH
+        preferred_path = self.get_preferred_path(path)
+        title = expand_wiki_name(basename(file_path))
 
         dir_resource = None
         file_resource = self.filestore.get_file(file_path)
         # If the resource exists and is a file, we are done.
         if file_resource is not None:
             if file_resource.file_type != FileType.DIRECTORY:
-                return ResourceInfo(path, file_path, file_resource, None)
+                return self._get_resource(
+                    preferred_path, title, file_path, file_resource, None)
             else:
                 dir_resource = file_resource
                 file_resource = None
@@ -146,4 +188,32 @@ class Server(object):
             file_path += '.txt'
             file_resource = self.filestore.get_file(file_path)
 
-        return ResourceInfo(path, file_path, file_resource, dir_resource)
+        return self._get_resource(
+            preferred_path, title, file_path, file_resource, dir_resource)
+
+    def get_preferred_path(self, path):
+        """Get the preferred path for the path passed in.
+
+        If the path ends with '.txt' and doesn't have any other '.'s in the
+        basename, then we prefer to access that file without the '.txt'.
+
+        If the resulting path is the default path, then the preferred path
+        should be '/'.
+        """
+        filename = basename(path)
+        if filename.endswith('.txt'):
+            filename = filename[:-4]
+
+        if filename == self.DEFAULT_PATH and dirname(path) == '/':
+            return '/'
+        elif '.' in filename:
+            return path
+        else:
+            return joinpath(dirname(path), filename)
+
+    def get_parent_info(self, resource_info):
+        """Get the resource info for the parent of path."""
+
+        if resource_info.path == '/':
+            return None
+        return self.get_info(dirname(resource_info.path))

@@ -16,15 +16,19 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Tests for the wikkid.filestore.volatile.FileStore."""
+"""The directory resource class.
 
-from wikkid.tests import TestCase
-from wikkid.tests.filestore import TestFileStore
-from wikkid.filestore.volatile import FileStore
+A directory resource is one where the path specifies a directory in the
+filestore.
+"""
+
+from zope.interface import implements
+
+from wikkid.model.baseresource import BaseResource
+from wikkid.interface.resource import IDirectoryResource
 
 
-class TestVolatileFileStore(TestCase, TestFileStore):
-    """Tests for the volatile filestore and files."""
+class DirectoryResource(BaseResource):
+    """A directory in the filestore."""
 
-    def make_filestore(self, contents=None):
-        return FileStore(contents)
+    implements(IDirectoryResource)

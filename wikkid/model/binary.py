@@ -16,15 +16,19 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Tests for the wikkid.filestore.volatile.FileStore."""
+"""The binary resource class.
 
-from wikkid.tests import TestCase
-from wikkid.tests.filestore import TestFileStore
-from wikkid.filestore.volatile import FileStore
+A binary resource is a file that isn't text.  This is primarily guessed using
+the mimetype library.
+"""
+
+from zope.interface import implements
+
+from wikkid.model.baseresource import BaseResource
+from wikkid.interface.resource import IBinaryFile
 
 
-class TestVolatileFileStore(TestCase, TestFileStore):
-    """Tests for the volatile filestore and files."""
+class BinaryResource(BaseResource):
+    """A binary resource is a non-text file."""
 
-    def make_filestore(self, contents=None):
-        return FileStore(contents)
+    implements(IBinaryFile)
