@@ -20,7 +20,7 @@
 
 import logging
 
-from wikkid.view.dispatcher import register_view
+from wikkid.dispatcher import register_view
 
 
 class BaseViewMetaClass(type):

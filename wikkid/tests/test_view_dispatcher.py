@@ -22,7 +22,7 @@ from zope.interface import Interface, implements
 
 from wikkid.tests import TestCase
 from wikkid.view.base import BaseView
-from wikkid.view.dispatcher import get_view, register_view
+from wikkid.dispatcher import get_view, register_view
 
 
 class TestGetView(TestCase):
