@@ -29,7 +29,7 @@ from zope.interface import implements
 
 from wikkid.errors import FileExists
 from wikkid.filestore.basefile import BaseFile
-from wikkid.interfaces import FileType, IFile, IFileStore
+from wikkid.interface.filestore import FileType, IFile, IFileStore
 
 
 class FileStore(object):

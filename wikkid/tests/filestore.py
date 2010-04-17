@@ -19,7 +19,7 @@
 """The base test class for filestores."""
 
 from wikkid.errors import FileExists
-from wikkid.interfaces import FileType, IFile, IFileStore
+from wikkid.interface.filestore import FileType, IFile, IFileStore
 
 
 class TestFileStore:

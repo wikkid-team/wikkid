@@ -16,28 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Base classes for other filestores to use."""
-
-import mimetypes
-
-import bzrlib.urlutils as urlutils
-
-from wikkid.interface.filestore import FileType
+"""Interface for the text formatters."""
 
 
-class BaseFile(object):
-    """Provide common fields and methods and properties for files."""
+from zope.interface import Interface
 
-    def __init__(self, path, file_id):
-        self.path = path
-        self.file_id = file_id
-        self.base_name = urlutils.basename(path)
-        self._mimetype = mimetypes.guess_type(self.base_name)[0]
 
-    @property
-    def mimetype(self):
-        """If the file_type is a directory, return None."""
-        if self.file_type == FileType.DIRECTORY:
-            return None
-        else:
-            return self._mimetype
+class ITextFormatter(Interface):
+    """A text formatter takes plain text and makes HTML of some form."""
+
+    def format(text):
+        """Takes text, and returns HTML."""

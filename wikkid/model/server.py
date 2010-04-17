@@ -24,7 +24,7 @@ import re
 from bzrlib.urlutils import basename, dirname, joinpath
 
 from wikkid.errors import UpdateConflicts
-from wikkid.interfaces import FileType
+from wikkid.interface.filestore import FileType
 from wikkid.view.binary import BinaryFile
 from wikkid.view.pages import (
     ConflictedEditWikiPage,

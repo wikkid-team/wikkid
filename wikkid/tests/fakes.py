@@ -20,7 +20,7 @@
 
 from zope.interface import implements
 
-from wikkid.interfaces import IUser
+from wikkid.interface.user import IUser
 
 
 class TestUserFactory(object):

@@ -29,7 +29,7 @@ from bzrlib.urlutils import basename, dirname
 
 from wikkid.errors import FileExists, UpdateConflicts
 from wikkid.filestore.basefile import BaseFile
-from wikkid.interfaces import FileType, IFile, IFileStore
+from wikkid.interface.filestore import FileType, IFile, IFileStore
 
 
 class FileStore(object):

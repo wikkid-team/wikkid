@@ -21,7 +21,7 @@
 from docutils.core import publish_parts
 from zope.interface import implements
 
-from wikkid.interfaces import ITextFormatter
+from wikkid.interface.formatter import ITextFormatter
 
 
 class RestructuredTextFormatter(object):

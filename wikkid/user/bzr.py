@@ -23,7 +23,7 @@ import email
 import logging
 from zope.interface import implements
 
-from wikkid.interfaces import IUser, IUserFactory
+from wikkid.interface.user import IUser, IUserFactory
 from wikkid.user.baseuser import BaseUser
 
 
