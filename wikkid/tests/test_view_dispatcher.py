@@ -21,11 +21,12 @@
 from zope.interface import Interface, implements
 
 from wikkid.tests import TestCase
+from wikkid.view.base import BaseView
 from wikkid.view.dispatcher import get_view, register_view
 
 
-class TestViewDispatcher(TestCase):
-    """Tests for the view dispatcher."""
+class TestGetView(TestCase):
+    """Tests for get_view."""
 
     def test_no_interfaces(self):
         """If the object supports no interfaces, there is no view."""
@@ -73,3 +74,19 @@ class TestViewDispatcher(TestCase):
         register_view(AView)
         obj = HasInterface()
         self.assertIs(AView, get_view(obj, None))
+
+
+class TestViewRegistration(TestCase):
+    """Test that views that inherit from BaseView are registered."""
+
+    def test_registration(self):
+        """Create a view class, and make sure it is registered."""
+        class IHasInterface(Interface):
+            pass
+        class HasInterface(object):
+            implements(IHasInterface)
+        class AView(BaseView):
+            for_interface = IHasInterface
+            name = 'name'
+        obj = HasInterface()
+        self.assertIs(AView, get_view(obj, 'name'))
