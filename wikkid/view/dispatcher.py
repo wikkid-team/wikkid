@@ -61,3 +61,13 @@ def register_view(view_class):
     _VIEW_REGISTRY[key] = view_class
     if default_view:
         _VIEW_REGISTRY[(interface, None)] = view_class
+
+
+# We know that the controller (whatever that is going to end up being) will
+# load this module to get the 'get_view' function.  None of the other view
+# modules should be explicitly loaded anywhere else (possible exceptions may
+# occur, so this isn't a hard rule).
+#
+# So... when this module is loaded, we want to load the other modules in the
+# wikkid.view package so that when the classes are parsed, they register
+# themselves with the view registry.
