@@ -32,6 +32,11 @@ from wikkid.interface.resource import IRootResource
 
 
 class RootResource(BaseResource):
-    """Information about a resource."""
+    """The root of the wiki.
+
+    Some special wiki views hang off the root resource and not others.  A root
+    resource is also a directory resource where the directory is the root of
+    the filesystem.
+    """
 
     implements(IRootResource)

@@ -36,10 +36,6 @@ class IResource(Interface):
         'path, or a related wiki page location.')
 
 
-class IRootResource(IResource):
-    """A special resource relating to the root object in the wiki."""
-
-
 class IFileResource(IResource):
     """A resource that relates to a file in the filestore."""
 
@@ -54,6 +50,10 @@ class IDirectoryResource(IResource):
     # TODO: think of a better variable name.
     dir_resource = Attribute(
         'An IFile representing the directory in the filestore.')
+
+
+class IRootResource(IDirectoryResource):
+    """A special resource relating to the root object in the wiki."""
 
 
 class IBinaryFile(IFileResource):
