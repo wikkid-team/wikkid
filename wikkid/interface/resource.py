@@ -36,9 +36,37 @@ class IResource(Interface):
         'path, or a related wiki page location.')
 
 
-class IFileResource(Interface):
+class IRootResource(IResource):
+    """A special resource relating to the root object in the wiki."""
+
+
+class IFileResource(IResource):
     """A resource that relates to a file in the filestore."""
 
     # TODO: think of a better variable name.
-    file_resource = Attribute('An IFile ')
+    file_resource = Attribute(
+        'An IFile representing the file in the filestore.')
 
+
+class IDirectoryResource(IResource):
+    """A resource that relates to a file in the filestore."""
+
+    # TODO: think of a better variable name.
+    dir_resource = Attribute(
+        'An IFile representing the directory in the filestore.')
+
+
+class IBinaryFile(IFileResource):
+    """A marker interface for binary files."""
+
+
+class ITextFile(IFileResource):
+    """A marker interface for text files."""
+
+
+class IWikiTextFile(ITextFile):
+    """A marker interface for a wiki text file."""
+
+
+class IMissingResource(IResource):
+    """A resource that doesn't exist in the filestore."""
