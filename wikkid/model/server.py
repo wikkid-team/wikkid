@@ -25,6 +25,11 @@ from bzrlib.urlutils import basename, dirname, joinpath
 
 from wikkid.errors import UpdateConflicts
 from wikkid.interface.filestore import FileType
+from wikkid.model.binary import BinaryResource
+from wikkid.model.directory import DirectoryResource
+from wikkid.model.missing import MissingResource
+from wikkid.model.sourcetext import SourceTextFile
+from wikkid.model.wikitext import WikiTextFile
 from wikkid.view.binary import BinaryFile
 from wikkid.view.pages import (
     ConflictedEditWikiPage,
@@ -52,17 +57,6 @@ def expand_wiki_name(name):
         return ' '.join(name_parts)
     else:
         return name
-
-
-class ResourceInfo(object):
-    """Information about a resource."""
-
-    def __init__(self, path, title, write_filename, file_resource, dir_resource):
-        self.path = path
-        self.title = title
-        self.write_filename = write_filename
-        self.file_resource = file_resource
-        self.dir_resource = dir_resource
 
 
 class Server(object):
@@ -139,6 +133,32 @@ class Server(object):
         else:
             return MissingPage(self.skin, None, path, user)
 
+    def _get_resource(self, preferred_path, title, file_path,
+                      file_resource, dir_resource):
+        """Return the correct type of resource based on the params."""
+        if file_resource is not None:
+            # We are pointing at a file.
+            file_type = file_resource.file_type
+            if file_type == FileType.BINARY_FILE:
+                # Binary resources have no associated directory.
+                return BinaryResource(
+                    self, preferred_path, title, file_path, file_resource, None)
+            # This is known to be not entirely right.
+            if (file_resource.path.endswith('.txt') or
+                '.' not in file_resource.base_name):
+                return WikiTextFile(
+                    self, preferred_path, title, file_path, file_resource,
+                    dir_resource)
+            else:
+                return SourceTextFile(
+                    self, preferred_path, title, file_path, file_resource, None)
+        elif dir_resource is not None:
+            return DirectoryResource(
+                self, preferred_path, title, file_path, None, dir_resource)
+        else:
+            return MissingResource(
+                self, preferred_path, title, file_path, None, None)
+
     def get_info(self, path):
         """Get the resource from the filestore for the specified path.
 
@@ -158,7 +178,7 @@ class Server(object):
         # If the resource exists and is a file, we are done.
         if file_resource is not None:
             if file_resource.file_type != FileType.DIRECTORY:
-                return ResourceInfo(
+                return self._get_resource(
                     preferred_path, title, file_path, file_resource, None)
             else:
                 dir_resource = file_resource
@@ -168,7 +188,7 @@ class Server(object):
             file_path += '.txt'
             file_resource = self.filestore.get_file(file_path)
 
-        return ResourceInfo(
+        return self._get_resource(
             preferred_path, title, file_path, file_resource, dir_resource)
 
     def get_preferred_path(self, path):

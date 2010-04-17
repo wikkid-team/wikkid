@@ -22,7 +22,9 @@
 class BaseResource(object):
     """Information about a resource."""
 
-    def __init__(self, path, title, write_filename, file_resource, dir_resource):
+    def __init__(self, server, path, title, write_filename,
+                 file_resource, dir_resource):
+        self.server = server
         self.path = path
         self.title = title
         self.write_filename = write_filename
