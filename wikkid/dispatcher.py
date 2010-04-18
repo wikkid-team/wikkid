@@ -23,6 +23,10 @@ this directory.  The views inherit from the BaseView which has a metaclass
 which registers the view with the dispatcher.
 """
 
+import os
+
+from bzrlib.urlutils import dirname, joinpath
+
 from zope.interface import providedBy
 
 
@@ -73,4 +77,10 @@ def register_view(view_class):
 # themselves with the view registry.
 
 def _load_view_modules():
-    pass
+    curr_dir = os.path.abspath(dirname(__file__))
+    view_dir = joinpath(curr_dir, 'view')
+    py_files = [
+        filename for filename in os.listdir(view_dir)
+        if filename.endswith('.py') and not filename.startswith('__')]
+    for filename in py_files:
+        __import__('wikkid.view.%s' % filename[:-3])
