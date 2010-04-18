@@ -18,11 +18,16 @@
 
 """Views associated with binary files."""
 
+from wikkid.interface.resource import IBinaryFile
 from wikkid.view.base import BaseView
 
 
 class BinaryFile(BaseView):
     """Renders a binary file with its mimetype."""
+
+    for_interface = IBinaryFile
+    name = 'view'
+    is_default = True
 
     def render(self):
         return self.resource.mimetype, self.resource.get_content()

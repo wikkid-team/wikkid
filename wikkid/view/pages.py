@@ -19,12 +19,22 @@
 """View classes to control the rendering of the content."""
 
 from wikkid.formatter.rest import RestructuredTextFormatter
+from wikkid.interface.resource import (
+    IDirectoryResource,
+    IMissingResource,
+    ISourceTextFile,
+    ITextFile,
+    IWikiTextFile,
+    )
 from wikkid.view.base import BaseView
 
 
 class MissingPage(BaseView):
     """A wiki page that does not exist."""
 
+    for_interface = IMissingResource
+    name = 'view'
+    is_default = True
     template = 'missing'
 
     @property
@@ -35,6 +45,9 @@ class MissingPage(BaseView):
 class WikiPage(BaseView):
     """A wiki page is a page that is going to be rendered for viewing."""
 
+    for_interface = IWikiTextFile
+    name = 'view'
+    is_default = True
     template = 'view_page'
 
     @property
@@ -51,6 +64,9 @@ class OtherTextPage(BaseView):
     Will be rendered using pygments.
     """
 
+    for_interface = ISourceTextFile
+    name = 'view'
+    is_default = True
     template = 'view_page'
 
     @property
@@ -61,6 +77,8 @@ class OtherTextPage(BaseView):
 class EditWikiPage(BaseView):
     """The page shows the wiki content in a large edit field."""
 
+    for_interface = ITextFile
+    name = 'edit'
     template = 'edit_page'
 
     @property
@@ -81,6 +99,8 @@ class EditWikiPage(BaseView):
 class ConflictedEditWikiPage(BaseView):
     """The page shows the wiki content in a large edit field."""
 
+    for_interface = ITextFile
+    name = 'conflicted'
     template = 'edit_page'
 
     def __init__(self, skin, resource, path, user, conflict_text,
@@ -97,6 +117,9 @@ class DirectoryListingPage(BaseView):
     directory (i.e. with '.txt' on the end).
     """
 
+    for_interface = IDirectoryResource
+    name = 'view'
+    is_default = True
     # template = 'view_directory'
     template = 'view_page'
 
