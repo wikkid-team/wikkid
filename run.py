@@ -25,6 +25,7 @@ import sys
 
 from bzrlib.workingtree import WorkingTree
 
+from wikkid.dispatcher import load_view_modules
 from wikkid.filestore.bzr import FileStore
 from wikkid.model.server import Server
 from wikkid.twistedserver import TwistedServer
@@ -56,6 +57,7 @@ def main(args):
     logger = logging.getLogger('wikkid')
     logger.setLevel(logging.DEBUG)
 
+    load_view_modules()
     working_tree = WorkingTree.open(options.branch)
     logger.info('Using: %s', working_tree)
     filestore = FileStore(working_tree)

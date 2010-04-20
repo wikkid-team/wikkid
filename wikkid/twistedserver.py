@@ -29,14 +29,21 @@ from twisted.web.resource import Resource
 from twisted.web.static import File
 from twisted.internet import reactor
 
+from wikkid.dispatcher import get_view
+from wikkid.skin.loader import Skin
+
 
 class TwistedPage(Resource):
 
-    def __init__(self, server, logger, user_factory):
+    def __init__(self, server, logger, user_factory, skin_name=None):
         Resource.__init__(self)
         self.server = server
         self.logger = logger
         self.user_factory = user_factory
+        # Need to load the initial templates for the skin.
+        if skin_name is None:
+            skin_name = 'default'
+        self.skin = Skin(skin_name)
 
     def getChild(self, name, request):
         # Yay for logging...
@@ -55,16 +62,19 @@ class TwistedPage(Resource):
         request.setHeader('Content-Type', content_type)
         return content
 
+    def get_view(self, request, action):
+        path = request.path
+        user = self.user_factory.create(request)
+        model = self.server.get_info(path)
+        view_class = get_view(model, action)
+        return view_class(self.skin, model, path, user)
+
     def render_GET(self, request):
         self.logger.debug('args: %s', request.args)
         self.logger.debug('path: %s', request.path)
-        path = request.path
-        user = self.user_factory.create(request)
-        if request.args.get('action') == ['edit']:
-            page = self.server.edit_page(path, user)
-        else:
-            page = self.server.get_page(path, user)
-        return self.render_page(request, page)
+        action = request.args.get('action', [None])[0]
+        view = self.get_view(request, action)
+        return self.render_page(request, view)
 
     def render_POST(self, request):
         self.logger.debug('args: %s', request.args)

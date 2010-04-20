@@ -76,7 +76,7 @@ def register_view(view_class):
 # wikkid.view package so that when the classes are parsed, they register
 # themselves with the view registry.
 
-def _load_view_modules():
+def load_view_modules():
     curr_dir = os.path.abspath(dirname(__file__))
     view_dir = joinpath(curr_dir, 'view')
     py_files = [
@@ -84,5 +84,3 @@ def _load_view_modules():
         if filename.endswith('.py') and not filename.startswith('__')]
     for filename in py_files:
         __import__('wikkid.view.%s' % filename[:-3])
-
-_load_view_modules()
