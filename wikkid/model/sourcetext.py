@@ -23,11 +23,11 @@ A source text file is a text file that isn't a wiki file.
 
 from zope.interface import implements
 
-from wikkid.model.baseresource import BaseResource
+from wikkid.model.textfile import TextFile
 from wikkid.interface.resource import ISourceTextFile
 
 
-class SourceTextFile(BaseResource):
+class SourceTextFile(TextFile):
     """A text file that isn't a wiki page."""
 
     implements(ISourceTextFile)

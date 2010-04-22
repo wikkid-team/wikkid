@@ -55,7 +55,7 @@ class WikiPage(BaseView):
         # Format the content.  Right not this is hard coded to ReST, although
         # I want to offer multiple ways to do this.
         formatter = RestructuredTextFormatter()
-        return formatter.format(self.resource.get_content())
+        return formatter.format(self.resource.text)
 
 
 class OtherTextPage(BaseView):
@@ -71,7 +71,7 @@ class OtherTextPage(BaseView):
 
     @property
     def content(self):
-        return self.resource.get_content()
+        return self.resource.text
 
 
 class EditWikiPage(BaseView):

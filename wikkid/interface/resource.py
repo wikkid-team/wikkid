@@ -63,6 +63,8 @@ class IBinaryFile(IFileResource):
 class ITextFile(IFileResource):
     """A marker interface for text files."""
 
+    text = Attribute('The text of the file.')
+
 
 class IWikiTextFile(ITextFile):
     """A marker interface for a wiki text file."""

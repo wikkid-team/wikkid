@@ -16,19 +16,22 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""The wiki text class.
+"""The source text class.
 
-A text file that contains text that will be formatted into HTML using one of
-the formatters.
+A source text file is a text file that isn't a wiki file.
 """
 
 from zope.interface import implements
 
-from wikkid.model.textfile import TextFile
-from wikkid.interface.resource import IWikiTextFile
+from wikkid.model.baseresource import BaseResource
+from wikkid.interface.resource import ITextFile
 
 
-class WikiTextFile(TextFile):
-    """A text file that represents a wiki page."""
+class TextFile(BaseResource):
+    """A text file that isn't a wiki page."""
 
-    implements(IWikiTextFile)
+    implements(ITextFile)
+
+    @property
+    def text(self):
+        return self.file_resource.get_content()
