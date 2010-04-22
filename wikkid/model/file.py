@@ -16,18 +16,26 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""The source text class.
-
-A source text file is a text file that isn't a wiki file.
-"""
+"""The model class for file resources."""
 
 from zope.interface import implements
 
-from wikkid.model.file import FileResource
+from wikkid.model.baseresource import BaseResource
 from wikkid.interface.resource import ITextFile
 
 
-class TextFile(FileResource):
-    """A text file that isn't a wiki page."""
+class FileResource(BaseResource):
+    """Anything that relates to all files."""
 
     implements(ITextFile)
+
+    @property
+    def mimetype(self):
+        return self.file_resource.mimetype
+
+    @property
+    def last_modified_in_revision(self):
+        return self.file_resource.last_modified_in_revision
+
+    def get_bytes(self):
+        return self.file_resource.get_content()

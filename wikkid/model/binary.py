@@ -24,18 +24,11 @@ the mimetype library.
 
 from zope.interface import implements
 
-from wikkid.model.baseresource import BaseResource
+from wikkid.model.file import FileResource
 from wikkid.interface.resource import IBinaryFile
 
 
-class BinaryResource(BaseResource):
+class BinaryResource(FileResource):
     """A binary resource is a non-text file."""
 
     implements(IBinaryFile)
-
-    @property
-    def mimetype(self):
-        return self.file_resource.mimetype
-
-    def get_bytes(self):
-        return self.file_resource.get_content()
