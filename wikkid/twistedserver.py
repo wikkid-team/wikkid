@@ -72,7 +72,6 @@ class TwistedPage(Resource):
     def render_GET(self, request):
         self.logger.debug('args: %s', request.args)
         self.logger.debug('path: %s', request.path)
-        import pdb; pdb.set_trace()
         action = request.args.get('action', [None])[0]
         view = self.get_view(request, action)
         return self.render_page(request, view)

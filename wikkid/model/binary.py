@@ -32,3 +32,10 @@ class BinaryResource(BaseResource):
     """A binary resource is a non-text file."""
 
     implements(IBinaryFile)
+
+    @property
+    def mimetype(self):
+        return self.file_resource.mimetype
+
+    def get_bytes(self):
+        return self.file_resource.get_content()

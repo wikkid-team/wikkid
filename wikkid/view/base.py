@@ -41,9 +41,9 @@ class BaseView(object):
 
     __metaclass__ = BaseViewMetaClass
 
-    def __init__(self, skin, resource, path, user):
+    def __init__(self, skin, context, path, user):
         self.skin = skin
-        self.resource = resource
+        self.context = context
         self.request_path = path
         self.user = user
         self.logger = logging.getLogger('wikkid')

@@ -35,3 +35,7 @@ class TextFile(BaseResource):
     @property
     def text(self):
         return self.file_resource.get_content()
+
+    @property
+    def last_modified_in_revision(self):
+        return self.file_resource.last_modified_in_revision

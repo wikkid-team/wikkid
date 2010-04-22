@@ -30,4 +30,4 @@ class BinaryFile(BaseView):
     is_default = True
 
     def render(self):
-        return self.resource.mimetype, self.resource.get_content()
+        return self.context.mimetype, self.context.get_bytes()

@@ -59,12 +59,19 @@ class IRootResource(IDirectoryResource):
 class IBinaryFile(IFileResource):
     """A marker interface for binary files."""
 
+    mimetype = Attribute('The mimetype of the file.')
+
+    def get_bytes():
+        """Returns the bytes of the binary file."""
+
 
 class ITextFile(IFileResource):
     """A marker interface for text files."""
 
     text = Attribute('The text of the file.')
 
+    last_modified_in_revision = Attribute(
+        'The revision id where the file was last modified.')
 
 class IWikiTextFile(ITextFile):
     """A marker interface for a wiki text file."""
