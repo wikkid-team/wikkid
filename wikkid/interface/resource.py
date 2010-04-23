@@ -43,6 +43,14 @@ class IFileResource(IResource):
     file_resource = Attribute(
         'An IFile representing the file in the filestore.')
 
+    mimetype = Attribute('The mimetype of the file.')
+
+    def get_bytes():
+        """Returns the bytes of the binary file."""
+
+    last_modified_in_revision = Attribute(
+        'The revision id where the file was last modified.')
+
 
 class IDirectoryResource(IResource):
     """A resource that relates to a file in the filestore."""

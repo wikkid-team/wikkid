@@ -46,7 +46,7 @@ class FileStore(object):
         if file_id is None:
             return None
         else:
-            return File(self.working_tree, path, file_id)
+            return File(self, path, file_id)
 
     def update_file(self, path, content, author, parent_revision,
                     commit_message=None):
@@ -116,7 +116,7 @@ class FileStore(object):
 
         This method merges the changes in based on the parent revision.
         """
-        f = File(self.working_tree, path, file_id)
+        f = File(self, path, file_id)
         basis_rev = f.last_modified_in_revision
         wt = self.working_tree
         wt.lock_write()
@@ -144,9 +144,11 @@ class File(BaseFile):
 
     implements(IFile)
 
-    def __init__(self, working_tree, path, file_id):
+    def __init__(self, filestore, path, file_id):
         BaseFile.__init__(self, path, file_id)
-        self.working_tree = working_tree
+        self.filestore = filestore
+        # This isn't entirely necessary.
+        self.working_tree = self.filestore.working_tree
         self.file_type = self._get_filetype()
         bt = self.working_tree.basis_tree()
         bt.lock_read()

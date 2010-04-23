@@ -16,18 +16,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Views associated with binary files."""
+"""The source text class.
 
-from wikkid.interface.resource import IBinaryFile
-from wikkid.view.base import BaseView
+A source text file is a text file that isn't a wiki file.
+"""
+
+from zope.interface import implements
+
+from wikkid.model.file import FileResource
+from wikkid.interface.resource import ITextFile
 
 
-class BinaryFile(BaseView):
-    """Renders a binary file with its mimetype."""
+class TextFile(FileResource):
+    """A text file that isn't a wiki page."""
 
-    for_interface = IBinaryFile
-    name = 'view'
-    is_default = True
-
-    def render(self, skin):
-        return self.context.mimetype, self.context.get_bytes()
+    implements(ITextFile)

@@ -20,16 +20,30 @@
 
 import logging
 
+from wikkid.dispatcher import register_view
+
+
+class BaseViewMetaClass(type):
+    """This metaclass registers the view with the view registry."""
+
+    def __new__(cls, classname, bases, classdict):
+        """Called when defining a new class."""
+        instance = type.__new__(cls, classname, bases, classdict)
+        register_view(instance)
+        return instance
+
+
 class BaseView(object):
     """The base view class.
 
     This is an abstract base class.
     """
 
-    def __init__(self, skin, resource, path, user):
-        self.skin = skin
-        self.resource = resource
-        self.request_path = path
+    __metaclass__ = BaseViewMetaClass
+
+    def __init__(self, context, request, user):
+        self.context = context
+        self.request = request
         self.user = user
         self.logger = logging.getLogger('wikkid')
 
@@ -43,11 +57,11 @@ class BaseView(object):
             'user': self.user,
             }
 
-    def render(self):
+    def render(self, skin):
         """Render the page.
 
         Return a tuple of content type and content.
         """
-        template = self.skin.get_template(self.template)
+        template = skin.get_template(self.template)
         rendered = template.render(**self.template_args())
         return ('text/html', rendered)

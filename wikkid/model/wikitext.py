@@ -24,11 +24,11 @@ the formatters.
 
 from zope.interface import implements
 
-from wikkid.model.baseresource import BaseResource
+from wikkid.model.textfile import TextFile
 from wikkid.interface.resource import IWikiTextFile
 
 
-class WikiTextFile(BaseResource):
+class WikiTextFile(TextFile):
     """A text file that represents a wiki page."""
 
     implements(IWikiTextFile)

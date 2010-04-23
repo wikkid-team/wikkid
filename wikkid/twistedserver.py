@@ -29,14 +29,21 @@ from twisted.web.resource import Resource
 from twisted.web.static import File
 from twisted.internet import reactor
 
+from wikkid.dispatcher import get_view
+from wikkid.skin.loader import Skin
+
 
 class TwistedPage(Resource):
 
-    def __init__(self, server, logger, user_factory):
+    def __init__(self, server, logger, user_factory, skin_name=None):
         Resource.__init__(self)
         self.server = server
         self.logger = logger
         self.user_factory = user_factory
+        # Need to load the initial templates for the skin.
+        if skin_name is None:
+            skin_name = 'default'
+        self.skin = Skin(skin_name)
 
     def getChild(self, name, request):
         # Yay for logging...
@@ -48,43 +55,35 @@ class TwistedPage(Resource):
         return '/'.join(self.path)
 
     def render_page(self, request, page):
-        content_type, content = page.render()
+        content_type, content = page.render(self.skin)
         if content_type.startswith('text/'):
             content_type = "%s; charset=utf-8" % content_type
             content = content.encode('utf-8')
         request.setHeader('Content-Type', content_type)
         return content
 
+    def get_view(self, request, action):
+        path = request.path
+        user = self.user_factory.create(request)
+        model = self.server.get_info(path)
+        return get_view(model, action, request, user)
+
     def render_GET(self, request):
         self.logger.debug('args: %s', request.args)
         self.logger.debug('path: %s', request.path)
-        path = request.path
-        user = self.user_factory.create(request)
-        if request.args.get('action') == ['edit']:
-            page = self.server.edit_page(path, user)
-        else:
-            page = self.server.get_page(path, user)
-        return self.render_page(request, page)
+        # TODO: make this 'view' instead of 'action'
+        action = request.args.get('action', [None])[0]
+        view = self.get_view(request, action)
+        # TODO: what to do with none?
+        return self.render_page(request, view)
 
     def render_POST(self, request):
         self.logger.debug('args: %s', request.args)
         self.logger.debug('path: %s', request.path)
-        path = request.path
-        user = self.user_factory.create(request)
-        if request.args.get('action') == ['save']:
-            content = request.args['content'][0]
-            message = request.args['message'][0]
-            if 'rev-id' in request.args:
-                rev_id = request.args['rev-id'][0]
-            else:
-                rev_id = None
-            page = self.server.update_page(
-                path, user, rev_id, content, message)
-            # Here is where we could check the page for a redirect following
-            # the post for a good update.
-            return self.render_page(request, page)
-        # If this isn't a save, pretend it is a get.
-        return self.render_GET(request)
+        action = request.args.get('action', [None])[0]
+        view = self.get_view(request, action)
+        # TODO: what to do with none?
+        return self.render_page(request, view)
 
 
 class TwistedServer(object):
