@@ -29,5 +29,5 @@ class BinaryFile(BaseView):
     name = 'view'
     is_default = True
 
-    def render(self):
+    def render(self, skin):
         return self.context.mimetype, self.context.get_bytes()

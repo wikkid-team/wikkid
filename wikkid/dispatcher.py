@@ -34,7 +34,7 @@ from zope.interface import providedBy
 _VIEW_REGISTRY = {}
 
 
-def get_view(obj, view_name):
+def get_view(obj, view_name, request, user):
     """Get the most relevant view for the object for the specified name.
 
     Iterate through the provided interfaces of the object and look in the view
@@ -43,7 +43,8 @@ def get_view(obj, view_name):
     interfaces = providedBy(obj)
     for interface in interfaces:
         try:
-            return _VIEW_REGISTRY[(interface, view_name)]
+            klass = _VIEW_REGISTRY[(interface, view_name)]
+            return klass(obj, request, user)
         except KeyError:
             pass
     # For example, if someone asked for 'raw' view on a directory or binary

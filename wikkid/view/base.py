@@ -41,10 +41,9 @@ class BaseView(object):
 
     __metaclass__ = BaseViewMetaClass
 
-    def __init__(self, skin, context, path, user):
-        self.skin = skin
+    def __init__(self, context, request, user):
         self.context = context
-        self.request_path = path
+        self.request = request
         self.user = user
         self.logger = logging.getLogger('wikkid')
 
@@ -58,11 +57,11 @@ class BaseView(object):
             'user': self.user,
             }
 
-    def render(self):
+    def render(self, skin):
         """Render the page.
 
         Return a tuple of content type and content.
         """
-        template = self.skin.get_template(self.template)
+        template = skin.get_template(self.template)
         rendered = template.render(**self.template_args())
         return ('text/html', rendered)

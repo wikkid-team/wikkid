@@ -77,6 +77,8 @@ class OtherTextPage(BaseView):
 class EditWikiPage(BaseView):
     """The page shows the wiki content in a large edit field."""
 
+    # TODO: this is broken for missing files.
+
     for_interface = ITextFile
     name = 'edit'
     template = 'edit_page'
@@ -102,6 +104,8 @@ class ConflictedEditWikiPage(BaseView):
     for_interface = ITextFile
     name = 'conflicted'
     template = 'edit_page'
+
+    # TODO: fix this too...
 
     def __init__(self, skin, resource, path, user, conflict_text,
                  rev_id):

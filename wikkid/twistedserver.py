@@ -55,7 +55,7 @@ class TwistedPage(Resource):
         return '/'.join(self.path)
 
     def render_page(self, request, page):
-        content_type, content = page.render()
+        content_type, content = page.render(self.skin)
         if content_type.startswith('text/'):
             content_type = "%s; charset=utf-8" % content_type
             content = content.encode('utf-8')
@@ -66,8 +66,7 @@ class TwistedPage(Resource):
         path = request.path
         user = self.user_factory.create(request)
         model = self.server.get_info(path)
-        view_class = get_view(model, action)
-        return view_class(self.skin, model, path, user)
+        return get_view(model, action, request, user)
 
     def render_GET(self, request):
         self.logger.debug('args: %s', request.args)
