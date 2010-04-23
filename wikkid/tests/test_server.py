@@ -20,15 +20,7 @@
 
 from testtools import TestCase
 
-from wikkid.view.binary import BinaryFile
-from wikkid.view.pages import (
-    DirectoryListingPage,
-    MissingPage,
-    OtherTextPage,
-    WikiPage,
-    )
 from wikkid.model.server import expand_wiki_name, Server
-from wikkid.tests.fakes import TestUser
 from wikkid.filestore.volatile import FileStore
 
 # TODO: make a testing filestore that can produce either a volatile filestore
