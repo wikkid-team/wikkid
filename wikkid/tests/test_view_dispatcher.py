@@ -33,7 +33,7 @@ class TestGetView(TestCase):
         class NoInterfaces(object):
             pass
         obj = NoInterfaces()
-        self.assertIs(None, get_view(obj, None))
+        self.assertIs(None, get_view(obj, None, None, None))
 
     def test_interface_not_registered(self):
         """If the object supports an interface, but that interface is not
@@ -43,7 +43,7 @@ class TestGetView(TestCase):
         class HasInterface(object):
             implements(IHasInterface)
         obj = HasInterface()
-        self.assertIs(None, get_view(obj, None))
+        self.assertIs(None, get_view(obj, None, None, None))
 
     def test_interface_view_registered(self):
         """If the object supports an interface, and the view is registered,
@@ -55,9 +55,12 @@ class TestGetView(TestCase):
         class AView(object):
             for_interface = IHasInterface
             name = 'name'
+            def __init__(self, *args):
+                pass
         register_view(AView)
         obj = HasInterface()
-        self.assertIs(AView, get_view(obj, 'name'))
+        view = get_view(obj, 'name', None, None)
+        self.assertIsInstance(view, AView)
 
     def test_interface_view_registered_default(self):
         """If the object supports an interface, and the view is registered as
@@ -71,9 +74,12 @@ class TestGetView(TestCase):
             for_interface = IHasInterface
             name = 'name'
             is_default = True
+            def __init__(self, *args):
+                pass
         register_view(AView)
         obj = HasInterface()
-        self.assertIs(AView, get_view(obj, None))
+        view = get_view(obj, None, None, None)
+        self.assertIsInstance(view, AView)
 
 
 class TestViewRegistration(TestCase):
@@ -89,4 +95,5 @@ class TestViewRegistration(TestCase):
             for_interface = IHasInterface
             name = 'name'
         obj = HasInterface()
-        self.assertIs(AView, get_view(obj, 'name'))
+        view = get_view(obj, 'name', None, None)
+        self.assertIsInstance(view, AView)
