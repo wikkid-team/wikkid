@@ -23,22 +23,12 @@ import re
 
 from bzrlib.urlutils import basename, dirname, joinpath
 
-from wikkid.errors import UpdateConflicts
 from wikkid.interface.filestore import FileType
 from wikkid.model.binary import BinaryResource
 from wikkid.model.directory import DirectoryResource
 from wikkid.model.missing import MissingResource
 from wikkid.model.sourcetext import SourceTextFile
 from wikkid.model.wikitext import WikiTextFile
-from wikkid.view.binary import BinaryFile
-from wikkid.view.pages import (
-    ConflictedEditWikiPage,
-    DirectoryListingPage,
-    EditWikiPage,
-    MissingPage,
-    OtherTextPage,
-    WikiPage,
-    )
 from wikkid.skin.loader import Skin
 
 
@@ -78,60 +68,6 @@ class Server(object):
             skin_name = 'default'
         self.logger = logging.getLogger('wikkid')
         self.skin = Skin(skin_name)
-
-    def edit_page(self, path, user):
-        self.logger.debug('edit_page: %s, %s', path, user.display_name)
-        info = self.get_info(path)
-
-        # If we have a file, and it isn't binary, edit it.
-        if info.file_resource is not None:
-            file_type = info.file_resource.file_type
-            if file_type == FileType.BINARY_FILE:
-                raise NotImplementedError(
-                    'Binary files are not editable yet.')
-
-        return EditWikiPage(self.skin, info.file_resource, path, user)
-
-    def update_page(self, path, user, rev_id, content, commit_msg):
-        """Try to update the page with the specified content.
-
-        TODO: add in the file_id to handle page moves.
-        """
-        self.logger.debug('update_page: %s, %s', path, user.display_name)
-        info = self.get_info(path)
-        try:
-            self.filestore.update_file(
-                info.write_filename, content, user.committer_id,
-                rev_id, commit_msg)
-            return self.get_page(path, user)
-        except UpdateConflicts, e:
-            return ConflictedEditWikiPage(
-                self.skin, info.file_resource, path, user,
-                e.conflict_text, e.rev_id)
-
-    def get_page(self, path, user):
-        self.logger.debug('get_page: %s, %s', path, user.display_name)
-        info = self.get_info(path)
-
-        if info.file_resource is not None:
-            # We are pointing at a file.
-            file_type = info.file_resource.file_type
-            if file_type == FileType.BINARY_FILE:
-                self.logger.debug('%s is a binary file', path)
-                return BinaryFile(
-                    self.skin, info.file_resource, path, user)
-            if (info.file_resource.path.endswith('.txt') or
-                '.' not in info.file_resource.base_name):
-                return WikiPage(
-                    self.skin, info.file_resource, path, user)
-            else:
-                return OtherTextPage(
-                    self.skin, info.file_resource, path, user)
-        elif info.dir_resource is not None:
-            return DirectoryListingPage(
-                self.skin, info.dir_resource, path, user)
-        else:
-            return MissingPage(self.skin, None, path, user)
 
     def _get_resource(self, preferred_path, title, file_path,
                       file_resource, dir_resource):

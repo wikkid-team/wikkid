@@ -39,3 +39,8 @@ class FileResource(BaseResource):
 
     def get_bytes(self):
         return self.file_resource.get_content()
+
+    def put_bytes(self, bytes, committer, rev_id, commit_msg):
+        """Update the file resource."""
+        self.file_resource.filestore.update_file(
+            self.write_filename, bytes, committer, rev_id, commit_msg)

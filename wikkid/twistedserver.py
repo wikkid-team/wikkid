@@ -71,29 +71,19 @@ class TwistedPage(Resource):
     def render_GET(self, request):
         self.logger.debug('args: %s', request.args)
         self.logger.debug('path: %s', request.path)
+        # TODO: make this 'view' instead of 'action'
         action = request.args.get('action', [None])[0]
         view = self.get_view(request, action)
+        # TODO: what to do with none?
         return self.render_page(request, view)
 
     def render_POST(self, request):
         self.logger.debug('args: %s', request.args)
         self.logger.debug('path: %s', request.path)
-        path = request.path
-        user = self.user_factory.create(request)
-        if request.args.get('action') == ['save']:
-            content = request.args['content'][0]
-            message = request.args['message'][0]
-            if 'rev-id' in request.args:
-                rev_id = request.args['rev-id'][0]
-            else:
-                rev_id = None
-            page = self.server.update_page(
-                path, user, rev_id, content, message)
-            # Here is where we could check the page for a redirect following
-            # the post for a good update.
-            return self.render_page(request, page)
-        # If this isn't a save, pretend it is a get.
-        return self.render_GET(request)
+        action = request.args.get('action', [None])[0]
+        view = self.get_view(request, action)
+        # TODO: what to do with none?
+        return self.render_page(request, view)
 
 
 class TwistedServer(object):
