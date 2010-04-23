@@ -85,3 +85,5 @@ def load_view_modules():
         if filename.endswith('.py') and not filename.startswith('__')]
     for filename in py_files:
         __import__('wikkid.view.%s' % filename[:-3])
+
+load_view_modules()
