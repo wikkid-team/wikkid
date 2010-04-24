@@ -128,5 +128,5 @@ class TestFileStore:
         filestore = self.make_filestore(
             [('empty/', None),
              ])
-        listing = filestore.list_directory('missing')
+        listing = filestore.list_directory('empty')
         self.assertEqual([], listing)
