@@ -118,3 +118,15 @@ class TestFileStore:
                               None)
         readme = filestore.get_file('README')
         self.assertEqual('new content', readme.get_content())
+
+    def test_list_directory_non_existant(self):
+        filestore = self.make_filestore()
+        listing = filestore.list_directory('missing')
+        self.assertIs(None, listing)
+
+    def test_listing_directory_empty(self):
+        filestore = self.make_filestore(
+            [('empty/', None),
+             ])
+        listing = filestore.list_directory('missing')
+        self.assertEqual([], listing)

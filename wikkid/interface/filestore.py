@@ -49,6 +49,21 @@ class IFileStore(Interface):
            provided, then some sensible default will be used.
         """
 
+    def list_directory(path):
+        """Return a list of IFile objects.
+
+        Each of the IFile objects will be directly in the directory specified
+        by the path.
+
+        If the specified path is None, the files in the root directory of the
+        branch are returned.
+
+        If the specified path doesn't exist, None is returned.
+
+        If the specified path exists but has no files, an empty list is
+        returned.
+        """
+
 
 class FileType(object):
     """Package lazr.enum and use an Enumerated Type."""
