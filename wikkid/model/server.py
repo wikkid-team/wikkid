@@ -69,7 +69,7 @@ class Server(object):
         self.logger = logging.getLogger('wikkid')
         self.skin = Skin(skin_name)
 
-    def _get_resource(self, path, file_path, file_resource, dir_resource):
+    def get_resource(self, path, file_path, file_resource, dir_resource):
         """Return the correct type of resource based on the params."""
         preferred_path = self.get_preferred_path(path)
         filename = basename(file_path)
@@ -117,7 +117,7 @@ class Server(object):
         # If the resource exists and is a file, we are done.
         if file_resource is not None:
             if file_resource.file_type != FileType.DIRECTORY:
-                return self._get_resource(path, file_path, file_resource, None)
+                return self.get_resource(path, file_path, file_resource, None)
             else:
                 dir_resource = file_resource
                 file_resource = None
@@ -126,7 +126,7 @@ class Server(object):
             file_path += '.txt'
             file_resource = self.filestore.get_file(file_path)
 
-        return self._get_resource(path, file_path, file_resource, dir_resource)
+        return self.get_resource(path, file_path, file_resource, dir_resource)
 
     def get_preferred_path(self, path):
         """Get the preferred path for the path passed in.
