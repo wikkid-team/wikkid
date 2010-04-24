@@ -25,6 +25,7 @@ filestore.
 from zope.interface import implements
 
 from wikkid.model.baseresource import BaseResource
+from wikkid.interface.filestore import FileType
 from wikkid.interface.resource import IDirectoryResource
 
 
@@ -35,4 +36,19 @@ class DirectoryResource(BaseResource):
 
     def get_listing(self):
         """Return a list of resources that are in this directory."""
-        
+        dir_name = self.dir_resource.path
+        filestore = self.server.filestore
+        listing = []
+        for entry in filestore.list_directory(dir_name):
+            if entry.file_type == FileType.DIRECTORY:
+                file_resource = None
+                dir_resource = entry
+            else:
+                file_resource = entry
+                dir_resource = None
+            file_path = entry.path
+            listing.append(
+                self.server.get_resource(
+                    '/' + file_path, file_path, file_resource, dir_resource))
+
+        return listing
