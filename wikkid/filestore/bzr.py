@@ -25,7 +25,7 @@ from zope.interface import implements
 from bzrlib.errors import BinaryFile
 from bzrlib.merge3 import Merge3
 from bzrlib.textfile import check_text_path
-from bzrlib.urlutils import basename, dirname
+from bzrlib.urlutils import basename, dirname, joinpath
 
 from wikkid.errors import FileExists, UpdateConflicts
 from wikkid.filestore.basefile import BaseFile
@@ -136,6 +136,35 @@ class FileStore(object):
             wt.commit(
                 message=commit_message, authors=[author],
                 specific_files=[path])
+            wt.unlock()
+
+    def list_directory(self, directory_path):
+        """Return a list of File objects for in the directory path.
+
+        If the path doesn't exist, returns None.  If the path exists but is
+        empty, an empty list is returned.  Otherwise a list of File objects in
+        that directory.
+        """
+        if directory_path is not None:
+            directory = self.get_file(directory_path)
+            if directory is None or directory.file_type != FileType.DIRECTORY:
+                return None
+        listing = []
+        wt = self.working_tree
+        wt.lock_read()
+        try:
+            for fp, fc, fkind, fid, entry in wt.list_files(
+                from_dir=directory_path, recursive=False):
+                if fc != 'V':
+                    # If the file isn't versioned, skip it.
+                    continue
+                if directory_path is None:
+                    file_path = fp
+                else:
+                    file_path = joinpath(directory_path, fp)
+                listing.append(File(self, file_path, fid))
+            return listing
+        finally:
             wt.unlock()
 
 
