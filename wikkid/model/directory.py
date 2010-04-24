@@ -32,3 +32,7 @@ class DirectoryResource(BaseResource):
     """A directory in the filestore."""
 
     implements(IDirectoryResource)
+
+    def get_listing(self):
+        """Return a list of resources that are in this directory."""
+        

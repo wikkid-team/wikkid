@@ -59,6 +59,9 @@ class IDirectoryResource(IResource):
     dir_resource = Attribute(
         'An IFile representing the directory in the filestore.')
 
+    def get_listing():
+        """Returns a list of objects."""
+
 
 class IRootResource(IDirectoryResource):
     """A special resource relating to the root object in the wiki."""
