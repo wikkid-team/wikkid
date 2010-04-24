@@ -138,3 +138,16 @@ class TestFileStore:
              ])
         listing = filestore.list_directory('some-file')
         self.assertIs(None, listing)
+
+    def test_listing_directory_root(self):
+        # If a listing is attempted of a file, then None is returned.
+        filestore = self.make_filestore(
+            [('some-file', 'content'),
+             ('another-file', 'a'),
+             ('directory/', None),
+             ('directory/subfile', 'b'),
+             ])
+        listing = filestore.list_directory(None)
+        self.assertEqual(
+            ['another-file', 'directory', 'some-file'],
+            sorted(f.base_name for f in listing))
