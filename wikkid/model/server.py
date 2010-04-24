@@ -69,9 +69,14 @@ class Server(object):
         self.logger = logging.getLogger('wikkid')
         self.skin = Skin(skin_name)
 
-    def _get_resource(self, preferred_path, title, file_path,
-                      file_resource, dir_resource):
+    def _get_resource(self, path, file_path, file_resource, dir_resource):
         """Return the correct type of resource based on the params."""
+        preferred_path = self.get_preferred_path(path)
+        filename = basename(file_path)
+        if filename.endswith('.txt'):
+            title = expand_wiki_name(filename[:-4])
+        else:
+            title = expand_wiki_name(filename)
         if file_resource is not None:
             # We are pointing at a file.
             file_type = file_resource.file_type
@@ -80,7 +85,7 @@ class Server(object):
                 return BinaryResource(
                     self, preferred_path, title, file_path, file_resource, None)
             # This is known to be not entirely right.
-            if (file_resource.path.endswith('.txt') or
+            if (filename.endswith('.txt') or
                 '.' not in file_resource.base_name):
                 return WikiTextFile(
                     self, preferred_path, title, file_path, file_resource,
@@ -106,16 +111,13 @@ class Server(object):
         file_path = path[1:]
         if file_path == '':
             file_path = self.DEFAULT_PATH
-        preferred_path = self.get_preferred_path(path)
-        title = expand_wiki_name(basename(file_path))
 
         dir_resource = None
         file_resource = self.filestore.get_file(file_path)
         # If the resource exists and is a file, we are done.
         if file_resource is not None:
             if file_resource.file_type != FileType.DIRECTORY:
-                return self._get_resource(
-                    preferred_path, title, file_path, file_resource, None)
+                return self._get_resource(path, file_path, file_resource, None)
             else:
                 dir_resource = file_resource
                 file_resource = None
@@ -124,8 +126,7 @@ class Server(object):
             file_path += '.txt'
             file_resource = self.filestore.get_file(file_path)
 
-        return self._get_resource(
-            preferred_path, title, file_path, file_resource, dir_resource)
+        return self._get_resource(path, file_path, file_resource, dir_resource)
 
     def get_preferred_path(self, path):
         """Get the preferred path for the path passed in.
