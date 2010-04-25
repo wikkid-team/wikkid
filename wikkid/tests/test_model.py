@@ -18,6 +18,8 @@
 
 """Tests for the model objects."""
 
+from operator import attrgetter
+
 from testtools import TestCase
 
 from wikkid.filestore.volatile import FileStore
@@ -40,3 +42,16 @@ class TestDirectoryResource(TestCase, ProvidesMixin):
                 ])
         dir_resource = server.get_info('/SomeDir')
         self.assertProvides(dir_resource, IDirectoryResource)
+
+    def test_directory_and_pages(self):
+        """Both the directory and wiki page are returned."""
+        server = self.make_server([
+                ('SomeDir/', None),
+                ('SomeDir.txt', 'Some content'),
+                ])
+        dir_resource = server.get_info('/')
+        listing = dir_resource.get_listing()
+        some_dir, some_wiki = sorted(
+            listing, key=attrgetter('path'))
+        self.assertEqual('/SomeDir', some_dir.path)
+        self.assertEqual('/SomeDir.txt', some_wiki.path)

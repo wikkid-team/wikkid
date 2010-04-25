@@ -31,3 +31,6 @@ class BaseResource(object):
         self.file_resource = file_resource
         self.dir_resource = dir_resource
 
+    @property
+    def preferred_path(self):
+        return self.server.get_preferred_path(self.path)

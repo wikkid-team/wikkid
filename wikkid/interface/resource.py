@@ -26,6 +26,8 @@ class IResource(Interface):
 
     path = Attribute('The full path for the resource.')
 
+    preferred_path = Attribute('The preferred path for the resource.')
+
     title = Attribute(
         'The title of the resource. '
         'The title is shown in the web title bar.')
@@ -65,6 +67,9 @@ class IDirectoryResource(IResource):
 
 class IRootResource(IDirectoryResource):
     """A special resource relating to the root object in the wiki."""
+
+    has_home_page = Attribute(
+        'True if there is a home wiki page defined.')
 
 
 class IBinaryFile(IFileResource):

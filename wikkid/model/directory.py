@@ -34,9 +34,12 @@ class DirectoryResource(BaseResource):
 
     implements(IDirectoryResource)
 
+    def _get_dir_name(self):
+        return self.dir_resource.path
+
     def get_listing(self):
         """Return a list of resources that are in this directory."""
-        dir_name = self.dir_resource.path
+        dir_name = self._get_dir_name()
         filestore = self.server.filestore
         listing = []
         for entry in filestore.list_directory(dir_name):

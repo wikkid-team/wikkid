@@ -27,6 +27,7 @@ from wikkid.interface.filestore import FileType
 from wikkid.model.binary import BinaryResource
 from wikkid.model.directory import DirectoryResource
 from wikkid.model.missing import MissingResource
+from wikkid.model.root import RootResource
 from wikkid.model.sourcetext import SourceTextFile
 from wikkid.model.wikitext import WikiTextFile
 from wikkid.skin.loader import Skin
@@ -71,34 +72,36 @@ class Server(object):
 
     def get_resource(self, path, file_path, file_resource, dir_resource):
         """Return the correct type of resource based on the params."""
-        preferred_path = self.get_preferred_path(path)
         filename = basename(file_path)
         if filename.endswith('.txt'):
             title = expand_wiki_name(filename[:-4])
         else:
             title = expand_wiki_name(filename)
-        if file_resource is not None:
+        if path == '/':
+            return RootResource(
+                self, path, title, file_path, file_resource, None)
+        elif file_resource is not None:
             # We are pointing at a file.
             file_type = file_resource.file_type
             if file_type == FileType.BINARY_FILE:
                 # Binary resources have no associated directory.
                 return BinaryResource(
-                    self, preferred_path, title, file_path, file_resource, None)
+                    self, path, title, file_path, file_resource, None)
             # This is known to be not entirely right.
             if (filename.endswith('.txt') or
                 '.' not in file_resource.base_name):
                 return WikiTextFile(
-                    self, preferred_path, title, file_path, file_resource,
+                    self, path, title, file_path, file_resource,
                     dir_resource)
             else:
                 return SourceTextFile(
-                    self, preferred_path, title, file_path, file_resource, None)
+                    self, path, title, file_path, file_resource, None)
         elif dir_resource is not None:
             return DirectoryResource(
-                self, preferred_path, title, file_path, None, dir_resource)
+                self, path, title, file_path, None, dir_resource)
         else:
             return MissingResource(
-                self, preferred_path, title, file_path, None, None)
+                self, path, title, file_path, None, None)
 
     def get_info(self, path):
         """Get the resource from the filestore for the specified path.
