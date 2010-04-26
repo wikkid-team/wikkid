@@ -18,7 +18,7 @@
 
 """The base resource class."""
 
-from bzrlib import urlutils
+import bzrlib.urlutils as urlutils
 
 
 class BaseResource(object):
@@ -39,4 +39,4 @@ class BaseResource(object):
 
     @property
     def base_name(self):
-        return urlutils.base_name(self.path)
+        return urlutils.basename(self.path)

@@ -34,8 +34,7 @@ class DirectoryListingPage(BaseView):
     for_interface = IDirectoryResource
     name = 'listing'
     is_default = True
-    # template = 'view_directory'
-    template = 'view_page'
+    template = 'view_directory'
 
     def before_render(self):
         """Ghet the listing and split it into directories and files."""
@@ -46,7 +45,6 @@ class DirectoryListingPage(BaseView):
                 directories.append(item)
             else:
                 files.append(item)
-        import pdb; pdb.set_trace()
         self.directories = sorted(directories, key=attrgetter('base_name'))
         self.files = sorted(files, key=attrgetter('base_name'))
 
