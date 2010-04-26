@@ -24,7 +24,7 @@ from testtools import TestCase
 
 from wikkid.filestore.volatile import FileStore
 from wikkid.interface.resource import IDirectoryResource
-from wikkid.model.server import Server
+from wikkid.model.factory import ResourceFactory
 from wikkid.tests import ProvidesMixin
 
 
@@ -33,7 +33,7 @@ class TestDirectoryResource(TestCase, ProvidesMixin):
     def make_server(self, content=None):
         """Make a server with a volatile filestore."""
         filestore = FileStore(content)
-        return Server(filestore)
+        return ResourceFactory(filestore)
 
     def test_implements_interface(self):
         """DirectoryResource implements IDirectoryResource."""
