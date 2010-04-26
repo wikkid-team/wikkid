@@ -26,7 +26,7 @@ import sys
 from bzrlib.workingtree import WorkingTree
 
 from wikkid.filestore.bzr import FileStore
-from wikkid.model.server import Server
+from wikkid.model.factory import ResourceFactory
 from wikkid.twistedserver import TwistedServer
 from wikkid.user.bzr import UserFactory
 
@@ -60,7 +60,7 @@ def main(args):
     logger.info('Using: %s', working_tree)
     filestore = FileStore(working_tree)
     server = TwistedServer(
-        Server(filestore),
+        ResourceFactory(filestore),
         UserFactory(working_tree.branch),
         port=options.port)
     server.run()

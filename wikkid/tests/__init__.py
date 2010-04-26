@@ -43,7 +43,7 @@ class TestCase(testtools.TestCase, ProvidesMixin):
 
 def test_suite():
     names = [
-        'server',
+        'model_factory',
         'volatile_filestore',
         'bzr_filestore',
         'bzr_user',

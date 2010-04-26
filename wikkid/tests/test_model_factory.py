@@ -16,11 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""Tests for the wikkid.model.server."""
+"""Tests for the wikkid.model.factory module."""
 
 from testtools import TestCase
 
-from wikkid.model.server import expand_wiki_name, Server
+from wikkid.model.factory import expand_wiki_name, ResourceFactory
 from wikkid.filestore.volatile import FileStore
 
 # TODO: make a testing filestore that can produce either a volatile filestore
@@ -31,7 +31,7 @@ class ServerTestCase(TestCase):
     def make_server(self, content=None):
         """Make a server with a volatile filestore."""
         filestore = FileStore(content)
-        return Server(filestore)
+        return ResourceFactory(filestore)
 
 
 class TestServerGetInfo(ServerTestCase):
