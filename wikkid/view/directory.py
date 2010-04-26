@@ -18,6 +18,8 @@
 
 """View classes to control the rendering of the content."""
 
+from operator import attrgetter
+
 from wikkid.interface.resource import IDirectoryResource
 from wikkid.view.base import BaseView
 
@@ -34,6 +36,19 @@ class DirectoryListingPage(BaseView):
     is_default = True
     # template = 'view_directory'
     template = 'view_page'
+
+    def before_render(self):
+        """Ghet the listing and split it into directories and files."""
+        directories = []
+        files = []
+        for item in self.context.get_listing():
+            if IDirectoryResource.providedBy(item):
+                directories.append(item)
+            else:
+                files.append(item)
+        import pdb; pdb.set_trace()
+        self.directories = sorted(directories, key=attrgetter('base_name'))
+        self.files = sorted(files, key=attrgetter('base_name'))
 
     @property
     def content(self):
