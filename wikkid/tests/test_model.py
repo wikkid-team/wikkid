@@ -40,7 +40,7 @@ class TestDirectoryResource(TestCase, ProvidesMixin):
         server = self.make_server([
                 ('SomeDir/', None),
                 ])
-        dir_resource = server.get_info('/SomeDir')
+        dir_resource = server.get_resource_at_path('/SomeDir')
         self.assertProvides(dir_resource, IDirectoryResource)
 
     def test_directory_and_pages(self):
@@ -49,7 +49,7 @@ class TestDirectoryResource(TestCase, ProvidesMixin):
                 ('SomeDir/', None),
                 ('SomeDir.txt', 'Some content'),
                 ])
-        dir_resource = server.get_info('/')
+        dir_resource = server.get_resource_at_path('/')
         listing = dir_resource.get_listing()
         some_dir, some_wiki = sorted(
             listing, key=attrgetter('path'))

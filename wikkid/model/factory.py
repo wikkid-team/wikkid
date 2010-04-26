@@ -97,7 +97,7 @@ class ResourceFactory(object):
             return MissingResource(
                 self, path, title, file_path, None, None)
 
-    def get_info(self, path):
+    def get_resource_at_path(self, path):
         """Get the resource from the filestore for the specified path.
 
         The path starts with a slash as proveded through the url traversal,
@@ -150,4 +150,4 @@ class ResourceFactory(object):
 
         if resource_info.path == '/':
             return None
-        return self.get_info(dirname(resource_info.path))
+        return self.get_resource_at_path(dirname(resource_info.path))
