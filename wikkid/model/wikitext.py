@@ -32,3 +32,6 @@ class WikiTextFile(TextFile):
     """A text file that represents a wiki page."""
 
     implements(IWikiTextFile)
+
+    def __repr__(self):
+        return "<WikiTextFile '%s'>" % self.path

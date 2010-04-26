@@ -55,3 +55,6 @@ class DirectoryResource(BaseResource):
                     '/' + file_path, file_path, file_resource, dir_resource))
 
         return listing
+
+    def __repr__(self):
+        return "<DirectoryResource '%s'>" % self.path

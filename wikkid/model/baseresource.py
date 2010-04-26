@@ -18,6 +18,8 @@
 
 """The base resource class."""
 
+from bzrlib import urlutils
+
 
 class BaseResource(object):
     """Information about a resource."""
@@ -34,3 +36,7 @@ class BaseResource(object):
     @property
     def preferred_path(self):
         return self.server.get_preferred_path(self.path)
+
+    @property
+    def base_name(self):
+        return urlutils.base_name(self.path)

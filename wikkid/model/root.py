@@ -47,3 +47,6 @@ class RootResource(DirectoryResource):
     @property
     def has_home_page(self):
         return self.file_resource is not None
+
+    def __repr__(self):
+        return "<RootResource '/'>"
