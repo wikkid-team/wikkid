@@ -30,26 +30,26 @@ from wikkid.tests import ProvidesMixin
 
 class TestDirectoryResource(TestCase, ProvidesMixin):
 
-    def make_server(self, content=None):
+    def make_factory(self, content=None):
         """Make a server with a volatile filestore."""
         filestore = FileStore(content)
         return ResourceFactory(filestore)
 
     def test_implements_interface(self):
         """DirectoryResource implements IDirectoryResource."""
-        server = self.make_server([
+        factory = self.make_factory([
                 ('SomeDir/', None),
                 ])
-        dir_resource = server.get_resource_at_path('/SomeDir')
+        dir_resource = factory.get_resource_at_path('/SomeDir')
         self.assertProvides(dir_resource, IDirectoryResource)
 
     def test_directory_and_pages(self):
         """Both the directory and wiki page are returned."""
-        server = self.make_server([
+        factory = self.make_factory([
                 ('SomeDir/', None),
                 ('SomeDir.txt', 'Some content'),
                 ])
-        dir_resource = server.get_resource_at_path('/')
+        dir_resource = factory.get_resource_at_path('/')
         listing = dir_resource.get_listing()
         some_dir, some_wiki = sorted(
             listing, key=attrgetter('path'))
