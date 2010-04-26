@@ -47,6 +47,9 @@ class BaseView(object):
         self.user = user
         self.logger = logging.getLogger('wikkid')
 
+    def before_render(self):
+        """A hook to do things before rendering."""
+
     def template_args(self):
         """Needs to be implemented in the derived classes.
 
@@ -62,6 +65,7 @@ class BaseView(object):
 
         Return a tuple of content type and content.
         """
+        self.before_render()
         template = skin.get_template(self.template)
         rendered = template.render(**self.template_args())
         return ('text/html', rendered)
