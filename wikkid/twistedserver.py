@@ -69,8 +69,7 @@ class TwistedPage(Resource):
     def render_GET(self, request):
         self.logger.debug('args: %s', request.args)
         self.logger.debug('path: %s', request.path)
-        # TODO: make this 'view' instead of 'action'
-        action = request.args.get('action', [None])[0]
+        action = request.args.get('view', [None])[0]
         view = self.get_view(request, action)
         # TODO: what to do with none?
         return self.render_page(request, view)
