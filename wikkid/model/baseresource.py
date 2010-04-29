@@ -40,3 +40,7 @@ class BaseResource(object):
     @property
     def base_name(self):
         return urlutils.basename(self.path)
+
+    @property
+    def parent(self):
+        return self.server.get_parent_info(self)
