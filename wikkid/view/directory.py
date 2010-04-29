@@ -45,9 +45,22 @@ class DirectoryListingPage(BaseView):
                 directories.append(item)
             else:
                 files.append(item)
-        self.directories = sorted(directories, key=attrgetter('base_name'))
-        self.files = sorted(files, key=attrgetter('base_name'))
+
+        def sort_key(item):
+            return item.base_name.lower()
+
+        self.directories = sorted(directories, key=sort_key)
+        self.files = sorted(files, key=sort_key)
 
     @property
     def content(self):
         return 'Directory listing for %s' % self.path
+
+    @property
+    def title(self):
+        """The title is just the directory path."""
+        dir_name = self.context.get_dir_name()
+        if dir_name is None:
+            return self.context.title
+        else:
+            return dir_name

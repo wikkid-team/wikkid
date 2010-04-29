@@ -58,6 +58,8 @@ class BaseView(object):
         return {
             'view': self,
             'user': self.user,
+            'context': self.context,
+            'request': self.request,
             }
 
     def render(self, skin):
@@ -69,3 +71,7 @@ class BaseView(object):
         template = skin.get_template(self.template)
         rendered = template.render(**self.template_args())
         return ('text/html', rendered)
+
+    @property
+    def title(self):
+        return self.context.title

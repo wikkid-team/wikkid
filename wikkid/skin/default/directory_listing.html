@@ -1,8 +1,25 @@
 {% extends "base.html" %}
 {% block title %}{{ view.title }}{% endblock %}
-{% block content %}{{ view.content }}{% endblock %}
+{% block content %}
+
+{% for dir in view.directories %}
+<div class="directory">{{ dir.base_name }}</div>
+{% endfor %}
+
+{% for f in view.files %}
+<div class="file">{{ f.base_name }}</div>
+{% endfor %}
+
+<div style="padding-top:2em">
+<p>context.path = {{ context.path }}</p>
+<p>context.title = {{ context.title }}</p>
+</div>
+
+{{ view.content }}
+
+{% endblock %}
 {% block commands %}
 {% if view.user %}
-<a href="{{view.request_path}}?action=edit">Edit</a>
+TODO: Add page here?
 {% endif %}
 {% endblock %}
