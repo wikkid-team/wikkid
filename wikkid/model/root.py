@@ -41,7 +41,7 @@ class RootResource(DirectoryResource):
 
     implements(IRootResource)
 
-    def _get_dir_name(self):
+    def get_dir_name(self):
         return None
 
     @property
