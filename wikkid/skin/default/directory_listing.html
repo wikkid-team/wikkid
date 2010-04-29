@@ -2,13 +2,11 @@
 {% block title %}{{ view.title }}{% endblock %}
 {% block content %}
 
-{% for dir in view.directories %}
-<div class="directory">{{ dir.base_name }}</div>
+<table>
+{% for item in view.items %}
+<tr><td><a href="{{ item.url }}">{{ item.name }}</a></td></tr>
 {% endfor %}
-
-{% for f in view.files %}
-<div class="file">{{ f.base_name }}</div>
-{% endfor %}
+</table>
 
 <div style="padding-top:2em">
 <p>context.path = {{ context.path }}</p>

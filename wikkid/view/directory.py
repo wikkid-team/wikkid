@@ -24,6 +24,17 @@ from wikkid.interface.resource import IDirectoryResource
 from wikkid.view.base import BaseView
 
 
+class ListingItem(object):
+    """An item to be shown in the directory listing."""
+
+    def __init__(self, context, url, name=None):
+        self.context = context
+        self.url = url
+        if name is None:
+            name = context.base_name
+        self.name = name
+
+
 class DirectoryListingPage(BaseView):
     """The directory listing shows the content in the directory.
 
@@ -49,8 +60,18 @@ class DirectoryListingPage(BaseView):
         def sort_key(item):
             return item.base_name.lower()
 
-        self.directories = sorted(directories, key=sort_key)
-        self.files = sorted(files, key=sort_key)
+        items = []
+        # If we are looking at / don't add a parent dir.
+        if self.context.path != '/':
+            parent = self.context.parent
+            items.append(
+                ListingItem(
+                    parent, '%s?view=listing' % parent.path, name='..'))
+        for item in sorted(directories, key=sort_key):
+            items.append(ListingItem(item, '%s?view=listing' % item.path))
+        for item in sorted(files, key=sort_key):
+            items.append(ListingItem(item, item.path))
+        self.items = items
 
     @property
     def content(self):
