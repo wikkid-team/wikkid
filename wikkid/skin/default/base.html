@@ -23,8 +23,12 @@
   </div>
   <div id="location">
     <div id="commands">{% block commands %}{% endblock %}</div>
-    Need some breadcrumbs: dir > dir > page
-    Need links for edit, home, et al.
+
+{% for parent in view.parents %}
+<a href="{{ parent.path }}" class="crumb">{{ parent.title }}</a> &raquo;
+{% endfor %}
+<span class="crumb">{{ context.title }}</span>
+
   </div>
   <div id="content">{% block content %}{% endblock %}</div>
   <div id="footer">
