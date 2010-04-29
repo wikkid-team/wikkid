@@ -31,3 +31,6 @@ class TextFile(FileResource):
     """A text file that isn't a wiki page."""
 
     implements(ITextFile)
+
+    def __repr__(self):
+        return "<TextFile '%s'>" % self.path

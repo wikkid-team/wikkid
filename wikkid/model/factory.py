@@ -27,9 +27,9 @@ from wikkid.interface.filestore import FileType
 from wikkid.model.binary import BinaryResource
 from wikkid.model.directory import DirectoryResource
 from wikkid.model.missing import MissingResource
+from wikkid.model.root import RootResource
 from wikkid.model.sourcetext import SourceTextFile
 from wikkid.model.wikitext import WikiTextFile
-from wikkid.skin.loader import Skin
 
 
 WIKI_PAGE = re.compile('^([A-Z]+[a-z]*)+$')
@@ -49,53 +49,55 @@ def expand_wiki_name(name):
         return name
 
 
-class Server(object):
-    """The Wikkid wiki server.
-    """
+class ResourceFactory(object):
+    """Factory to create the model objects used by the views."""
 
     DEFAULT_PATH = 'Home'
 
-    def __init__(self, filestore, skin_name=None):
-        """Construct the Wikkid Wiki server.
+    def __init__(self, filestore):
+        """Construct the factory.
 
         :param filestore: An `IFileStore` instance.
         :param user_factory: A factory to create users.
         :param skin_name: The name of a skin to use.
         """
         self.filestore = filestore
-        # Need to load the initial templates for the skin.
-        if skin_name is None:
-            skin_name = 'default'
         self.logger = logging.getLogger('wikkid')
-        self.skin = Skin(skin_name)
 
-    def _get_resource(self, preferred_path, title, file_path,
-                      file_resource, dir_resource):
+    def get_resource(self, path, file_path, file_resource, dir_resource):
         """Return the correct type of resource based on the params."""
-        if file_resource is not None:
+        filename = basename(file_path)
+        if filename.endswith('.txt'):
+            title = expand_wiki_name(filename[:-4])
+        else:
+            title = expand_wiki_name(filename)
+        if path == '/':
+            return RootResource(
+                self, path, title, file_path, file_resource, None)
+        elif file_resource is not None:
             # We are pointing at a file.
             file_type = file_resource.file_type
             if file_type == FileType.BINARY_FILE:
                 # Binary resources have no associated directory.
                 return BinaryResource(
-                    self, preferred_path, title, file_path, file_resource, None)
+                    self, path, title, file_path, file_resource, None)
             # This is known to be not entirely right.
-            if (file_resource.path.endswith('.txt') or
+            if (filename.endswith('.txt') or
                 '.' not in file_resource.base_name):
                 return WikiTextFile(
-                    self, preferred_path, title, file_path, file_resource,
+                    self, path, title, file_path, file_resource,
                     dir_resource)
             else:
                 return SourceTextFile(
-                    self, preferred_path, title, file_path, file_resource, None)
+                    self, path, title, file_path, file_resource, None)
         elif dir_resource is not None:
             return DirectoryResource(
-                self, preferred_path, title, file_path, None, dir_resource)
+                self, path, title, file_path, None, dir_resource)
         else:
             return MissingResource(
-                self, preferred_path, title, file_path, None, None)
+                self, path, title, file_path, None, None)
 
-    def get_info(self, path):
+    def get_resource_at_path(self, path):
         """Get the resource from the filestore for the specified path.
 
         The path starts with a slash as proveded through the url traversal,
@@ -106,16 +108,13 @@ class Server(object):
         file_path = path[1:]
         if file_path == '':
             file_path = self.DEFAULT_PATH
-        preferred_path = self.get_preferred_path(path)
-        title = expand_wiki_name(basename(file_path))
 
         dir_resource = None
         file_resource = self.filestore.get_file(file_path)
         # If the resource exists and is a file, we are done.
         if file_resource is not None:
             if file_resource.file_type != FileType.DIRECTORY:
-                return self._get_resource(
-                    preferred_path, title, file_path, file_resource, None)
+                return self.get_resource(path, file_path, file_resource, None)
             else:
                 dir_resource = file_resource
                 file_resource = None
@@ -124,8 +123,7 @@ class Server(object):
             file_path += '.txt'
             file_resource = self.filestore.get_file(file_path)
 
-        return self._get_resource(
-            preferred_path, title, file_path, file_resource, dir_resource)
+        return self.get_resource(path, file_path, file_resource, dir_resource)
 
     def get_preferred_path(self, path):
         """Get the preferred path for the path passed in.
@@ -152,4 +150,4 @@ class Server(object):
 
         if resource_info.path == '/':
             return None
-        return self.get_info(dirname(resource_info.path))
+        return self.get_resource_at_path(dirname(resource_info.path))

@@ -43,12 +43,13 @@ class TestCase(testtools.TestCase, ProvidesMixin):
 
 def test_suite():
     names = [
-        'server',
+        'model_factory',
         'volatile_filestore',
         'bzr_filestore',
         'bzr_user',
         'rest_formatter',
         'view_dispatcher',
+        'model',
         ]
     module_names = ['wikkid.tests.test_' + name for name in names]
     loader = unittest.TestLoader()

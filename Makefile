@@ -18,7 +18,14 @@
 
 all: check
 
+
 check:
 	python -m testtools.run wikkid.tests.test_suite
 
-.PHONY: check
+
+clean:
+	@find . -name '*.py[co]' -print0 | xargs -r0 $(RM)
+	@find . -name '*~' -print0 | xargs -r0 $(RM)
+
+
+.PHONY: check clean

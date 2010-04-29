@@ -18,6 +18,8 @@
 
 """The base resource class."""
 
+import bzrlib.urlutils as urlutils
+
 
 class BaseResource(object):
     """Information about a resource."""
@@ -31,3 +33,14 @@ class BaseResource(object):
         self.file_resource = file_resource
         self.dir_resource = dir_resource
 
+    @property
+    def preferred_path(self):
+        return self.server.get_preferred_path(self.path)
+
+    @property
+    def base_name(self):
+        return urlutils.basename(self.path)
+
+    @property
+    def parent(self):
+        return self.server.get_parent_info(self)

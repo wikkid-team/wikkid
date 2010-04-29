@@ -39,3 +39,6 @@ class MissingResource(BaseResource):
     # NOTE: perhaps it'll make more sense to put the actual saving or
     # modifying of text content into a base class that both this class and the
     # text file classes can inherit from.
+
+    def __repr__(self):
+        return "<MissingResource '%s'>" % self.path

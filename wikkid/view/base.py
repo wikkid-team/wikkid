@@ -46,6 +46,15 @@ class BaseView(object):
         self.request = request
         self.user = user
         self.logger = logging.getLogger('wikkid')
+        parents = []
+        parent = getattr(context, 'parent', None)
+        while parent is not None:
+            parents.append(parent)
+            parent = parent.parent
+        self.parents = reversed(parents)
+
+    def before_render(self):
+        """A hook to do things before rendering."""
 
     def template_args(self):
         """Needs to be implemented in the derived classes.
@@ -55,6 +64,8 @@ class BaseView(object):
         return {
             'view': self,
             'user': self.user,
+            'context': self.context,
+            'request': self.request,
             }
 
     def render(self, skin):
@@ -62,6 +73,11 @@ class BaseView(object):
 
         Return a tuple of content type and content.
         """
+        self.before_render()
         template = skin.get_template(self.template)
         rendered = template.render(**self.template_args())
         return ('text/html', rendered)
+
+    @property
+    def title(self):
+        return self.context.title

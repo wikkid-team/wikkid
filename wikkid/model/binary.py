@@ -32,3 +32,6 @@ class BinaryResource(FileResource):
     """A binary resource is a non-text file."""
 
     implements(IBinaryFile)
+
+    def __repr__(self):
+        return "<BinaryResource '%s'>" % self.path

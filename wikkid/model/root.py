@@ -27,11 +27,11 @@ the root path.
 
 from zope.interface import implements
 
-from wikkid.model.baseresource import BaseResource
+from wikkid.model.directory import DirectoryResource
 from wikkid.interface.resource import IRootResource
 
 
-class RootResource(BaseResource):
+class RootResource(DirectoryResource):
     """The root of the wiki.
 
     Some special wiki views hang off the root resource and not others.  A root
@@ -40,3 +40,13 @@ class RootResource(BaseResource):
     """
 
     implements(IRootResource)
+
+    def get_dir_name(self):
+        return None
+
+    @property
+    def has_home_page(self):
+        return self.file_resource is not None
+
+    def __repr__(self):
+        return "<RootResource '/'>"

@@ -94,6 +94,26 @@ class FileStore(object):
         else:
             existing_file.content = content
 
+    def list_directory(self, directory_path):
+        """Return a list of File objects for in the directory path.
+
+        If the path doesn't exist, returns None.  If the path exists but is
+        empty, an empty list is returned.  Otherwise a list of File objects in
+        that directory.
+        """
+        if directory_path is None:
+            directory_path = ''
+        else:
+            directory = self.get_file(directory_path)
+            if directory is None or not directory._is_directory:
+                return None
+        listing = []
+        for path, value in self.path_map.iteritems():
+            path_dir = dirname(path)
+            if path_dir == directory_path:
+                listing.append(value)
+        return listing
+
 
 class File(BaseFile):
     """A volatile file object."""

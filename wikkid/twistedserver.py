@@ -35,20 +35,18 @@ from wikkid.skin.loader import Skin
 
 class TwistedPage(Resource):
 
-    def __init__(self, server, logger, user_factory, skin_name=None):
+    def __init__(self, resource_factory, logger, user_factory, skin):
         Resource.__init__(self)
-        self.server = server
+        self.resource_factory = resource_factory
         self.logger = logger
         self.user_factory = user_factory
-        # Need to load the initial templates for the skin.
-        if skin_name is None:
-            skin_name = 'default'
-        self.skin = Skin(skin_name)
+        self.skin = skin
 
     def getChild(self, name, request):
         # Yay for logging...
         self.logger.debug('getChild: %r' % name)
-        return TwistedPage(self.server, self.logger, self.user_factory)
+        return TwistedPage(
+            self.resource_factory, self.logger, self.user_factory, self.skin)
 
     @property
     def filepath(self):
@@ -65,14 +63,13 @@ class TwistedPage(Resource):
     def get_view(self, request, action):
         path = request.path
         user = self.user_factory.create(request)
-        model = self.server.get_info(path)
+        model = self.resource_factory.get_resource_at_path(path)
         return get_view(model, action, request, user)
 
     def render_GET(self, request):
         self.logger.debug('args: %s', request.args)
         self.logger.debug('path: %s', request.path)
-        # TODO: make this 'view' instead of 'action'
-        action = request.args.get('action', [None])[0]
+        action = request.args.get('view', [None])[0]
         view = self.get_view(request, action)
         # TODO: what to do with none?
         return self.render_page(request, view)
@@ -89,23 +86,28 @@ class TwistedPage(Resource):
 class TwistedServer(object):
     """Wraps the twisted stuff..."""
 
-    def __init__(self, server, user_factory, port=8080):
-        self.server = server
+    def __init__(self, resource_factory, user_factory, port=8080,
+                 skin_name=None):
+        self.resource_factory = resource_factory
         self.port = port
         self.logger = logging.getLogger('wikkid')
         self.user_factory = user_factory
+        # Need to load the initial templates for the skin.
+        if skin_name is None:
+            skin_name = 'default'
+        self.skin = Skin(skin_name)
 
     def run(self):
         self.logger.info('Listening on port %d' % self.port)
-        root = TwistedPage(self.server, self.logger, self.user_factory)
-        skin = self.server.skin
-        if skin.favicon is not None:
-            root.putChild('favicon.ico', File(skin.favicon))
-        if skin.static_dir is not None:
+        root = TwistedPage(
+            self.resource_factory, self.logger, self.user_factory, self.skin)
+        if self.skin.favicon is not None:
+            root.putChild('favicon.ico', File(self.skin.favicon))
+        if self.skin.static_dir is not None:
             # Perhaps have the 'static' name configurable to avoid potential
             # conflict with a static directory in a branch that the user cares
             # about.
-            root.putChild('static', File(skin.static_dir))
+            root.putChild('static', File(self.skin.static_dir))
         factory = Site(root)
         reactor.listenTCP(self.port, factory)
         reactor.run()

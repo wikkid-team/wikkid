@@ -22,7 +22,6 @@ from wikkid.dispatcher import get_view
 from wikkid.errors import UpdateConflicts
 from wikkid.formatter.rest import RestructuredTextFormatter
 from wikkid.interface.resource import (
-    IDirectoryResource,
     IMissingResource,
     ISourceTextFile,
     ITextFile,
@@ -144,21 +143,3 @@ class ConflictedEditWikiPage(BaseView):
         BaseView.__init__(self, skin, resource, path, user)
         self.content = conflict_text
         self.rev_id = rev_id
-
-
-class DirectoryListingPage(BaseView):
-    """The directory listing shows the content in the directory.
-
-    This view is shown if there is no matching wiki apge the same name as the
-    directory (i.e. with '.txt' on the end).
-    """
-
-    for_interface = IDirectoryResource
-    name = 'view'
-    is_default = True
-    # template = 'view_directory'
-    template = 'view_page'
-
-    @property
-    def content(self):
-        return 'Directory listing for %s' % self.path

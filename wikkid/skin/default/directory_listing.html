@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ view.title }}{% endblock %}
+{% block content %}
+
+<table>
+{% for item in view.items %}
+<tr class="{{ loop.cycle('odd', 'even') }}">
+  <td>
+    <a href="{{ item.url }}">{{ item.name }}</a>
+  </td>
+</tr>
+{% endfor %}
+</table>
+
+{{ view.content }}
+
+{% endblock %}
+{% block commands %}
+{% if view.user %}
+TODO: Add page here?
+{% endif %}
+{% endblock %}
