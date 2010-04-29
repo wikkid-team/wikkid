@@ -4,7 +4,11 @@
 
 <table>
 {% for item in view.items %}
-<tr><td><a href="{{ item.url }}">{{ item.name }}</a></td></tr>
+<tr class="{{ loop.cycle('odd', 'even') }}">
+  <td>
+    <a href="{{ item.url }}">{{ item.name }}</a>
+  </td>
+</tr>
 {% endfor %}
 </table>
 
