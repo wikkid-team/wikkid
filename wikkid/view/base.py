@@ -46,6 +46,12 @@ class BaseView(object):
         self.request = request
         self.user = user
         self.logger = logging.getLogger('wikkid')
+        parents = []
+        parent = context.parent
+        while parent is not None:
+            parents.append(parent)
+            parent = parent.parent
+        self.parents = reversed(parents)
 
     def before_render(self):
         """A hook to do things before rendering."""
