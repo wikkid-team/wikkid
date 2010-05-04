@@ -50,6 +50,7 @@ def test_suite():
         'rest_formatter',
         'view_dispatcher',
         'model',
+        'views',
         ]
     module_names = ['wikkid.tests.test_' + name for name in names]
     loader = unittest.TestLoader()

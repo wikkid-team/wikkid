@@ -20,7 +20,7 @@
 
 from testtools import TestCase
 
-from wikkid.view.base import expand_wiki_name
+from wikkid.view.base import expand_wiki_name, title_for_filename
 
 
 class TestExpandWikiName(TestCase):
@@ -38,3 +38,14 @@ class TestExpandWikiName(TestCase):
         self.assertEqual(
             'A Simple FTP Example',
             expand_wiki_name('ASimpleFTPExample'))
+
+
+class TesttitleForFilename(TestCase):
+    """Tests for title_for_filename."""
+
+    def test_title_for_filename(self):
+        self.assertEqual('simple', title_for_filename('simple.txt'))
+        self.assertEqual('simple.cpp', title_for_filename('simple.cpp'))
+        self.assertEqual('Front Page', title_for_filename('FrontPage'))
+        self.assertEqual('Front Page', title_for_filename('FrontPage.txt'))
+        self.assertEqual('FrontPage.cpp', title_for_filename('FrontPage.cpp'))
