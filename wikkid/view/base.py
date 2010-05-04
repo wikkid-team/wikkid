@@ -41,6 +41,14 @@ def expand_wiki_name(name):
         return name
 
 
+def title_for_filename(filename):
+    """Generate a title based on the basename of the file object."""
+    if filename.endswith('.txt'):
+        return expand_wiki_name(filename[:-4])
+    else:
+        return expand_wiki_name(filename)
+
+
 class BaseViewMetaClass(type):
     """This metaclass registers the view with the view registry."""
 
@@ -49,6 +57,14 @@ class BaseViewMetaClass(type):
         instance = type.__new__(cls, classname, bases, classdict)
         register_view(instance)
         return instance
+
+
+class Breadcrumb(object):
+    """Breadcrumbs exist to give the user quick links up the path chain."""
+
+    def __init__(self, context):
+        self.path = context.path
+        self.title = title_for_filename(context.base_name)
 
 
 class BaseView(object):
@@ -67,17 +83,9 @@ class BaseView(object):
         parents = []
         parent = getattr(context, 'parent', None)
         while parent is not None:
-            parents.append(parent)
+            parents.append(Breadcrumb(parent))
             parent = parent.parent
         self.parents = reversed(parents)
-
-    @property
-    def title(self):
-        filename = self.context.base_name
-        if filename.endswith('.txt'):
-            return expand_wiki_name(filename[:-4])
-        else:
-            return expand_wiki_name(filename)
 
     def before_render(self):
         """A hook to do things before rendering."""
