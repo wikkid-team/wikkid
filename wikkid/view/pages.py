@@ -20,7 +20,6 @@
 
 from twisted.web.util import redirectTo
 
-from wikkid.dispatcher import get_view
 from wikkid.errors import UpdateConflicts
 from wikkid.formatter.rest import RestructuredTextFormatter
 from wikkid.interface.resource import (
