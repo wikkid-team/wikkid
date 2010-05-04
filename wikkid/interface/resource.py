@@ -28,10 +28,6 @@ class IResource(Interface):
 
     preferred_path = Attribute('The preferred path for the resource.')
 
-    title = Attribute(
-        'The title of the resource. '
-        'The title is shown in the web title bar.')
-
     write_filename = Attribute(
         'The full path of the file to write to in the filestore. '
         'This is either the filename as it directly corresponds to the '

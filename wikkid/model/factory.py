@@ -32,23 +32,6 @@ from wikkid.model.sourcetext import SourceTextFile
 from wikkid.model.wikitext import WikiTextFile
 
 
-WIKI_PAGE = re.compile('^([A-Z]+[a-z]*)+$')
-WIKI_PAGE_ELEMENTS = re.compile('([A-Z][a-z]+)')
-
-
-def expand_wiki_name(name):
-    """A wiki name like 'FrontPage' is expanded to 'Front Page'.
-
-    Names that don't match wiki names are unaltered.
-    """
-    if WIKI_PAGE.match(name):
-        name_parts = [
-            part for part in WIKI_PAGE_ELEMENTS.split(name) if part]
-        return ' '.join(name_parts)
-    else:
-        return name
-
-
 class ResourceFactory(object):
     """Factory to create the model objects used by the views."""
 
@@ -67,35 +50,31 @@ class ResourceFactory(object):
     def get_resource(self, path, file_path, file_resource, dir_resource):
         """Return the correct type of resource based on the params."""
         filename = basename(file_path)
-        if filename.endswith('.txt'):
-            title = expand_wiki_name(filename[:-4])
-        else:
-            title = expand_wiki_name(filename)
         if path == '/':
             return RootResource(
-                self, path, title, file_path, file_resource, None)
+                self, path, file_path, file_resource, None)
         elif file_resource is not None:
             # We are pointing at a file.
             file_type = file_resource.file_type
             if file_type == FileType.BINARY_FILE:
                 # Binary resources have no associated directory.
                 return BinaryResource(
-                    self, path, title, file_path, file_resource, None)
+                    self, path, file_path, file_resource, None)
             # This is known to be not entirely right.
             if (filename.endswith('.txt') or
                 '.' not in file_resource.base_name):
                 return WikiTextFile(
-                    self, path, title, file_path, file_resource,
+                    self, path, file_path, file_resource,
                     dir_resource)
             else:
                 return SourceTextFile(
-                    self, path, title, file_path, file_resource, None)
+                    self, path, file_path, file_resource, None)
         elif dir_resource is not None:
             return DirectoryResource(
-                self, path, title, file_path, None, dir_resource)
+                self, path, file_path, None, dir_resource)
         else:
             return MissingResource(
-                self, path, title, file_path, None, None)
+                self, path, file_path, None, None)
 
     def get_resource_at_path(self, path):
         """Get the resource from the filestore for the specified path.

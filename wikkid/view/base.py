@@ -19,8 +19,26 @@
 """The base view class."""
 
 import logging
+import re
 
 from wikkid.dispatcher import register_view
+
+
+WIKI_PAGE = re.compile('^([A-Z]+[a-z]*)+$')
+WIKI_PAGE_ELEMENTS = re.compile('([A-Z][a-z]+)')
+
+
+def expand_wiki_name(name):
+    """A wiki name like 'FrontPage' is expanded to 'Front Page'.
+
+    Names that don't match wiki names are unaltered.
+    """
+    if WIKI_PAGE.match(name):
+        name_parts = [
+            part for part in WIKI_PAGE_ELEMENTS.split(name) if part]
+        return ' '.join(name_parts)
+    else:
+        return name
 
 
 class BaseViewMetaClass(type):
@@ -53,6 +71,14 @@ class BaseView(object):
             parent = parent.parent
         self.parents = reversed(parents)
 
+    @property
+    def title(self):
+        filename = self.context.base_name
+        if filename.endswith('.txt'):
+            return expand_wiki_name(filename[:-4])
+        else:
+            return expand_wiki_name(filename)
+
     def before_render(self):
         """A hook to do things before rendering."""
 
@@ -77,7 +103,3 @@ class BaseView(object):
         template = skin.get_template(self.template)
         rendered = template.render(**self.template_args())
         return ('text/html', rendered)
-
-    @property
-    def title(self):
-        return self.context.title

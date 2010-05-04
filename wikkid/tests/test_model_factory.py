@@ -20,7 +20,7 @@
 
 from testtools import TestCase
 
-from wikkid.model.factory import expand_wiki_name, ResourceFactory
+from wikkid.model.factory import ResourceFactory
 from wikkid.filestore.volatile import FileStore
 
 # TODO: make a testing filestore that can produce either a volatile filestore
@@ -208,27 +208,9 @@ class TestFactoryGetParentInfo(FactoryTestCase):
         info = factory.get_resource_at_path('/MissingPage')
         parent = factory.get_parent_info(info)
         self.assertEqual('/', parent.path)
-        self.assertEqual('Home', parent.title)
 
     def test_get_parent_subdir(self):
         factory = self.make_factory()
         info = factory.get_resource_at_path('/SomePage/SubPage')
         parent = factory.get_parent_info(info)
         self.assertEqual('/SomePage', parent.path)
-
-
-class TestExpandWikiName(TestCase):
-    """Tests for expand_wiki_name."""
-
-    def test_expand_wiki_name(self):
-        self.assertEqual('simple.txt', expand_wiki_name('simple.txt'))
-        self.assertEqual('nonMatching', expand_wiki_name('nonMatching'))
-        self.assertEqual('README', expand_wiki_name('README'))
-        self.assertEqual('Home', expand_wiki_name('Home'))
-        self.assertEqual('Front Page', expand_wiki_name('FrontPage'))
-        self.assertEqual('FrontPage.txt', expand_wiki_name('FrontPage.txt'))
-        self.assertEqual('A Simple Page', expand_wiki_name('ASimplePage'))
-        self.assertEqual('FTP Example', expand_wiki_name('FTPExample'))
-        self.assertEqual(
-            'A Simple FTP Example',
-            expand_wiki_name('ASimpleFTPExample'))
