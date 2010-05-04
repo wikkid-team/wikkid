@@ -52,14 +52,6 @@ class TwistedPage(Resource):
     def filepath(self):
         return '/'.join(self.path)
 
-    def render_page(self, request, page):
-        content_type, content = page.render(self.skin)
-        if content_type.startswith('text/'):
-            content_type = "%s; charset=utf-8" % content_type
-            content = content.encode('utf-8')
-        request.setHeader('Content-Type', content_type)
-        return content
-
     def get_view(self, request, action):
         path = request.path
         user = self.user_factory.create(request)
@@ -72,7 +64,7 @@ class TwistedPage(Resource):
         action = request.args.get('view', [None])[0]
         view = self.get_view(request, action)
         # TODO: what to do with none?
-        return self.render_page(request, view)
+        return view.render(self.skin)
 
     def render_POST(self, request):
         self.logger.debug('args: %s', request.args)
@@ -80,7 +72,7 @@ class TwistedPage(Resource):
         action = request.args.get('action', [None])[0]
         view = self.get_view(request, action)
         # TODO: what to do with none?
-        return self.render_page(request, view)
+        return view.render(self.skin)
 
 
 class TwistedServer(object):

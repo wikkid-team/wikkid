@@ -18,6 +18,8 @@
 
 """View classes to control the rendering of the content."""
 
+from twisted.web.util import redirectTo
+
 from wikkid.dispatcher import get_view
 from wikkid.errors import UpdateConflicts
 from wikkid.formatter.rest import RestructuredTextFormatter
@@ -105,7 +107,7 @@ class UpdateTextFile(BaseView):
     for_interface = ITextFile
     name = 'save'
 
-    def render(self, skin):
+    def _render(self, skin):
         """Save the text file.
 
         If it conflicts, render the edit, otherwise render the page (ideally
@@ -121,9 +123,8 @@ class UpdateTextFile(BaseView):
         try:
             self.context.put_bytes(
                 content, self.user.committer_id, rev_id, message)
-            # TODO: redirect
-            view = get_view(self.context, None, self.request, self.user)
-            return view.render(skin)
+
+            return redirectTo(self.context.path, self.request)
         except UpdateConflicts:
             # TODO: fix this
             assert False, "add conflict handling"

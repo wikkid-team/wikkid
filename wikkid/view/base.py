@@ -102,12 +102,23 @@ class BaseView(object):
             'request': self.request,
             }
 
+    def _render(self, skin):
+        """Get the template and render with the args.
+
+        If a template isn't going to be used or provide the conent,
+        this is the method to override.
+        """
+        template = skin.get_template(self.template)
+        content = template.render(**self.template_args())
+        self.request.setHeader(
+            'Content-Type', "text/html; charset=utf-8")
+        # Return the encoded content.
+        return content.encode('utf-8')
+
     def render(self, skin):
         """Render the page.
 
         Return a tuple of content type and content.
         """
         self.before_render()
-        template = skin.get_template(self.template)
-        rendered = template.render(**self.template_args())
-        return ('text/html', rendered)
+        return self._render(skin)
