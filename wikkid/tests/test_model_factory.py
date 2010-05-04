@@ -22,11 +22,15 @@ from testtools import TestCase
 
 from wikkid.model.factory import ResourceFactory
 from wikkid.filestore.volatile import FileStore
+from wikkid.interface.resource import (
+    IRootResource,
+    )
+from wikkid.tests import ProvidesMixin
 
 # TODO: make a testing filestore that can produce either a volatile filestore
 # or a bzr filestore.
 
-class FactoryTestCase(TestCase):
+class FactoryTestCase(TestCase, ProvidesMixin):
 
     def make_factory(self, content=None):
         """Make a factory with a volatile filestore."""
@@ -43,10 +47,11 @@ class TestFactoryGetResourceAtPath(FactoryTestCase):
         # the default home page.
         factory = self.make_factory()
         info = factory.get_resource_at_path('/')
+        self.assertProvides(info, IRootResource)
         self.assertEqual('/', info.path)
-        self.assertEqual('Home.txt', info.write_filename)
-        self.assertIs(None, info.file_resource)
+        self.assertIs(None, info.get_dir_name())
         self.assertIs(None, info.dir_resource)
+        self.assertFalse(info.has_home_page)
 
     def test_get_resource_at_path_root_has_page(self):
         # If the root file is selected, and there is a home page, this is

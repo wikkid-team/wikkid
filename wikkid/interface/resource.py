@@ -53,6 +53,12 @@ class IFileResource(IResource):
 class IDirectoryResource(IResource):
     """A resource that relates to a file in the filestore."""
 
+    def get_dir_name():
+        """Get the full directory name.
+
+        This is the full path for the directory from the root.
+        """
+
     # TODO: think of a better variable name.
     dir_resource = Attribute(
         'An IFile representing the directory in the filestore.')
