@@ -20,7 +20,7 @@
 
 from testtools import TestCase
 
-from wikkid.view.base import expand_wiki_name, title_for_filename
+from wikkid.view.utils import expand_wiki_name, title_for_filename
 
 
 class TestExpandWikiName(TestCase):
