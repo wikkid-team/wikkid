@@ -55,12 +55,18 @@ class BaseView(object):
         self.request = request
         self.user = user
         self.logger = logging.getLogger('wikkid')
-        parents = []
-        parent = getattr(context, 'parent', None)
+
+    def _create_breadcrumbs(self):
+        crumbs = [Breadcrumb(self.context)]
+        parent = getattr(self.context, 'parent', None)
         while parent is not None:
-            parents.append(Breadcrumb(parent))
+            crumbs.append(Breadcrumb(parent))
             parent = parent.parent
-        self.parents = reversed(parents)
+        return reversed(crumbs)
+
+    @property
+    def breadcrumbs(self):
+        return self._create_breadcrumbs()
 
     def before_render(self):
         """A hook to do things before rendering."""

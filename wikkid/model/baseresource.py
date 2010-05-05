@@ -41,5 +41,9 @@ class BaseResource(object):
         return urlutils.basename(self.path)
 
     @property
+    def dir_name(self):
+        return urlutils.dirname(self.path)
+
+    @property
     def parent(self):
         return self.server.get_parent_info(self)

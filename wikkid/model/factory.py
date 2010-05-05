@@ -104,6 +104,9 @@ class ResourceFactory(object):
 
         return self.get_resource(path, file_path, file_resource, dir_resource)
 
+    def _is_default(self, dir_name, base_name):
+        return base_name == self.DEFAULT_PATH and dir_name == '/'
+
     def get_preferred_path(self, path):
         """Get the preferred path for the path passed in.
 
@@ -124,9 +127,15 @@ class ResourceFactory(object):
         else:
             return joinpath(dirname(path), filename)
 
-    def get_parent_info(self, resource_info):
+    def get_parent_info(self, resource):
         """Get the resource info for the parent of path."""
 
-        if resource_info.path == '/':
+        if resource.path == '/':
             return None
-        return self.get_resource_at_path(dirname(resource_info.path))
+        base_name = resource.base_name
+        dir_name = resource.dir_name
+        if self._is_default(dir_name, base_name):
+            return None
+        if dir_name == '/':
+            dir_name += self.DEFAULT_PATH
+        return self.get_resource_at_path(dir_name)

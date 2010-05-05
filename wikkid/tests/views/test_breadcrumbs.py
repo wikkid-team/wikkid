@@ -36,7 +36,7 @@ class TestBreadcrumbs(FactoryTestCase):
 
     def assertBreadcrumbs(self, view, expected):
         """Make sure the breadcrumbs from view are the expected ones."""
-        crumbs = [(crumb.title, crumb.url) for crumb in view.breadcrumbs]
+        crumbs = [(crumb.title, crumb.path) for crumb in view.breadcrumbs]
         self.assertEqual(expected, crumbs)
 
     def test_home_missing(self):

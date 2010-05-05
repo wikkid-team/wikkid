@@ -237,11 +237,19 @@ class TestFactoryGetParentInfo(FactoryTestCase):
 
     def test_get_parent_info_page(self):
         # If a non default page in the root directory is asked for, the parent
-        # of that page is the default page.
+        # of that page is the default home page.
         factory = self.make_factory()
         info = factory.get_resource_at_path('/MissingPage')
         parent = factory.get_parent_info(info)
-        self.assertEqual('/', parent.path)
+        self.assertEqual('/Home', parent.path)
+
+    def test_get_parent_home_page(self):
+        # If a non default page in the root directory is asked for, the parent
+        # of that page is the default home page.
+        factory = self.make_factory()
+        info = factory.get_resource_at_path('/Home')
+        parent = factory.get_parent_info(info)
+        self.assertIs(None, parent)
 
     def test_get_parent_subdir(self):
         factory = self.make_factory()
