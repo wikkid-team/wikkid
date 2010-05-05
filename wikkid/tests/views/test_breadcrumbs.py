@@ -34,6 +34,11 @@ class TestBreadcrumbs(FactoryTestCase):
         self.user = TestUser('test@example.com', 'Test User')
         self.request = TestRequest()
 
+    def assertBreadcrumbs(self, view, expected):
+        """Make sure the breadcrumbs from view are the expected ones."""
+        crumbs = [(crumb.title, crumb.url) for crumb in view.breadcrumbs]
+        self.assertEqual(expected, crumbs)
+
     def test_home_missing(self):
         # If the Home page is selected, but there is no content, the
         # breadcrumb is still Home.
