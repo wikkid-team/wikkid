@@ -19,7 +19,6 @@
 """The server class for the wiki."""
 
 import logging
-import re
 
 from bzrlib.urlutils import basename, dirname, joinpath
 
