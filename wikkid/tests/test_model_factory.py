@@ -18,10 +18,6 @@
 
 """Tests for the wikkid.model.factory module."""
 
-from testtools import TestCase
-
-from wikkid.model.factory import ResourceFactory
-from wikkid.filestore.volatile import FileStore
 from wikkid.interface.resource import (
     IBinaryFile,
     IDirectoryResource,
@@ -30,18 +26,10 @@ from wikkid.interface.resource import (
     ISourceTextFile,
     IWikiTextFile,
     )
-from wikkid.tests import ProvidesMixin
+from wikkid.tests.factory import FactoryTestCase
 
 # TODO: make a testing filestore that can produce either a volatile filestore
 # or a bzr filestore.
-
-class FactoryTestCase(TestCase, ProvidesMixin):
-
-    def make_factory(self, content=None):
-        """Make a factory with a volatile filestore."""
-        filestore = FileStore(content)
-        return ResourceFactory(filestore)
-
 
 class TestFactoryGetResourceAtPath(FactoryTestCase):
     """Test the get_resource_at_path method of the Factory class."""
