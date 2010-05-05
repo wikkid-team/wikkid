@@ -68,6 +68,10 @@ class BaseView(object):
     def breadcrumbs(self):
         return self._create_breadcrumbs()
 
+    @property
+    def title(self):
+        return title_for_filename(self.context.base_name)
+
     def before_render(self):
         """A hook to do things before rendering."""
 
