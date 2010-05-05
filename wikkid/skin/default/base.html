@@ -23,11 +23,13 @@
   </div>
   <div id="location">
     <div id="commands">{% block commands %}{% endblock %}</div>
-??
-{% for parent in view.parents %}
-<a href="{{ parent.path }}" class="crumb">{{ parent.title }}</a> &raquo;
+{% for crumb in view.breadcrumbs %}
+  {% if loop.last %}
+    <span class="crumb">{{ crumb.title }}</span>
+  {% else %}
+    <a href="{{ crumb.path }}" class="crumb">{{ crumb.title }}</a> &raquo;
+  {% endif %}
 {% endfor %}
-<span class="crumb">{{ context.title }}</span>
 
   </div>
   <div id="content">{% block content %}{% endblock %}</div>
