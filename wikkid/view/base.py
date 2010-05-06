@@ -37,9 +37,15 @@ class BaseViewMetaClass(type):
 class Breadcrumb(object):
     """Breadcrumbs exist to give the user quick links up the path chain."""
 
-    def __init__(self, context):
-        self.path = context.path
-        self.title = title_for_filename(context.base_name)
+    def __init__(self, context, suffix='', url=None, title=None):
+        if url is not None:
+            self.path = url
+        else:
+            self.path = context.path + suffix
+        if title is None:
+            self.title = title_for_filename(context.base_name)
+        else:
+            self.title = title
 
 
 class BaseView(object):

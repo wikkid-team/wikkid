@@ -20,6 +20,8 @@
 
 import bzrlib.urlutils as urlutils
 
+from wikkid.interface.resource import IRootResource
+
 
 class BaseResource(object):
     """Information about a resource."""
@@ -47,3 +49,10 @@ class BaseResource(object):
     @property
     def parent(self):
         return self.server.get_parent_info(self)
+
+    @property
+    def parent_dir(self):
+        """Return the directory containing this resource."""
+        if IRootResource.providedBy(self):
+            return None
+        return self.server.get_resource_at_path(self.base_name)

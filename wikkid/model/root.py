@@ -50,3 +50,7 @@ class RootResource(DirectoryResource):
 
     def __repr__(self):
         return "<RootResource '/'>"
+
+    @property
+    def default_resource(self):
+        return self.server.get_default_resource()

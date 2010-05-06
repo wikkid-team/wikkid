@@ -18,10 +18,8 @@
 
 """View classes to control the rendering of the content."""
 
-from operator import attrgetter
-
-from wikkid.interface.resource import IDirectoryResource
-from wikkid.view.base import BaseView
+from wikkid.interface.resource import IDirectoryResource, IRootResource
+from wikkid.view.base import BaseView, Breadcrumb
 
 
 class ListingItem(object):
@@ -46,6 +44,19 @@ class DirectoryListingPage(BaseView):
     name = 'listing'
     is_default = False
     template = 'view_directory'
+
+    def _create_breadcrumbs(self):
+        crumbs = []
+        current = self.context
+        while not IRootResource.providedBy(current):
+            crumbs.append(Breadcrumb(current, suffix='?view=listing'))
+            current = current.curr_dir
+        # Add in the root dir.
+        crumbs.append(Breadcrumb(
+                current, url='/?view=listing', title='wiki root'))
+        # And add in the default page.
+        crumbs.append(Breadcrumb(current.default_resource))
+        return reversed(crumbs)
 
     def before_render(self):
         """Ghet the listing and split it into directories and files."""
