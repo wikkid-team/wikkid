@@ -79,32 +79,37 @@ class OtherTextPage(BaseView):
 class EditWikiPage(BaseView):
     """The page shows the wiki content in a large edit field."""
 
-    # TODO: this is broken for missing files.
-
     for_interface = ITextFile
     name = 'edit'
     template = 'edit_page'
 
     @property
     def rev_id(self):
-        if self.context is None:
-            return None
-        else:
-            return self.context.last_modified_in_revision
+        return self.context.last_modified_in_revision
 
     @property
     def content(self):
-        if self.context is None:
-            return ''
-        else:
-            return self.context.get_bytes()
+        return self.context.get_bytes()
 
 
-class UpdateTextFile(BaseView):
+class NewWikiPage(BaseView):
+    """Show the edit page with no existing content."""
+
+    for_interface = IMissingResource
+    name = 'edit'
+    template = 'edit_page'
+
+    @property
+    def rev_id(self):
+        return None
+
+    @property
+    def content(self):
+        return ''
+
+
+class SaveNewTextContent(BaseView):
     """Update the text of a file."""
-
-    for_interface = ITextFile
-    name = 'save'
 
     def _render(self, skin):
         """Save the text file.
@@ -127,6 +132,18 @@ class UpdateTextFile(BaseView):
         except UpdateConflicts:
             # TODO: fix this
             assert False, "add conflict handling"
+
+
+class UpdateTextFile(SaveNewTextContent):
+
+    for_interface = ITextFile
+    name = 'save'
+
+
+class SaveNewTextFile(SaveNewTextContent):
+
+    for_interface = IMissingResource
+    name = 'save'
 
 
 class ConflictedEditWikiPage(BaseView):
