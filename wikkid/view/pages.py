@@ -59,6 +59,17 @@ class WikiPage(BaseView):
         formatter = RestructuredTextFormatter()
         return formatter.format(self.context.get_bytes())
 
+    def _render(self, skin):
+        """If the page is not being viewed with the preferred path, redirect.
+
+        For example, /FrontPage.txt will redirect to /FrontPage
+        """
+        preferred = self.context.preferred_path
+        if self.context.path != preferred:
+            return redirectTo(preferred, self.request)
+        else:
+            return super(WikiPage, self)._render(skin)
+
 
 class OtherTextPage(BaseView):
     """Any other non-binary file is considered other text.
