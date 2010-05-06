@@ -85,3 +85,16 @@ class TestBreadcrumbs(FactoryTestCase):
              ('wikkid', '/wikkid'),
              ('views', '/wikkid/views'),
              ('base.py', '/wikkid/views/base.py')])
+
+    def test_directory_breadcrumbs_root(self):
+        # Directory breadcrumbs start with Home, and then list the
+        # directories, where the urls for the directories are the listing
+        # urls.
+        factory = self.make_factory()
+        info = factory.get_resource_at_path('/')
+        view = get_view(info, 'listing', self.request, self.user)
+        self.assertBreadcrumbs(
+            view,
+            [('Home', '/Home'),
+             ('wiki root', '/?view=listing')])
+
