@@ -21,13 +21,13 @@
 from zope.interface import implements
 
 from wikkid.model.baseresource import BaseResource
-from wikkid.interface.resource import ITextFile
+from wikkid.interface.resource import IFileResource
 
 
 class FileResource(BaseResource):
     """Anything that relates to all files."""
 
-    implements(ITextFile)
+    implements(IFileResource)
 
     @property
     def mimetype(self):
