@@ -44,7 +44,7 @@ class DirectoryListingPage(BaseView):
 
     for_interface = IDirectoryResource
     name = 'listing'
-    is_default = True
+    is_default = False
     template = 'view_directory'
 
     def before_render(self):
