@@ -75,6 +75,10 @@ class ResourceFactory(object):
             return MissingResource(
                 self, path, file_path, None, None)
 
+    def get_default_resource(self):
+        """Return the Home resource."""
+        return self.get_resource_at_path('/' + self.DEFAULT_PATH)
+
     def get_resource_at_path(self, path):
         """Get the resource from the filestore for the specified path.
 

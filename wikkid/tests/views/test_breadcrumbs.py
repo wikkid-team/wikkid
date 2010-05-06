@@ -85,3 +85,29 @@ class TestBreadcrumbs(FactoryTestCase):
              ('wikkid', '/wikkid'),
              ('views', '/wikkid/views'),
              ('base.py', '/wikkid/views/base.py')])
+
+    def test_directory_breadcrumbs_root(self):
+        # Directory breadcrumbs start with Home, and then list the
+        # directories, where the urls for the directories are the listing
+        # urls.
+        factory = self.make_factory()
+        info = factory.get_resource_at_path('/')
+        view = get_view(info, 'listing', self.request, self.user)
+        self.assertBreadcrumbs(
+            view,
+            [('Home', '/Home'),
+             ('wiki root', '/?view=listing')])
+
+    def test_directory_breadcrumbs_nested(self):
+        # For each directory after the root, a listing crumb is added.
+        # Names are not wiki expanded.
+        factory = self.make_factory([
+                ('SomePage/SubPage/Nested.txt', 'some text')])
+        info = factory.get_resource_at_path('/SomePage/SubPage')
+        view = get_view(info, 'listing', self.request, self.user)
+        self.assertBreadcrumbs(
+            view,
+            [('Home', '/Home'),
+             ('wiki root', '/?view=listing'),
+             ('SomePage', '/SomePage?view=listing'),
+             ('SubPage', '/SomePage/SubPage?view=listing')])

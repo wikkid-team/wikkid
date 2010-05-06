@@ -3,6 +3,7 @@
 {% block content %}{{ view.content }}{% endblock %}
 {% block commands %}
 {% if view.user %}
-<a href="{{view.request_path}}?view=edit">Edit</a>
+<a class="command" href="{{view.request_path}}?view=edit">Edit</a>
+<a class="command" href="{{context.dir_name}}?view=listing">Browse</a>
 {% endif %}
 {% endblock %}

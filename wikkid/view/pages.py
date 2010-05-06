@@ -24,6 +24,7 @@ from wikkid.errors import UpdateConflicts
 from wikkid.formatter.rest import RestructuredTextFormatter
 from wikkid.interface.resource import (
     IMissingResource,
+    IRootResource,
     ISourceTextFile,
     ITextFile,
     IWikiTextFile,
@@ -42,6 +43,19 @@ class MissingPage(BaseView):
     @property
     def content(self):
         '%s Not found' % self.path
+
+
+class RootPage(BaseView):
+    """The default view for the root page redirects to the home page."""
+
+    for_interface = IRootResource
+    name = 'view'
+    is_default = True
+
+    def _render(self, skin):
+        """Redirect to Home (or the default page)."""
+        preferred = self.context.preferred_path
+        return redirectTo(preferred, self.request)
 
 
 class WikiPage(BaseView):
