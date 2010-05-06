@@ -49,8 +49,9 @@ class DirectoryListingPage(BaseView):
         crumbs = []
         current = self.context
         while not IRootResource.providedBy(current):
-            crumbs.append(Breadcrumb(current, suffix='?view=listing'))
-            current = current.curr_dir
+            crumbs.append(Breadcrumb(
+                    current, suffix='?view=listing', title=current.base_name))
+            current = current.parent_dir
         # Add in the root dir.
         crumbs.append(Breadcrumb(
                 current, url='/?view=listing', title='wiki root'))

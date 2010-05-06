@@ -55,4 +55,4 @@ class BaseResource(object):
         """Return the directory containing this resource."""
         if IRootResource.providedBy(self):
             return None
-        return self.server.get_resource_at_path(self.base_name)
+        return self.server.get_resource_at_path(self.dir_name)
