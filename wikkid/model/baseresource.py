@@ -24,11 +24,10 @@ import bzrlib.urlutils as urlutils
 class BaseResource(object):
     """Information about a resource."""
 
-    def __init__(self, server, path, title, write_filename,
+    def __init__(self, server, path, write_filename,
                  file_resource, dir_resource):
         self.server = server
         self.path = path
-        self.title = title
         self.write_filename = write_filename
         self.file_resource = file_resource
         self.dir_resource = dir_resource
@@ -40,6 +39,10 @@ class BaseResource(object):
     @property
     def base_name(self):
         return urlutils.basename(self.path)
+
+    @property
+    def dir_name(self):
+        return urlutils.dirname(self.path)
 
     @property
     def parent(self):

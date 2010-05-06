@@ -24,15 +24,17 @@ filestore.
 
 from zope.interface import implements
 
-from wikkid.model.baseresource import BaseResource
+from wikkid.model.missing import MissingResource
 from wikkid.interface.filestore import FileType
 from wikkid.interface.resource import IDirectoryResource
 
 
-class DirectoryResource(BaseResource):
-    """A directory in the filestore."""
+class DirectoryMethods(object):
+    """Directory methods are used by DirectoryResource and WikiTextFile.
 
-    implements(IDirectoryResource)
+    The methods are only valid on WikiTextFile objects when there is a
+    directory with the same name as the wiki file without the '.txt'
+    """
 
     def get_dir_name(self):
         return self.dir_resource.path
@@ -55,6 +57,15 @@ class DirectoryResource(BaseResource):
                     '/' + file_path, file_path, file_resource, dir_resource))
 
         return listing
+
+
+class DirectoryResource(MissingResource, DirectoryMethods):
+    """A directory in the filestore.
+
+    By definition, a directory is also a missing wiki page.
+    """
+
+    implements(IDirectoryResource)
 
     def __repr__(self):
         return "<DirectoryResource '%s'>" % self.path

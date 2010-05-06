@@ -42,6 +42,9 @@ class TestCase(testtools.TestCase, ProvidesMixin):
 
 
 def test_suite():
+    packages = [
+        'views',
+        ]
     names = [
         'model_factory',
         'volatile_filestore',
@@ -53,4 +56,9 @@ def test_suite():
         ]
     module_names = ['wikkid.tests.test_' + name for name in names]
     loader = unittest.TestLoader()
-    return loader.loadTestsFromNames(module_names)
+    suite = loader.loadTestsFromNames(module_names)
+    for pkgname in packages:
+        pkg = __import__(
+            'wikkid.tests.' + pkgname, globals(), locals(), ['test_suite'])
+        suite.addTests(pkg.test_suite())
+    return suite

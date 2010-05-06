@@ -18,7 +18,8 @@
 
 """View classes to control the rendering of the content."""
 
-from wikkid.dispatcher import get_view
+from twisted.web.util import redirectTo
+
 from wikkid.errors import UpdateConflicts
 from wikkid.formatter.rest import RestructuredTextFormatter
 from wikkid.interface.resource import (
@@ -58,6 +59,17 @@ class WikiPage(BaseView):
         formatter = RestructuredTextFormatter()
         return formatter.format(self.context.get_bytes())
 
+    def _render(self, skin):
+        """If the page is not being viewed with the preferred path, redirect.
+
+        For example, /FrontPage.txt will redirect to /FrontPage
+        """
+        preferred = self.context.preferred_path
+        if self.context.path != preferred:
+            return redirectTo(preferred, self.request)
+        else:
+            return super(WikiPage, self)._render(skin)
+
 
 class OtherTextPage(BaseView):
     """Any other non-binary file is considered other text.
@@ -78,34 +90,39 @@ class OtherTextPage(BaseView):
 class EditWikiPage(BaseView):
     """The page shows the wiki content in a large edit field."""
 
-    # TODO: this is broken for missing files.
-
     for_interface = ITextFile
     name = 'edit'
     template = 'edit_page'
 
     @property
     def rev_id(self):
-        if self.context is None:
-            return None
-        else:
-            return self.context.last_modified_in_revision
+        return self.context.last_modified_in_revision
 
     @property
     def content(self):
-        if self.context is None:
-            return ''
-        else:
-            return self.context.get_bytes()
+        return self.context.get_bytes()
 
 
-class UpdateTextFile(BaseView):
+class NewWikiPage(BaseView):
+    """Show the edit page with no existing content."""
+
+    for_interface = IMissingResource
+    name = 'edit'
+    template = 'edit_page'
+
+    @property
+    def rev_id(self):
+        return None
+
+    @property
+    def content(self):
+        return ''
+
+
+class SaveNewTextContent(BaseView):
     """Update the text of a file."""
 
-    for_interface = ITextFile
-    name = 'save'
-
-    def render(self, skin):
+    def _render(self, skin):
         """Save the text file.
 
         If it conflicts, render the edit, otherwise render the page (ideally
@@ -121,12 +138,23 @@ class UpdateTextFile(BaseView):
         try:
             self.context.put_bytes(
                 content, self.user.committer_id, rev_id, message)
-            # TODO: redirect
-            view = get_view(self.context, None, self.request, self.user)
-            return view.render(skin)
+
+            return redirectTo(self.context.path, self.request)
         except UpdateConflicts:
             # TODO: fix this
             assert False, "add conflict handling"
+
+
+class UpdateTextFile(SaveNewTextContent):
+
+    for_interface = ITextFile
+    name = 'save'
+
+
+class SaveNewTextFile(SaveNewTextContent):
+
+    for_interface = IMissingResource
+    name = 'save'
 
 
 class ConflictedEditWikiPage(BaseView):

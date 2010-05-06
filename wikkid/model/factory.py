@@ -19,7 +19,6 @@
 """The server class for the wiki."""
 
 import logging
-import re
 
 from bzrlib.urlutils import basename, dirname, joinpath
 
@@ -30,23 +29,6 @@ from wikkid.model.missing import MissingResource
 from wikkid.model.root import RootResource
 from wikkid.model.sourcetext import SourceTextFile
 from wikkid.model.wikitext import WikiTextFile
-
-
-WIKI_PAGE = re.compile('^([A-Z]+[a-z]*)+$')
-WIKI_PAGE_ELEMENTS = re.compile('([A-Z][a-z]+)')
-
-
-def expand_wiki_name(name):
-    """A wiki name like 'FrontPage' is expanded to 'Front Page'.
-
-    Names that don't match wiki names are unaltered.
-    """
-    if WIKI_PAGE.match(name):
-        name_parts = [
-            part for part in WIKI_PAGE_ELEMENTS.split(name) if part]
-        return ' '.join(name_parts)
-    else:
-        return name
 
 
 class ResourceFactory(object):
@@ -67,35 +49,31 @@ class ResourceFactory(object):
     def get_resource(self, path, file_path, file_resource, dir_resource):
         """Return the correct type of resource based on the params."""
         filename = basename(file_path)
-        if filename.endswith('.txt'):
-            title = expand_wiki_name(filename[:-4])
-        else:
-            title = expand_wiki_name(filename)
         if path == '/':
             return RootResource(
-                self, path, title, file_path, file_resource, None)
+                self, path, file_path, file_resource, None)
         elif file_resource is not None:
             # We are pointing at a file.
             file_type = file_resource.file_type
             if file_type == FileType.BINARY_FILE:
                 # Binary resources have no associated directory.
                 return BinaryResource(
-                    self, path, title, file_path, file_resource, None)
+                    self, path, file_path, file_resource, None)
             # This is known to be not entirely right.
             if (filename.endswith('.txt') or
                 '.' not in file_resource.base_name):
                 return WikiTextFile(
-                    self, path, title, file_path, file_resource,
+                    self, path, file_path, file_resource,
                     dir_resource)
             else:
                 return SourceTextFile(
-                    self, path, title, file_path, file_resource, None)
+                    self, path, file_path, file_resource, None)
         elif dir_resource is not None:
             return DirectoryResource(
-                self, path, title, file_path, None, dir_resource)
+                self, path, file_path, None, dir_resource)
         else:
             return MissingResource(
-                self, path, title, file_path, None, None)
+                self, path, file_path, None, None)
 
     def get_resource_at_path(self, path):
         """Get the resource from the filestore for the specified path.
@@ -125,6 +103,9 @@ class ResourceFactory(object):
 
         return self.get_resource(path, file_path, file_resource, dir_resource)
 
+    def _is_default(self, dir_name, base_name):
+        return base_name == self.DEFAULT_PATH and dir_name == '/'
+
     def get_preferred_path(self, path):
         """Get the preferred path for the path passed in.
 
@@ -132,22 +113,28 @@ class ResourceFactory(object):
         basename, then we prefer to access that file without the '.txt'.
 
         If the resulting path is the default path, then the preferred path
-        should be '/'.
+        should be '/Home' providing Home is the default path..
         """
         filename = basename(path)
         if filename.endswith('.txt'):
             filename = filename[:-4]
 
-        if filename == self.DEFAULT_PATH and dirname(path) == '/':
-            return '/'
+        if path == '/':
+            return '/' + self.DEFAULT_PATH
         elif '.' in filename:
             return path
         else:
             return joinpath(dirname(path), filename)
 
-    def get_parent_info(self, resource_info):
+    def get_parent_info(self, resource):
         """Get the resource info for the parent of path."""
 
-        if resource_info.path == '/':
+        if resource.path == '/':
             return None
-        return self.get_resource_at_path(dirname(resource_info.path))
+        base_name = resource.base_name
+        dir_name = resource.dir_name
+        if self._is_default(dir_name, base_name):
+            return None
+        if dir_name == '/':
+            dir_name += self.DEFAULT_PATH
+        return self.get_resource_at_path(dir_name)

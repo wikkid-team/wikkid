@@ -36,3 +36,7 @@ class TestUser(object):
         self.email = email
         self.display_name = display_name
         self.committer_id = "{0} <{1}>".format(email, display_name)
+
+
+class TestRequest(object):
+    """A fake request object."""

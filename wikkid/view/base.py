@@ -21,6 +21,7 @@
 import logging
 
 from wikkid.dispatcher import register_view
+from wikkid.view.utils import title_for_filename
 
 
 class BaseViewMetaClass(type):
@@ -31,6 +32,14 @@ class BaseViewMetaClass(type):
         instance = type.__new__(cls, classname, bases, classdict)
         register_view(instance)
         return instance
+
+
+class Breadcrumb(object):
+    """Breadcrumbs exist to give the user quick links up the path chain."""
+
+    def __init__(self, context):
+        self.path = context.path
+        self.title = title_for_filename(context.base_name)
 
 
 class BaseView(object):
@@ -46,12 +55,22 @@ class BaseView(object):
         self.request = request
         self.user = user
         self.logger = logging.getLogger('wikkid')
-        parents = []
-        parent = getattr(context, 'parent', None)
+
+    def _create_breadcrumbs(self):
+        crumbs = [Breadcrumb(self.context)]
+        parent = getattr(self.context, 'parent', None)
         while parent is not None:
-            parents.append(parent)
+            crumbs.append(Breadcrumb(parent))
             parent = parent.parent
-        self.parents = reversed(parents)
+        return reversed(crumbs)
+
+    @property
+    def breadcrumbs(self):
+        return self._create_breadcrumbs()
+
+    @property
+    def title(self):
+        return title_for_filename(self.context.base_name)
 
     def before_render(self):
         """A hook to do things before rendering."""
@@ -68,16 +87,23 @@ class BaseView(object):
             'request': self.request,
             }
 
+    def _render(self, skin):
+        """Get the template and render with the args.
+
+        If a template isn't going to be used or provide the conent,
+        this is the method to override.
+        """
+        template = skin.get_template(self.template)
+        content = template.render(**self.template_args())
+        self.request.setHeader(
+            'Content-Type', "text/html; charset=utf-8")
+        # Return the encoded content.
+        return content.encode('utf-8')
+
     def render(self, skin):
         """Render the page.
 
         Return a tuple of content type and content.
         """
         self.before_render()
-        template = skin.get_template(self.template)
-        rendered = template.render(**self.template_args())
-        return ('text/html', rendered)
-
-    @property
-    def title(self):
-        return self.context.title
+        return self._render(skin)

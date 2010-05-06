@@ -16,25 +16,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""The missing resource class.
+"""A base test case for factory tests."""
 
-A missing resource is a file that has been asked for that doesn't exist.
-
-A model object exists for a missing resource as in a wiki you can have views
-on things that aren't there, like a page asking if you want to make a wiki
-page there.
-"""
-
-from zope.interface import implements
-
-from wikkid.model.file import UpdatableResource
-from wikkid.interface.resource import IMissingResource
+from wikkid.model.factory import ResourceFactory
+from wikkid.filestore.volatile import FileStore
+from wikkid.tests import TestCase
 
 
-class MissingResource(UpdatableResource):
-    """Information about a resource."""
+class FactoryTestCase(TestCase):
 
-    implements(IMissingResource)
-
-    def __repr__(self):
-        return "<MissingResource '%s'>" % self.path
+    def make_factory(self, content=None):
+        """Make a factory with a volatile filestore."""
+        filestore = FileStore(content)
+        return ResourceFactory(filestore)

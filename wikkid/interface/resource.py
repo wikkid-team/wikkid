@@ -28,17 +28,27 @@ class IResource(Interface):
 
     preferred_path = Attribute('The preferred path for the resource.')
 
-    title = Attribute(
-        'The title of the resource. '
-        'The title is shown in the web title bar.')
-
     write_filename = Attribute(
         'The full path of the file to write to in the filestore. '
         'This is either the filename as it directly corresponds to the '
         'path, or a related wiki page location.')
 
 
-class IFileResource(IResource):
+class IUpdatableResource(IResource):
+    """Reflects either a file either missing or actual."""
+
+    def put_bytes(bytes, committer, rev_id, commit_msg):
+        """Update the content of the resource with the bytes specified.
+
+        :param bytes: A byte string reflecting the new file content.
+        :param committer: The committer string that will be used.
+        :param rev_id: The base revision id for the text being edited.
+            None when adding a new file.
+        :param commit_msg: The message to associate with this edit.
+        """
+
+
+class IFileResource(IUpdatableResource):
     """A resource that relates to a file in the filestore."""
 
     # TODO: think of a better variable name.
@@ -56,6 +66,12 @@ class IFileResource(IResource):
 
 class IDirectoryResource(IResource):
     """A resource that relates to a file in the filestore."""
+
+    def get_dir_name():
+        """Get the full directory name.
+
+        This is the full path for the directory from the root.
+        """
 
     # TODO: think of a better variable name.
     dir_resource = Attribute(

@@ -16,25 +16,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikkid.  If not, see <http://www.gnu.org/licenses/>
 
-"""The missing resource class.
+"""The wikkid tests for the wikkid.view package."""
 
-A missing resource is a file that has been asked for that doesn't exist.
-
-A model object exists for a missing resource as in a wiki you can have views
-on things that aren't there, like a page asking if you want to make a wiki
-page there.
-"""
-
-from zope.interface import implements
-
-from wikkid.model.file import UpdatableResource
-from wikkid.interface.resource import IMissingResource
+import unittest
 
 
-class MissingResource(UpdatableResource):
-    """Information about a resource."""
-
-    implements(IMissingResource)
-
-    def __repr__(self):
-        return "<MissingResource '%s'>" % self.path
+def test_suite():
+    names = [
+        'breadcrumbs',
+        'utils',
+        ]
+    module_names = ['wikkid.tests.views.test_' + name for name in names]
+    loader = unittest.TestLoader()
+    return loader.loadTestsFromNames(module_names)
