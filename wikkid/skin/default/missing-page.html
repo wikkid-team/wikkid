@@ -13,4 +13,7 @@ The page you are looking for isn't here.
 {% if view.user %}
 <a href="{{view.request_path}}?view=edit">Edit</a>
 {% endif %}
+{% if context.get_dir_name %}
+<a class="command" href="{{context.path}}?view=listing">Browse</a>
+{% endif %}
 {% endblock %}
