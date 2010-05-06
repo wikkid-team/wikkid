@@ -22,16 +22,24 @@ A text file that contains text that will be formatted into HTML using one of
 the formatters.
 """
 
-from zope.interface import implements
+from zope.interface import directlyProvides, implements
 
+from wikkid.model.directory import DirectoryMethods
 from wikkid.model.textfile import TextFile
-from wikkid.interface.resource import IWikiTextFile
+from wikkid.interface.resource import IDirectoryResource, IWikiTextFile
 
 
-class WikiTextFile(TextFile):
+class WikiTextFile(TextFile, DirectoryMethods):
     """A text file that represents a wiki page."""
 
     implements(IWikiTextFile)
+
+    def __init__(self, server, path, write_filename,
+                 file_resource, dir_resource):
+        super(WikiTextFile, self).__init__(
+            server, path, write_filename, file_resource, dir_resource)
+        if dir_resource is not None:
+            directlyProvides(self, IDirectoryResource)
 
     def __repr__(self):
         return "<WikiTextFile '%s'>" % self.path
