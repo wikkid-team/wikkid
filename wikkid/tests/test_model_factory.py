@@ -201,22 +201,24 @@ class TestFactoryGetPreferredPath(FactoryTestCase):
 
     def test_home_preferred(self):
         factory = self.make_factory()
-        self.assertEqual('/', factory.get_preferred_path('/'))
-        self.assertEqual('/', factory.get_preferred_path('/Home'))
-        self.assertEqual('/', factory.get_preferred_path('/Home.txt'))
+        self.assertEqual('/Home', factory.get_preferred_path('/'))
+        self.assertEqual('/Home', factory.get_preferred_path('/Home'))
+        self.assertEqual('/Home', factory.get_preferred_path('/Home.txt'))
 
     def test_default_preferred(self):
         factory = self.make_factory()
         factory.DEFAULT_PATH = 'FrontPage'
-        self.assertEqual('/', factory.get_preferred_path('/'))
-        self.assertEqual('/', factory.get_preferred_path('/FrontPage'))
-        self.assertEqual('/', factory.get_preferred_path('/FrontPage.txt'))
+        self.assertEqual(
+            '/FrontPage', factory.get_preferred_path('/'))
+        self.assertEqual(
+            '/FrontPage', factory.get_preferred_path('/FrontPage'))
+        self.assertEqual(
+            '/FrontPage', factory.get_preferred_path('/FrontPage.txt'))
 
     def test_image_preferred(self):
         factory = self.make_factory()
         self.assertEqual(
-            '/foo/bar.jpg',
-            factory.get_preferred_path('/foo/bar.jpg'))
+            '/foo/bar.jpg', factory.get_preferred_path('/foo/bar.jpg'))
 
     def test_text_preferred(self):
         factory = self.make_factory()

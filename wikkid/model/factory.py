@@ -113,14 +113,14 @@ class ResourceFactory(object):
         basename, then we prefer to access that file without the '.txt'.
 
         If the resulting path is the default path, then the preferred path
-        should be '/'.
+        should be '/Home' providing Home is the default path..
         """
         filename = basename(path)
         if filename.endswith('.txt'):
             filename = filename[:-4]
 
-        if filename == self.DEFAULT_PATH and dirname(path) == '/':
-            return '/'
+        if path == '/':
+            return '/' + self.DEFAULT_PATH
         elif '.' in filename:
             return path
         else:
