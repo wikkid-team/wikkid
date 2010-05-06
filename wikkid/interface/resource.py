@@ -34,7 +34,21 @@ class IResource(Interface):
         'path, or a related wiki page location.')
 
 
-class IFileResource(IResource):
+class IUpdatableResource(IResource):
+    """Reflects either a file either missing or actual."""
+
+    def put_bytes(bytes, committer, rev_id, commit_msg):
+        """Update the content of the resource with the bytes specified.
+
+        :param bytes: A byte string reflecting the new file content.
+        :param committer: The committer string that will be used.
+        :param rev_id: The base revision id for the text being edited.
+            None when adding a new file.
+        :param commit_msg: The message to associate with this edit.
+        """
+
+
+class IFileResource(IUpdatableResource):
     """A resource that relates to a file in the filestore."""
 
     # TODO: think of a better variable name.
