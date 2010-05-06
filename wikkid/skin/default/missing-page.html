@@ -1,11 +1,16 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html lang="en">
-<head>
-  <title>{{ title }}</title>
-</head>
-<body>
-  <div id="header">The page you are looking for isn't here.</div>
-  <div id="content">{{ content }}</div>
-  <div id="footer">Some footer</div>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}{{ view.title }}{% endblock %}
+{% block content %}
+
+The page you are looking for isn't here.
+
+<a href="{{ context.path }}?view=edit">
+  Click here to create a new page: {{ view.title }}
+</a>
+
+{% endblock %}
+{% block commands %}
+{% if view.user %}
+<a href="{{view.request_path}}?view=edit">Edit</a>
+{% endif %}
+{% endblock %}
