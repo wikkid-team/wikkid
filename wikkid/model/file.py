@@ -21,10 +21,21 @@
 from zope.interface import implements
 
 from wikkid.model.baseresource import BaseResource
-from wikkid.interface.resource import IFileResource
+from wikkid.interface.resource import IFileResource, IUpdatableResource
 
 
-class FileResource(BaseResource):
+class UpdatableResource(BaseResource):
+    """Reflects either a file either missing or actual."""
+
+    implements(IUpdatableResource)
+
+    def put_bytes(self, bytes, committer, rev_id, commit_msg):
+        """Update the file resource."""
+        self.server.filestore.update_file(
+            self.write_filename, bytes, committer, rev_id, commit_msg)
+
+
+class FileResource(UpdatableResource):
     """Anything that relates to all files."""
 
     implements(IFileResource)
@@ -39,8 +50,3 @@ class FileResource(BaseResource):
 
     def get_bytes(self):
         return self.file_resource.get_content()
-
-    def put_bytes(self, bytes, committer, rev_id, commit_msg):
-        """Update the file resource."""
-        self.file_resource.filestore.update_file(
-            self.write_filename, bytes, committer, rev_id, commit_msg)
