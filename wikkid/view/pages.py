@@ -21,6 +21,7 @@
 from twisted.web.util import redirectTo
 
 from wikkid.errors import UpdateConflicts
+from wikkid.formatter.pygment import PygmentsFormatter
 from wikkid.formatter.rest import RestructuredTextFormatter
 from wikkid.interface.resource import (
     IMissingResource,
@@ -99,7 +100,9 @@ class OtherTextPage(BaseView):
 
     @property
     def content(self):
-        return self.context.get_bytes()
+        formatter = PygmentsFormatter()
+        return formatter.format(
+            self.context.base_name, self.context.get_bytes())
 
 
 class EditWikiPage(BaseView):

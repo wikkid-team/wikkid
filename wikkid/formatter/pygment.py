@@ -18,9 +18,12 @@
 
 """A text to html formatter using pygments."""
 
+import cgi
+
 from pygments import highlight
-from pygments.lexers import PythonLexer
+from pygments.lexers import guess_lexer_for_filename
 from pygments.formatters import HtmlFormatter
+from pygments.util import ClassNotFound
 from zope.interface import implements
 
 from wikkid.interface.formatter import ITextFormatter
@@ -34,7 +37,11 @@ class PygmentsFormatter(object):
     def format(self, filename, text):
         """Format the text.
 
-        I'm almost 100% positive that this method needs more args.
+        We can at a later time try to guess the lexer based on the file
+        content.
         """
-        parts = publish_parts(text, writer_name='html')
-        return parts['html_title'] + parts['body']
+        try:
+            lexer = guess_lexer_for_filename(filename, text)
+            return highlight(text, lexer, HtmlFormatter())
+        except ClassNotFound:
+            return "<pre>{0}</pre>".format(cgi.escape(text))
