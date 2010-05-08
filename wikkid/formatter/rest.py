@@ -29,7 +29,7 @@ class RestructuredTextFormatter(object):
 
     implements(ITextFormatter)
 
-    def format(self, text):
+    def format(self, filename, text):
         """Format the text.
 
         I'm almost 100% positive that this method needs more args.
