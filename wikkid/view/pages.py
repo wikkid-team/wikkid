@@ -71,7 +71,8 @@ class WikiPage(BaseView):
         # Format the content.  Right not this is hard coded to ReST, although
         # I want to offer multiple ways to do this.
         formatter = RestructuredTextFormatter()
-        return formatter.format(self.context.get_bytes())
+        return formatter.format(
+            self.context.base_name, self.context.get_bytes())
 
     def _render(self, skin):
         """If the page is not being viewed with the preferred path, redirect.
