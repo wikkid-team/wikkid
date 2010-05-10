@@ -23,6 +23,8 @@ A location for general notes
 
 * AJAX editing of source files (avoid page refreshes)
 
+* Add a better page for attempting to list a missing directory
+
 
 
 Standalone requirements

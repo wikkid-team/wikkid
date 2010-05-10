@@ -82,8 +82,9 @@ class TestBreadcrumbs(FactoryTestCase):
         self.assertBreadcrumbs(
             view,
             [('Home', '/Home'),
-             ('wikkid', '/wikkid'),
-             ('views', '/wikkid/views'),
+             ('wiki root', '/?view=listing'),
+             ('wikkid', '/wikkid?view=listing'),
+             ('views', '/wikkid/views?view=listing'),
              ('base.py', '/wikkid/views/base.py')])
 
     def test_directory_breadcrumbs_root(self):
