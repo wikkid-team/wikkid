@@ -2,11 +2,15 @@
 {% block title %}{{ view.title }}{% endblock %}
 {% block content %}
 
-The page you are looking for isn't here.
+<p>The page you are looking for isn't here.<p>
 
-<a href="{{ context.path }}?view=edit">
-  Click here to create a new page: {{ view.title }}
-</a>
+<p><a href="{{ context.path }}?view=edit">
+  Create a new page: {{ view.title }}
+</a></p>
+
+<p><a href="/?view=listing">
+  Browse the wiki content
+</a></p>
 
 {% endblock %}
 {% block commands %}
