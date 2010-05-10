@@ -5,7 +5,24 @@ A location for general notes
   Server class and the views themselves.  Probably want something like
   a method that takes a model object, and view class and generates an URL.
 
-* General URL traversal:
-  * /path/to/file always represents a server resource, missing or otherwise
-  * ?view=XXX gets the defined view for the object, like view, edit, raw, diff
-  * ?action=XXX causes something to happen to the resource, like save, move
+* Add a nice error page instead of the twisted.web error page.
+
+* Add in a file id for text editing so we can track edits during page moves
+
+* Add in the ability to move pages
+
+* Add markdown and textile formatters
+
+
+Ideas not yet fully formed
+--------------------------
+
+* Lazy loading of formatters (to reduce install dependancies)
+
+* Customize default rendering engine
+
+* Extend creole to allow specifying format of embedded code
+
+* Look for a wiki-media python library for formatting wiki-media text
+  Or write one.
+
