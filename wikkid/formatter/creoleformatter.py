@@ -23,6 +23,12 @@ from zope.interface import implements
 from wikkid.interface.formatter import ITextFormatter
 
 
+# TODO: automatic registration of formatters with the soon to exist
+# FormatFactory (like the ways views are).  Although we may want to auto
+# register a lazy loaded formatter.  That way we can have a fall back that
+# lets the user (wiki owner) know that there are possible missing
+# dependancies.
+
 class CreoleFormatter(object):
     """Format text as HTML using creole wiki format."""
 
