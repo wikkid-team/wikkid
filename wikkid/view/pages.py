@@ -30,7 +30,7 @@ from wikkid.interface.resource import (
     ITextFile,
     IWikiTextFile,
     )
-from wikkid.view.base import BaseView
+from wikkid.view.base import BaseView, DirectoryBreadcrumbView
 
 
 class MissingPage(BaseView):
@@ -87,7 +87,7 @@ class WikiPage(BaseView):
             return super(WikiPage, self)._render(skin)
 
 
-class OtherTextPage(BaseView):
+class OtherTextPage(DirectoryBreadcrumbView):
     """Any other non-binary file is considered other text.
 
     Will be rendered using pygments.

@@ -74,9 +74,24 @@ class TestBreadcrumbs(FactoryTestCase):
              ('Next', '/SamplePage/SubPage/Next')])
 
     def test_source_file_missing(self):
+        # If a non-wiki style name is selected, the breadcrumbs are as a wiki
+        # page.
+        factory = self.make_factory()
+        info = factory.get_resource_at_path('/wikkid/views/base.py')
+        view = get_view(info, None, self.request, self.user)
+        self.assertBreadcrumbs(
+            view,
+            [('Home', '/Home'),
+             ('wikkid', '/wikkid'),
+             ('views', '/wikkid/views'),
+             ('base.py', '/wikkid/views/base.py')])
+
+    def test_source_file_existing(self):
         # If the Home page is selected, but there is no content, the
         # breadcrumb is still Home.
-        factory = self.make_factory()
+        factory = self.make_factory([
+                ('wikkid/views/base.py', 'A python file'),
+                ])
         info = factory.get_resource_at_path('/wikkid/views/base.py')
         view = get_view(info, None, self.request, self.user)
         self.assertBreadcrumbs(
@@ -111,4 +126,4 @@ class TestBreadcrumbs(FactoryTestCase):
             [('Home', '/Home'),
              ('wiki root', '/?view=listing'),
              ('SomePage', '/SomePage?view=listing'),
-             ('SubPage', '/SomePage/SubPage?view=listing')])
+             ('SubPage', '/SomePage/SubPage')])
