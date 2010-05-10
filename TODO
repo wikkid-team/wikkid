@@ -25,6 +25,11 @@ A location for general notes
 
 * Add a better page for attempting to list a missing directory
 
+* Extend the identification of files without extensions to try a pygments
+  lexer.  If one isn't found, or if we find ReST, use the rest formatter, if
+  it finds other wiki formats we know about, use those, otherwise format using
+  the lexer it finds, and if none found, then plain <pre> (or treat as wiki
+  page, yet to decide).
 
 
 Standalone requirements
