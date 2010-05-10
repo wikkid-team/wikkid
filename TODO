@@ -13,6 +13,43 @@ A location for general notes
 
 * Add markdown and textile formatters
 
+* Lock pages as read-only (see also merging)
+  Is this really locked, or is it a restricted ACL?
+
+* ACLs for editing (see also merging)
+
+* Define formatter in the first line of wiki text
+  # <format> <reserved for later use - like acls or locking>
+
+* AJAX editing of source files (avoid page refreshes)
+
+
+
+Standalone requirements
+-----------------------
+
+* Sessions
+
+* Login and logout
+
+* SQLite storage engine for usernames and passwords?
+
+* Subscriptions?
+
+* Generate a nonce for new users, and validate email addresses
+  (hmm... requires incoming email processing, not that easy for standalone
+  deployments, and not needed for launchpad integration)
+
+
+Launchpad integration
+---------------------
+
+* A plan for spam!  Really needed as we have spammers
+
+* How to handle merges
+  Page merge hooks?
+
+
 
 Ideas not yet fully formed
 --------------------------
@@ -26,3 +63,5 @@ Ideas not yet fully formed
 * Look for a wiki-media python library for formatting wiki-media text
   Or write one.
 
+* Soundex filename search based on base_name of the files, used when
+  hitting a missing file to offer suggestions.
