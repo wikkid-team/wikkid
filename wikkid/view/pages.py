@@ -21,6 +21,7 @@
 from twisted.web.util import redirectTo
 
 from wikkid.errors import UpdateConflicts
+from wikkid.formatter.pygment import PygmentsFormatter
 from wikkid.formatter.rest import RestructuredTextFormatter
 from wikkid.interface.resource import (
     IMissingResource,
@@ -29,7 +30,7 @@ from wikkid.interface.resource import (
     ITextFile,
     IWikiTextFile,
     )
-from wikkid.view.base import BaseView
+from wikkid.view.base import BaseView, DirectoryBreadcrumbView
 
 
 class MissingPage(BaseView):
@@ -71,7 +72,8 @@ class WikiPage(BaseView):
         # Format the content.  Right not this is hard coded to ReST, although
         # I want to offer multiple ways to do this.
         formatter = RestructuredTextFormatter()
-        return formatter.format(self.context.get_bytes())
+        return formatter.format(
+            self.context.base_name, self.context.get_bytes())
 
     def _render(self, skin):
         """If the page is not being viewed with the preferred path, redirect.
@@ -85,7 +87,7 @@ class WikiPage(BaseView):
             return super(WikiPage, self)._render(skin)
 
 
-class OtherTextPage(BaseView):
+class OtherTextPage(DirectoryBreadcrumbView):
     """Any other non-binary file is considered other text.
 
     Will be rendered using pygments.
@@ -98,7 +100,9 @@ class OtherTextPage(BaseView):
 
     @property
     def content(self):
-        return self.context.get_bytes()
+        formatter = PygmentsFormatter()
+        return formatter.format(
+            self.context.base_name, self.context.get_bytes())
 
 
 class EditWikiPage(BaseView):

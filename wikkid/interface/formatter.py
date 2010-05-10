@@ -25,5 +25,5 @@ from zope.interface import Interface
 class ITextFormatter(Interface):
     """A text formatter takes plain text and makes HTML of some form."""
 
-    def format(text):
+    def format(filename, text):
         """Takes text, and returns HTML."""

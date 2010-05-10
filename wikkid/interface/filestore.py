@@ -19,7 +19,6 @@
 """Interfaces relating to filestores."""
 
 from zope.interface import Attribute, Interface
-from zope.schema import TextLine
 
 
 class IFileStore(Interface):
@@ -77,33 +76,26 @@ class FileType(object):
 class IFile(Interface):
     """A file from the file store."""
 
-    path = TextLine(
-        description=(
-            u"The full path of the page with respect to the root of the "
-            "file store."))
+    path = Attribute(
+        "The full path of the page with respect to the root of the "
+        "file store.")
 
-    base_name = TextLine(
-        description=(u"The last part of the path."))
+    base_name = Attribute("The last part of the path.")
 
-    file_id = TextLine(
-        description=(
-            u"The unique identifier for the file in the filestore."))
+    file_id = Attribute(
+        "The unique identifier for the file in the filestore.")
 
     file_type = Attribute("Soon to be a Choice with a lazr.enum.")
 
-    mimetype = TextLine(
-        description=(
-            u"The guessed mimetype for the file. Directories don't have a "
-            "mimetype."))
+    mimetype = Attribute(
+        "The guessed mimetype for the file. Directories don't have a "
+        "mimetype.")
 
-    last_modified_in_revision = TextLine(
-        description=(
-            u"The revision id of the last revision that this file was "
-            "modified in."))
+    last_modified_in_revision = Attribute(
+        "The revision id of the last revision that this file was "
+        "modified in.")
 
-    last_modified_by = TextLine(
-        description=(
-            u"The person who last modified the file."))
+    last_modified_by = Attribute("The person who last modified the file.")
 
     def get_content():
         """Get the contents of the file.

@@ -22,7 +22,7 @@ import logging
 
 from wikkid.dispatcher import register_view
 from wikkid.view.utils import title_for_filename
-
+from wikkid.interface.resource import IRootResource
 
 class BaseViewMetaClass(type):
     """This metaclass registers the view with the view registry."""
@@ -113,3 +113,25 @@ class BaseView(object):
         """
         self.before_render()
         return self._render(skin)
+
+
+class DirectoryBreadcrumbView(BaseView):
+    """A view that uses the directories as breadcrumbs."""
+
+    def _create_breadcrumbs(self):
+        crumbs = []
+        current = self.context
+        suffix = ''
+        while not IRootResource.providedBy(current):
+            crumbs.append(Breadcrumb(
+                    current, suffix, title=current.base_name))
+            current = current.parent_dir
+            # Add listings to subsequent urls.
+            suffix='?view=listing'
+        # Add in the root dir.
+        crumbs.append(Breadcrumb(
+                current, url='/?view=listing', title='wiki root'))
+        # And add in the default page.
+        crumbs.append(Breadcrumb(current.default_resource))
+        return reversed(crumbs)
+
