@@ -4,4 +4,4 @@
 # This software is licensed under the GNU Affero General Public License
 # version 3 (see the file LICENSE).
 
-"""A Distributed Wiki."""
+"""For packages that are not adequately packaged."""
