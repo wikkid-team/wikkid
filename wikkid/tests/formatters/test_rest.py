@@ -9,7 +9,7 @@
 from textwrap import dedent
 from BeautifulSoup import BeautifulSoup
 
-from wikkid.formatter.rest import RestructuredTextFormatter
+from wikkid.formatter.restformatter import RestructuredTextFormatter
 from wikkid.tests import TestCase
 
 

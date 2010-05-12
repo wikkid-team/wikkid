@@ -9,8 +9,8 @@
 from twisted.web.util import redirectTo
 
 from wikkid.errors import UpdateConflicts
-from wikkid.formatter.pygment import PygmentsFormatter
-from wikkid.formatter.rest import RestructuredTextFormatter
+from wikkid.formatter.pygmentsformatter import PygmentsFormatter
+from wikkid.formatter.restformatter import RestructuredTextFormatter
 from wikkid.interface.resource import (
     IMissingResource,
     IRootResource,
