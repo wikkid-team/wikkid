@@ -25,8 +25,8 @@ from wikkid.formatter.creoleformatter import CreoleFormatter
 from wikkid.tests import TestCase
 
 
-class TestRestructuredTextFormatter(TestCase):
-    """Tests for the ReST formatter."""
+class TestCreoleFormatter(TestCase):
+    """Tests for the creole formatter."""
 
     def setUp(self):
         TestCase.setUp(self)
@@ -43,3 +43,10 @@ class TestRestructuredTextFormatter(TestCase):
         soup = BeautifulSoup(result)
         self.assertEqual('Nice Heading', soup.h2.string)
         self.assertEqual('Simple sentence.', soup.p.string)
+
+    def test_wiki_links(self):
+        # A paragraph containing a wiki word.
+        text = "A link to the FrontPage helps."
+        result = self.formatter.format('filename', text)
+        soup = BeautifulSoup(result)
+        self.assertEqual('FrontPage', soup.a['href'])
