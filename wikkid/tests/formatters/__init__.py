@@ -24,7 +24,7 @@ import unittest
 def test_suite():
     names = [
         'rest',
-#        'creole',
+        'creole',
         ]
     module_names = ['wikkid.tests.formatters.test_' + name for name in names]
     loader = unittest.TestLoader()
