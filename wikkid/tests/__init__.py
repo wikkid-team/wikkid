@@ -43,6 +43,7 @@ class TestCase(testtools.TestCase, ProvidesMixin):
 
 def test_suite():
     packages = [
+        'formatters',
         'views',
         ]
     names = [
@@ -50,7 +51,6 @@ def test_suite():
         'volatile_filestore',
         'bzr_filestore',
         'bzr_user',
-        'rest_formatter',
         'view_dispatcher',
         'model',
         ]
