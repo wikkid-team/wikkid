@@ -20,6 +20,9 @@
 
 from zope.interface import implements
 
+from wikkid.contrib.creole_1_1.creole import Parser, Rules
+from wikkid.contrib.creole_1_1.creole2html import HtmlEmitter
+
 from wikkid.interface.formatter import ITextFormatter
 
 
@@ -34,5 +37,9 @@ class CreoleFormatter(object):
 
     implements(ITextFormatter)
 
+    def __init__(self):
+        self.rules = Rules(wiki_words=True)
+
     def format(self, filename, text):
         """Format the text."""
+        return HtmlEmitter(Parser(text, self.rules).parse()).emit()
