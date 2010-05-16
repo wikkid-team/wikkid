@@ -35,7 +35,7 @@ def get_formatter(name):
     return formatter_registry[name]
 
 
-FORMAT_MATCHER = re.compile('^# (\w+).*$')
+FORMAT_MATCHER = re.compile('^#\W+(\w+).*$')
 
 
 def get_wiki_formatter(content, default_formatter):

@@ -47,3 +47,13 @@ class TestGetWikiFormtter(TestCase):
         self.assertEqual('# missing\nsome content\n', content)
         self.assertEqual(
             'RestructuredTextFormatter', formatter.__class__.__name__)
+
+    def test_specify_extra_whitespace(self):
+        content, formatter = get_wiki_formatter(
+            dedent("""\
+                #\t\tcreole
+                some content
+                """), 'rest')
+        self.assertEqual('some content\n', content)
+        self.assertEqual('CreoleFormatter', formatter.__class__.__name__)
+
