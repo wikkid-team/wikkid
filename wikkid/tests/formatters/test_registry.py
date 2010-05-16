@@ -37,3 +37,13 @@ class TestGetWikiFormtter(TestCase):
                 """), 'rest')
         self.assertEqual('some content\n', content)
         self.assertEqual('CreoleFormatter', formatter.__class__.__name__)
+
+    def test_specify_missing(self):
+        content, formatter = get_wiki_formatter(
+            dedent("""\
+                # missing
+                some content
+                """), 'rest')
+        self.assertEqual('# missing\nsome content\n', content)
+        self.assertEqual(
+            'RestructuredTextFormatter', formatter.__class__.__name__)
