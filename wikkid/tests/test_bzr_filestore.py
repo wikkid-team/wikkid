@@ -6,6 +6,8 @@
 
 """Tests for the wikkid.filestore.bzr.FileStore."""
 
+from textwrap import dedent
+
 from bzrlib.tests import TestCaseWithTransport
 
 from wikkid.errors import UpdateConflicts
@@ -44,4 +46,15 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin, TestFileStore):
             'also change the first line\n',
             'Test Author <test@example.com>',
             base_rev)
+        curr = filestore.get_file('test.txt')
+        self.assertEqual(
+            curr.last_modified_in_revision,
+            conflicts.basis_rev)
+        self.assertEqual(dedent("""\
+            <<<<<<<
+            also change the first line
+            =======
+            different line
+            >>>>>>>
+            """), conflicts.content)
 

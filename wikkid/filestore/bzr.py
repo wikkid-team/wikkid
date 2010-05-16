@@ -118,7 +118,7 @@ class FileStore(object):
         conflicted = '>>>>>>>\n' in result
         if conflicted:
             wt.unlock()
-            raise UpdateConflicts(result, current_rev)
+            raise UpdateConflicts(''.join(result), current_rev)
         else:
             wt.bzrdir.root_transport.put_bytes(path, ''.join(result))
             wt.commit(
