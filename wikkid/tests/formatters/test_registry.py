@@ -74,4 +74,3 @@ class TestGetWikiFormtter(TestCase):
                 """), 'rest')
         self.assertEqual('some content\n', content)
         self.assertEqual('CreoleFormatter', formatter.__class__.__name__)
-
