@@ -40,19 +40,3 @@ class WikiPage(BaseView):
             return redirectTo(preferred, self.request)
         else:
             return super(WikiPage, self)._render(skin)
-
-
-class ConflictedEditWikiPage(BaseView):
-    """The page shows the wiki content in a large edit field."""
-
-    for_interface = ITextFile
-    name = 'conflicted'
-    template = 'edit_page'
-
-    # TODO: fix this too...
-
-    def __init__(self, skin, resource, path, user, conflict_text,
-                 rev_id):
-        BaseView.__init__(self, skin, resource, path, user)
-        self.content = conflict_text
-        self.rev_id = rev_id
