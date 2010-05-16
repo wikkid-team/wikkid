@@ -50,9 +50,12 @@ class SaveNewTextContent(BaseView):
                 content, self.user.committer_id, rev_id, message)
 
             return redirectTo(self.context.path, self.request)
-        except UpdateConflicts:
-            # TODO: fix this
-            assert False, "add conflict handling"
+        except UpdateConflicts, e:
+            # Show the edit page again.
+            self.template = 'edit_page'
+            self.rev_id = e.basis_rev
+            self.content = e.content
+            return super(SaveNewTextContent, self)._render(skin)
 
 
 class UpdateTextFile(SaveNewTextContent):
