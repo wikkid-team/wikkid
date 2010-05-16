@@ -6,6 +6,7 @@
 
 """Tests for wikkid.formatter.registry."""
 
+from textwrap import dedent
 
 from wikkid.formatter.registry import get_wiki_formatter
 from wikkid.tests import TestCase
@@ -27,3 +28,12 @@ class TestGetWikiFormtter(TestCase):
         self.assertEqual('some content', content)
         self.assertEqual(
             'RestructuredTextFormatter', formatter.__class__.__name__)
+
+    def test_specify_creole(self):
+        content, formatter = get_wiki_formatter(
+            dedent("""\
+                # creole
+                some content
+                """), 'rest')
+        self.assertEqual('some content\n', content)
+        self.assertEqual('CreoleFormatter', formatter.__class__.__name__)

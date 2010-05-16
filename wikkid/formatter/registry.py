@@ -6,6 +6,8 @@
 
 """The formatter registry is able to return formatters by name."""
 
+import re
+
 from wikkid.formatter.creoleformatter import CreoleFormatter
 from wikkid.formatter.pygmentsformatter import PygmentsFormatter
 from wikkid.formatter.restformatter import RestructuredTextFormatter
@@ -33,6 +35,9 @@ def get_formatter(name):
     return formatter_registry[name]
 
 
+FORMAT_MATCHER = re.compile('^# (\w+).*$')
+
+
 def get_wiki_formatter(content, default_formatter):
     """Choose a wiki formatter based on the first line of content.
 
@@ -50,5 +55,13 @@ def get_wiki_formatter(content, default_formatter):
     is returned.  If the default_formatter doesn't exist, a key error
     is raised.
     """
-    
+    end_of_line = content.find('\n')
+    match = FORMAT_MATCHER.match(content[:end_of_line])
+    if match is not None:
+        try:
+            formatter = formatter_registry[match.group(1)]
+            return content[end_of_line + 1:], formatter
+        except KeyError:
+            # Fall through to returning the default.
+            pass
     return content, formatter_registry[default_formatter]
