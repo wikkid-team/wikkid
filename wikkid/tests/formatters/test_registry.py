@@ -65,3 +65,13 @@ class TestGetWikiFormtter(TestCase):
                 """), 'rest')
         self.assertEqual('some content\n', content)
         self.assertEqual('CreoleFormatter', formatter.__class__.__name__)
+
+    def test_specify_creole_case_insensitive(self):
+        content, formatter = get_wiki_formatter(
+            dedent("""\
+                # CREOLE
+                some content
+                """), 'rest')
+        self.assertEqual('some content\n', content)
+        self.assertEqual('CreoleFormatter', formatter.__class__.__name__)
+

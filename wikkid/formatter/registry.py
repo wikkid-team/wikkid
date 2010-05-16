@@ -59,7 +59,8 @@ def get_wiki_formatter(content, default_formatter):
     match = FORMAT_MATCHER.match(content[:end_of_line])
     if match is not None:
         try:
-            formatter = formatter_registry[match.group(1)]
+            name = match.group(1).lower()
+            formatter = formatter_registry[name]
             return content[end_of_line + 1:], formatter
         except KeyError:
             # Fall through to returning the default.
