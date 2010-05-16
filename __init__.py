@@ -6,6 +6,10 @@ from bzrlib.option import Option
 
 from bzrlib.workingtree import WorkingTree
 
+#We need this as wikkid isn't a plugin, initially (stolen from loggerhead)
+import os.path, sys
+sys.path.append(os.path.dirname(__file__))
+
 from wikkid.filestore.bzr import FileStore
 from wikkid.model.factory import ResourceFactory
 from wikkid.twistedserver import TwistedServer
