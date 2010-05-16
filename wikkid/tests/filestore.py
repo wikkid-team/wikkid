@@ -102,8 +102,8 @@ class TestFileStore:
             [('README', 'Content'),
              ])
         user = 'Eric the viking <eric@example.com>'
-        filestore.update_file('README', 'new content', user,
-                              None)
+        parent_rev = filestore.get_file('README').last_modified_in_revision
+        filestore.update_file('README', 'new content', user, parent_rev)
         readme = filestore.get_file('README')
         self.assertEqual('new content', readme.get_content())
 

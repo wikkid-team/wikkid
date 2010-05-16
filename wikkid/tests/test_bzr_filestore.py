@@ -57,4 +57,3 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin, TestFileStore):
             different line
             >>>>>>>
             """), conflicts.content)
-
