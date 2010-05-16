@@ -57,3 +57,11 @@ class TestGetWikiFormtter(TestCase):
         self.assertEqual('some content\n', content)
         self.assertEqual('CreoleFormatter', formatter.__class__.__name__)
 
+    def test_specify_extra_params(self):
+        content, formatter = get_wiki_formatter(
+            dedent("""\
+                # creole extra params
+                some content
+                """), 'rest')
+        self.assertEqual('some content\n', content)
+        self.assertEqual('CreoleFormatter', formatter.__class__.__name__)
