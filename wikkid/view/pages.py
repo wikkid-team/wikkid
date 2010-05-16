@@ -10,28 +10,12 @@ from twisted.web.util import redirectTo
 
 from wikkid.errors import UpdateConflicts
 from wikkid.formatter.pygmentsformatter import PygmentsFormatter
-from wikkid.formatter.registry import get_wiki_formatter
 from wikkid.interface.resource import (
-    IMissingResource,
     IRootResource,
     ISourceTextFile,
     ITextFile,
-    IWikiTextFile,
     )
 from wikkid.view.base import BaseView, DirectoryBreadcrumbView
-
-
-class MissingPage(BaseView):
-    """A wiki page that does not exist."""
-
-    for_interface = IMissingResource
-    name = 'view'
-    is_default = True
-    template = 'missing'
-
-    @property
-    def content(self):
-        '%s Not found' % self.path
 
 
 class RootPage(BaseView):
@@ -45,35 +29,6 @@ class RootPage(BaseView):
         """Redirect to Home (or the default page)."""
         preferred = self.context.preferred_path
         return redirectTo(preferred, self.request)
-
-
-class WikiPage(BaseView):
-    """A wiki page is a page that is going to be rendered for viewing."""
-
-    for_interface = IWikiTextFile
-    name = 'view'
-    is_default = True
-    template = 'view_page'
-
-    @property
-    def content(self):
-        bytes = self.context.get_bytes()
-        # Check the first line of the content to see if it specifies a
-        # formatter. The default is currently ReST, but we should have it
-        # configurable shortly.
-        content, formatter = get_wiki_formatter(bytes, 'rest')
-        return formatter.format(self.context.base_name, content)
-
-    def _render(self, skin):
-        """If the page is not being viewed with the preferred path, redirect.
-
-        For example, /FrontPage.txt will redirect to /FrontPage
-        """
-        preferred = self.context.preferred_path
-        if self.context.path != preferred:
-            return redirectTo(preferred, self.request)
-        else:
-            return super(WikiPage, self)._render(skin)
 
 
 class OtherTextPage(DirectoryBreadcrumbView):
@@ -110,22 +65,6 @@ class EditWikiPage(BaseView):
         return self.context.get_bytes()
 
 
-class NewWikiPage(BaseView):
-    """Show the edit page with no existing content."""
-
-    for_interface = IMissingResource
-    name = 'edit'
-    template = 'edit_page'
-
-    @property
-    def rev_id(self):
-        return None
-
-    @property
-    def content(self):
-        return ''
-
-
 class SaveNewTextContent(BaseView):
     """Update the text of a file."""
 
@@ -156,25 +95,3 @@ class UpdateTextFile(SaveNewTextContent):
 
     for_interface = ITextFile
     name = 'save'
-
-
-class SaveNewTextFile(SaveNewTextContent):
-
-    for_interface = IMissingResource
-    name = 'save'
-
-
-class ConflictedEditWikiPage(BaseView):
-    """The page shows the wiki content in a large edit field."""
-
-    for_interface = ITextFile
-    name = 'conflicted'
-    template = 'edit_page'
-
-    # TODO: fix this too...
-
-    def __init__(self, skin, resource, path, user, conflict_text,
-                 rev_id):
-        BaseView.__init__(self, skin, resource, path, user)
-        self.content = conflict_text
-        self.rev_id = rev_id
