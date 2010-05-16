@@ -51,4 +51,4 @@ def get_wiki_formatter(content, default_formatter):
     is raised.
     """
     
-    return formatter_registry[default_formatter]
+    return content, formatter_registry[default_formatter]

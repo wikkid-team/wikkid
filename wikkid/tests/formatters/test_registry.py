@@ -21,3 +21,9 @@ class TestGetWikiFormtter(TestCase):
             'some content',
             'missing')
 
+    def test_default_exists(self):
+        content, formatter = get_wiki_formatter(
+            'some content', 'rest')
+        self.assertEqual('some content', content)
+        self.assertEqual(
+            'RestructuredTextFormatter', formatter.__class__.__name__)
