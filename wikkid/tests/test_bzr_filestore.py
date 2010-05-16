@@ -8,6 +8,7 @@
 
 from bzrlib.tests import TestCaseWithTransport
 
+from wikkid.errors import UpdateConflicts
 from wikkid.filestore.bzr import FileStore
 from wikkid.tests import ProvidesMixin
 from wikkid.tests.filestore import TestFileStore
@@ -23,4 +24,24 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin, TestFileStore):
         tree.smart_add(['.'])
         tree.commit(message='Initial commit', authors=['test@example.com'])
         return FileStore(tree)
+
+    def test_conflicts(self):
+        filestore = self.make_filestore(
+            [('test.txt', 'one line of content\n')])
+        f = filestore.get_file('test.txt')
+        base_rev = f.last_modified_in_revision
+        # First update succeeds.
+        filestore.update_file(
+            'test.txt',
+            'different line\n',
+            'Test Author <test@example.com>',
+            base_rev)
+        # Second update with same base revision should raise an exception.
+        conflicts = self.assertRaises(
+            UpdateConflicts,
+            filestore.update_file,
+            'test.txt',
+            'also change the first line\n',
+            'Test Author <test@example.com>',
+            base_rev)
 

@@ -105,11 +105,11 @@ class FileStore(object):
         This method merges the changes in based on the parent revision.
         """
         f = File(self, path, file_id)
-        basis_rev = f.last_modified_in_revision
+        current_rev = f.last_modified_in_revision
         wt = self.working_tree
         wt.lock_write()
         current_lines = wt.get_file_lines(file_id)
-        basis = wt.branch.repository.revision_tree(basis_rev)
+        basis = wt.branch.repository.revision_tree(parent_revision)
         basis_lines = basis.get_file_lines(file_id)
         # need to break content into lines.
         new_lines = StringIO(content).readlines()
@@ -118,7 +118,7 @@ class FileStore(object):
         conflicted = '>>>>>>>\n' in result
         if conflicted:
             wt.unlock()
-            raise UpdateConflicts(result, basis_rev)
+            raise UpdateConflicts(result, current_rev)
         else:
             wt.bzrdir.root_transport.put_bytes(path, ''.join(result))
             wt.commit(
