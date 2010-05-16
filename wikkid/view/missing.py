@@ -8,7 +8,7 @@
 
 from wikkid.interface.resource import IMissingResource
 from wikkid.view.base import BaseView
-from wikkid.view.pages import SaveNewTextContent
+from wikkid.view.textfile import SaveNewTextContent
 
 
 class MissingPage(BaseView):
