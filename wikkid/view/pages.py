@@ -57,11 +57,15 @@ class WikiPage(BaseView):
 
     @property
     def content(self):
+        bytes = self.context.get_bytes()
+        # Check the first line of the content to see if it specifies a
+        # formatter.
+
         # Format the content.  Right not this is hard coded to ReST, although
         # I want to offer multiple ways to do this.
         formatter = RestructuredTextFormatter()
         return formatter.format(
-            self.context.base_name, self.context.get_bytes())
+            self.context.base_name, bytes)
 
     def _render(self, skin):
         """If the page is not being viewed with the preferred path, redirect.

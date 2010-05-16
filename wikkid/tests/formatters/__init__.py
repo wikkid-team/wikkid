@@ -12,6 +12,7 @@ import unittest
 
 def test_suite():
     names = [
+        'registry',
         'rest',
         'creole',
         ]
