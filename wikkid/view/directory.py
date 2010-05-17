@@ -34,7 +34,7 @@ class DirectoryListingPage(DirectoryBreadcrumbView):
     template = 'view_directory'
 
     def before_render(self):
-        """Ghet the listing and split it into directories and files."""
+        """Get the listing and split it into directories and files."""
         directories = []
         files = []
         for item in self.context.get_listing():
@@ -49,7 +49,7 @@ class DirectoryListingPage(DirectoryBreadcrumbView):
         items = []
         # If we are looking at / don't add a parent dir.
         if self.context.path != '/':
-            parent = self.context.parent
+            parent = self.context.parent_dir
             items.append(
                 ListingItem(
                     parent, '%s?view=listing' % parent.path, name='..'))
