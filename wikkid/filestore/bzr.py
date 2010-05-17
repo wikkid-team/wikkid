@@ -6,18 +6,30 @@
 
 """A bzr backed filestore."""
 
-from cStringIO import StringIO
-
 from zope.interface import implements
 
 from bzrlib.errors import BinaryFile
 from bzrlib.merge3 import Merge3
+from bzrlib.osutils import split_lines
 from bzrlib.textfile import check_text_path
 from bzrlib.urlutils import basename, dirname, joinpath
 
 from wikkid.errors import FileExists, UpdateConflicts
 from wikkid.filestore.basefile import BaseFile
 from wikkid.interface.filestore import FileType, IFile, IFileStore
+
+
+def normalize_line_endings(content, ending='\n'):
+    return ending.join(content.splitlines())
+
+
+def get_line_ending(lines):
+    """Work out the line ending used in lines."""
+    first = lines[0]
+    if first.endswith('\r\n'):
+        return '\r\n'
+    # Default to \n if there are no line endings.
+    return '\n'
 
 
 class FileStore(object):
@@ -37,7 +49,7 @@ class FileStore(object):
             return File(self, path, file_id)
 
     def update_file(self, path, content, author, parent_revision,
-                    commit_message=None):
+                    commit_message=None, match_line_endings=False):
         """Update the file at the specified path with the content.
 
         This is going to be really interesting when we need to deal with
@@ -52,12 +64,15 @@ class FileStore(object):
             # update.  If it isn't we are doing an add.
             file_id = self.working_tree.path2id(path)
             if file_id is None:
+                if match_line_endings:
+                    # Default to simple '\n' line endings.
+                    content = normalize_line_endings(content)
                 self._add_file(path, content, author, commit_message)
             else:
                 # What if a parent_revision hasn't been set?
                 self._update_file(
                     file_id, path, content, author, parent_revision,
-                    commit_message)
+                    commit_message, match_line_endings)
         finally:
             self.working_tree.unlock()
 
@@ -99,7 +114,7 @@ class FileStore(object):
             authors=[author])
 
     def _update_file(self, file_id, path, content, author, parent_revision,
-                     commit_message):
+                     commit_message, match_line_endings):
         """Update an existing file with the content.
 
         This method merges the changes in based on the parent revision.
@@ -112,7 +127,16 @@ class FileStore(object):
         basis = wt.branch.repository.revision_tree(parent_revision)
         basis_lines = basis.get_file_lines(file_id)
         # need to break content into lines.
-        new_lines = StringIO(content).readlines()
+        new_lines = split_lines(content)
+        if match_line_endings:
+            # Look at the end of the first string.
+            ending = get_line_ending(current_lines)
+            new_ending = get_line_ending(new_lines)
+            if ending != new_ending:
+                # I know this is horribly inefficient, but lets get it working
+                # first.
+                content = normalize_line_endings(content, ending)
+                new_lines = split_lines(content)
         merge = Merge3(basis_lines, new_lines, current_lines)
         result = list(merge.merge_lines()) # or merge_regions or whatever
         conflicted = '>>>>>>>\n' in result
