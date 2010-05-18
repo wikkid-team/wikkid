@@ -6,6 +6,8 @@
 
 """A bzr backed filestore."""
 
+import logging
+
 from zope.interface import implements
 
 from bzrlib.errors import BinaryFile
@@ -39,6 +41,7 @@ class FileStore(object):
 
     def __init__(self, working_tree):
         self.working_tree = working_tree
+        self.logger = logging.getLogger('wikkid')
 
     def get_file(self, path):
         """Return an object representing the file at specified path."""
@@ -130,8 +133,9 @@ class FileStore(object):
         basis = wt.branch.repository.revision_tree(parent_revision)
         basis_lines = basis.get_file_lines(file_id)
         # need to break content into lines.
-        new_lines = split_lines(content)
         ending = get_line_ending(current_lines)
+        # If the content doesn't end with a new line, add one.
+        new_lines = split_lines(content)
         # Look at the end of the first string.
         new_ending = get_line_ending(new_lines)
         if ending != new_ending:
@@ -139,6 +143,8 @@ class FileStore(object):
             # first.
             content = normalize_line_endings(content, ending)
             new_lines = split_lines(content)
+        if not new_lines[-1].endswith(ending):
+            new_lines[-1] += ending
         merge = Merge3(basis_lines, new_lines, current_lines)
         result = list(merge.merge_lines()) # or merge_regions or whatever
         conflicted = ('>>>>>>>' + ending) in result

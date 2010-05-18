@@ -59,6 +59,7 @@ class SaveNewTextContent(BaseView):
             self.template = 'edit_page'
             self.rev_id = e.basis_rev
             self.content = e.content
+            self.message = "Conflicts detected during merge."
             return super(SaveNewTextContent, self)._render(skin)
 
 
