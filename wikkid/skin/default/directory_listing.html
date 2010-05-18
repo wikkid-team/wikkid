@@ -2,11 +2,11 @@
 {% block title %}{{ view.title }}{% endblock %}
 {% block content %}
 
-<table>
+<table class="dir-listing">
 {% for item in view.items %}
 <tr class="{{ loop.cycle('odd', 'even') }}">
   <td>
-    <a href="{{ item.url }}">{{ item.name }}</a>
+    <a href="{{ item.url }}" class="{{ item.css_class }}">{{ item.name }}</a>
   </td>
 </tr>
 {% endfor %}

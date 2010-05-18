@@ -13,12 +13,13 @@ from wikkid.view.base import DirectoryBreadcrumbView
 class ListingItem(object):
     """An item to be shown in the directory listing."""
 
-    def __init__(self, context, url, name=None):
+    def __init__(self, context, url, css_class, name=None):
         self.context = context
         self.url = url
         if name is None:
             name = context.base_name
         self.name = name
+        self.css_class = css_class
 
 
 class DirectoryListingPage(DirectoryBreadcrumbView):
@@ -52,11 +53,12 @@ class DirectoryListingPage(DirectoryBreadcrumbView):
             parent = self.context.parent_dir
             items.append(
                 ListingItem(
-                    parent, '%s?view=listing' % parent.path, name='..'))
+                    parent, '%s?view=listing' % parent.path, 'up', name='..'))
         for item in sorted(directories, key=sort_key):
-            items.append(ListingItem(item, '%s?view=listing' % item.path))
+            items.append(
+                ListingItem(item, '%s?view=listing' % item.path, 'directory'))
         for item in sorted(files, key=sort_key):
-            items.append(ListingItem(item, item.path))
+            items.append(ListingItem(item, item.path, 'file'))
         self.items = items
 
     @property
