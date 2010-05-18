@@ -6,6 +6,8 @@
 
 """View classes to control the rendering of text pages."""
 
+import logging
+
 from twisted.web.util import redirectTo
 
 from wikkid.errors import UpdateConflicts
@@ -52,6 +54,8 @@ class SaveNewTextContent(BaseView):
             return redirectTo(self.context.path, self.request)
         except UpdateConflicts, e:
             # Show the edit page again.
+            logger = logging.getLogger('wikkid')
+            logger.info('Conflicts detected: \n%r\n', e.content)
             self.template = 'edit_page'
             self.rev_id = e.basis_rev
             self.content = e.content

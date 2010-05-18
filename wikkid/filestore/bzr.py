@@ -107,6 +107,11 @@ class FileStore(object):
         t.create_prefix()
         # Put the file there.
         # TODO: UTF-8 encode text files?
+
+        # Make sure the content ends with a new-line.  This makes end of file
+        # conflicts nicer.
+        if not content.endswith('\n'):
+            content += '\n'
         t.put_bytes(basename(path), content)
         self.working_tree.smart_add([t.local_abspath('.')])
         self.working_tree.commit(

@@ -136,6 +136,7 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin, TestFileStore):
             'Test Author <test@example.com>',
             None, match_line_endings=True)
         curr = filestore.get_file('new-file.txt')
+        # A new line is added to the end too.
         self.assertEqual(
-            'some\ndos\nline\nendings',
+            'some\ndos\nline\nendings\n',
             curr.get_content())
