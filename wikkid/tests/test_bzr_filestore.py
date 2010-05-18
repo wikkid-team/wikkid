@@ -104,8 +104,9 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin, TestFileStore):
             'Test Author <test@example.com>',
             base_rev)
         curr = filestore.get_file('test.txt')
+        # New line added too.
         self.assertEqual(
-            'several\nslightly different lines\nof\ncontent',
+            'several\nslightly different lines\nof\ncontent\n',
             curr.get_content())
 
     def test_line_endings_new_file(self):

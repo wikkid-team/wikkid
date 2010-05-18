@@ -103,9 +103,9 @@ class TestFileStore:
              ])
         user = 'Eric the viking <eric@example.com>'
         parent_rev = filestore.get_file('README').last_modified_in_revision
-        filestore.update_file('README', 'new content', user, parent_rev)
+        filestore.update_file('README', 'new content\n', user, parent_rev)
         readme = filestore.get_file('README')
-        self.assertEqual('new content', readme.get_content())
+        self.assertEqual('new content\n', readme.get_content())
 
     def test_list_directory_non_existant(self):
         filestore = self.make_filestore()
