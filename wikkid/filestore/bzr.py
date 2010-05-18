@@ -49,7 +49,7 @@ class FileStore(object):
             return File(self, path, file_id)
 
     def update_file(self, path, content, author, parent_revision,
-                    commit_message=None, match_line_endings=False):
+                    commit_message=None):
         """Update the file at the specified path with the content.
 
         This is going to be really interesting when we need to deal with
@@ -64,15 +64,12 @@ class FileStore(object):
             # update.  If it isn't we are doing an add.
             file_id = self.working_tree.path2id(path)
             if file_id is None:
-                if match_line_endings:
-                    # Default to simple '\n' line endings.
-                    content = normalize_line_endings(content)
                 self._add_file(path, content, author, commit_message)
             else:
                 # What if a parent_revision hasn't been set?
                 self._update_file(
                     file_id, path, content, author, parent_revision,
-                    commit_message, match_line_endings)
+                    commit_message)
         finally:
             self.working_tree.unlock()
 
@@ -100,6 +97,12 @@ class FileStore(object):
 
         Then commit this new file with the specified commit_message.
         """
+        # Default to simple '\n' line endings.
+        content = normalize_line_endings(content)
+        # Make sure the content ends with a new-line.  This makes
+        # end of file conflicts nicer.
+        if not content.endswith('\n'):
+            content += '\n'
         t = self.working_tree.bzrdir.root_transport
         # Get a transport for the path we want.
         self._ensure_directory_or_nonexistant(dirname(path))
@@ -107,11 +110,6 @@ class FileStore(object):
         t.create_prefix()
         # Put the file there.
         # TODO: UTF-8 encode text files?
-
-        # Make sure the content ends with a new-line.  This makes end of file
-        # conflicts nicer.
-        if not content.endswith('\n'):
-            content += '\n'
         t.put_bytes(basename(path), content)
         self.working_tree.smart_add([t.local_abspath('.')])
         self.working_tree.commit(
@@ -119,7 +117,7 @@ class FileStore(object):
             authors=[author])
 
     def _update_file(self, file_id, path, content, author, parent_revision,
-                     commit_message, match_line_endings):
+                     commit_message):
         """Update an existing file with the content.
 
         This method merges the changes in based on the parent revision.
@@ -134,14 +132,13 @@ class FileStore(object):
         # need to break content into lines.
         new_lines = split_lines(content)
         ending = get_line_ending(current_lines)
-        if match_line_endings:
-            # Look at the end of the first string.
-            new_ending = get_line_ending(new_lines)
-            if ending != new_ending:
-                # I know this is horribly inefficient, but lets get it working
-                # first.
-                content = normalize_line_endings(content, ending)
-                new_lines = split_lines(content)
+        # Look at the end of the first string.
+        new_ending = get_line_ending(new_lines)
+        if ending != new_ending:
+            # I know this is horribly inefficient, but lets get it working
+            # first.
+            content = normalize_line_endings(content, ending)
+            new_lines = split_lines(content)
         merge = Merge3(basis_lines, new_lines, current_lines)
         result = list(merge.merge_lines()) # or merge_regions or whatever
         conflicted = ('>>>>>>>' + ending) in result

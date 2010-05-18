@@ -22,7 +22,7 @@ class IFileStore(Interface):
 
     def update_file(path, content, author, parent_revision,
                     commit_message=None):
-        """Update the file at the given path with the content.
+        """Update a text file at the given path with the content.
 
         :param path: The path of the file.
         :param content: The content of the file.
