@@ -60,6 +60,42 @@ textarea {
 
 
 /***********************************
+ *  Directory listings
+ **********************************/
+
+.dir-listing {
+  width: 100%;
+}
+
+.dir-listing .even {
+  background: #e0e0e0;
+}
+
+.dir-listing .odd {
+  background: #efefef;
+}
+
+.dir-listing a {
+  padding: 2px 0px 2px 20px;
+  background-repeat: no-repeat;
+  background-position: 2px center;
+}
+
+.dir-listing .up {
+  background-image: url("ico_folder_up.gif");
+}
+
+.dir-listing .directory {
+  background-image: url("ico_folder.gif");
+}
+
+.dir-listing .file {
+  background-image: url("ico_file.gif");
+  background-position: 4px center;
+}
+
+
+/***********************************
  *  Pygment styles
  **********************************/
 
