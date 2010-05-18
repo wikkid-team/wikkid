@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block title %}{{ view.title }}{% endblock %}
 {% block content %}
+{% if view.message %}
+<div class="message">{{ view.message }}</div>
+{% endif %}
 <form method="post" action="{{ view.request_path }}">
   <textarea name="content">{{ view.content }}</textarea>
   Describe the change: <input type="text" name="message" value=""/>

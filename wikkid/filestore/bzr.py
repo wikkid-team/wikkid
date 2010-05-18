@@ -6,18 +6,32 @@
 
 """A bzr backed filestore."""
 
-from cStringIO import StringIO
+import logging
 
 from zope.interface import implements
 
 from bzrlib.errors import BinaryFile
 from bzrlib.merge3 import Merge3
+from bzrlib.osutils import split_lines
 from bzrlib.textfile import check_text_path
 from bzrlib.urlutils import basename, dirname, joinpath
 
 from wikkid.errors import FileExists, UpdateConflicts
 from wikkid.filestore.basefile import BaseFile
 from wikkid.interface.filestore import FileType, IFile, IFileStore
+
+
+def normalize_line_endings(content, ending='\n'):
+    return ending.join(content.splitlines())
+
+
+def get_line_ending(lines):
+    """Work out the line ending used in lines."""
+    first = lines[0]
+    if first.endswith('\r\n'):
+        return '\r\n'
+    # Default to \n if there are no line endings.
+    return '\n'
 
 
 class FileStore(object):
@@ -27,6 +41,7 @@ class FileStore(object):
 
     def __init__(self, working_tree):
         self.working_tree = working_tree
+        self.logger = logging.getLogger('wikkid')
 
     def get_file(self, path):
         """Return an object representing the file at specified path."""
@@ -85,6 +100,12 @@ class FileStore(object):
 
         Then commit this new file with the specified commit_message.
         """
+        # Default to simple '\n' line endings.
+        content = normalize_line_endings(content)
+        # Make sure the content ends with a new-line.  This makes
+        # end of file conflicts nicer.
+        if not content.endswith('\n'):
+            content += '\n'
         t = self.working_tree.bzrdir.root_transport
         # Get a transport for the path we want.
         self._ensure_directory_or_nonexistant(dirname(path))
@@ -105,20 +126,31 @@ class FileStore(object):
         This method merges the changes in based on the parent revision.
         """
         f = File(self, path, file_id)
-        basis_rev = f.last_modified_in_revision
+        current_rev = f.last_modified_in_revision
         wt = self.working_tree
         wt.lock_write()
         current_lines = wt.get_file_lines(file_id)
-        basis = wt.branch.repository.revision_tree(basis_rev)
+        basis = wt.branch.repository.revision_tree(parent_revision)
         basis_lines = basis.get_file_lines(file_id)
         # need to break content into lines.
-        new_lines = StringIO(content).readlines()
+        ending = get_line_ending(current_lines)
+        # If the content doesn't end with a new line, add one.
+        new_lines = split_lines(content)
+        # Look at the end of the first string.
+        new_ending = get_line_ending(new_lines)
+        if ending != new_ending:
+            # I know this is horribly inefficient, but lets get it working
+            # first.
+            content = normalize_line_endings(content, ending)
+            new_lines = split_lines(content)
+        if not new_lines[-1].endswith(ending):
+            new_lines[-1] += ending
         merge = Merge3(basis_lines, new_lines, current_lines)
         result = list(merge.merge_lines()) # or merge_regions or whatever
-        conflicted = '>>>>>>>\n' in result
+        conflicted = ('>>>>>>>' + ending) in result
         if conflicted:
             wt.unlock()
-            raise UpdateConflicts('add text here', basis_rev)
+            raise UpdateConflicts(''.join(result), current_rev)
         else:
             wt.bzrdir.root_transport.put_bytes(path, ''.join(result))
             wt.commit(

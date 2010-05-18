@@ -82,12 +82,12 @@ class TestFileStore:
     def test_updating_file_adds_directories(self):
         filestore = self.make_filestore()
         user = 'Eric the viking <eric@example.com>'
-        filestore.update_file('first/second/third', 'content', user,
+        filestore.update_file('first/second/third', 'content\n', user,
                               None)
         self.assertDirectory(filestore, 'first')
         self.assertDirectory(filestore, 'first/second')
         third = filestore.get_file('first/second/third')
-        self.assertEqual('content', third.get_content())
+        self.assertEqual('content\n', third.get_content())
 
     def test_updating_file_with_directory_clash(self):
         filestore = self.make_filestore(
@@ -102,10 +102,10 @@ class TestFileStore:
             [('README', 'Content'),
              ])
         user = 'Eric the viking <eric@example.com>'
-        filestore.update_file('README', 'new content', user,
-                              None)
+        parent_rev = filestore.get_file('README').last_modified_in_revision
+        filestore.update_file('README', 'new content\n', user, parent_rev)
         readme = filestore.get_file('README')
-        self.assertEqual('new content', readme.get_content())
+        self.assertEqual('new content\n', readme.get_content())
 
     def test_list_directory_non_existant(self):
         filestore = self.make_filestore()
