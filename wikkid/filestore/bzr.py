@@ -128,9 +128,9 @@ class FileStore(object):
         basis_lines = basis.get_file_lines(file_id)
         # need to break content into lines.
         new_lines = split_lines(content)
+        ending = get_line_ending(current_lines)
         if match_line_endings:
             # Look at the end of the first string.
-            ending = get_line_ending(current_lines)
             new_ending = get_line_ending(new_lines)
             if ending != new_ending:
                 # I know this is horribly inefficient, but lets get it working
@@ -139,7 +139,7 @@ class FileStore(object):
                 new_lines = split_lines(content)
         merge = Merge3(basis_lines, new_lines, current_lines)
         result = list(merge.merge_lines()) # or merge_regions or whatever
-        conflicted = '>>>>>>>\n' in result
+        conflicted = ('>>>>>>>' + ending) in result
         if conflicted:
             wt.unlock()
             raise UpdateConflicts(''.join(result), current_rev)
