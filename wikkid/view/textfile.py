@@ -13,14 +13,13 @@ from twisted.web.util import redirectTo
 from wikkid.errors import UpdateConflicts
 from wikkid.interface.resource import ITextFile
 from wikkid.view.base import BaseView
+from wikkid.view.edit import BaseEditView
 
 
-class EditTextFile(BaseView):
+class EditTextFile(BaseEditView):
     """The page shows the text content in a large edit field."""
 
     for_interface = ITextFile
-    name = 'edit'
-    template = 'edit_page'
 
     @property
     def rev_id(self):
@@ -33,6 +32,8 @@ class EditTextFile(BaseView):
 
 class SaveNewTextContent(BaseView):
     """Update the text of a file."""
+
+    name = 'save'
 
     def _render(self, skin):
         """Save the text file.
@@ -60,10 +61,10 @@ class SaveNewTextContent(BaseView):
             self.rev_id = e.basis_rev
             self.content = e.content
             self.message = "Conflicts detected during merge."
+            self.cancel_url = self.context.preferred_path
             return super(SaveNewTextContent, self)._render(skin)
 
 
 class UpdateTextFile(SaveNewTextContent):
 
     for_interface = ITextFile
-    name = 'save'

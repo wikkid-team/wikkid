@@ -6,30 +6,12 @@
 
 """View classes to control the rendering of the content."""
 
-from twisted.web.util import redirectTo
-
 from wikkid.formatter.pygmentsformatter import PygmentsFormatter
-from wikkid.interface.resource import (
-    IRootResource,
-    ISourceTextFile,
-    )
-from wikkid.view.base import BaseView, DirectoryBreadcrumbView
+from wikkid.interface.resource import ISourceTextFile
+from wikkid.view.base import DirectoryBreadcrumbView
 
 
-class RootPage(BaseView):
-    """The default view for the root page redirects to the home page."""
-
-    for_interface = IRootResource
-    name = 'view'
-    is_default = True
-
-    def _render(self, skin):
-        """Redirect to Home (or the default page)."""
-        preferred = self.context.preferred_path
-        return redirectTo(preferred, self.request)
-
-
-class OtherTextPage(DirectoryBreadcrumbView):
+class SourceTextPage(DirectoryBreadcrumbView):
     """Any other non-binary file is considered other text.
 
     Will be rendered using pygments.
