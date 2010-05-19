@@ -70,6 +70,6 @@ class DirectoryListingPage(DirectoryBreadcrumbView):
         """The title is just the directory path."""
         dir_name = self.context.get_dir_name()
         if dir_name is None:
-            return self.context.title
+            return 'Wiki Root'
         else:
             return dir_name
