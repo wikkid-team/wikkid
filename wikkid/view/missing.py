@@ -8,6 +8,7 @@
 
 from wikkid.interface.resource import IMissingResource
 from wikkid.view.base import BaseView
+from wikkid.view.edit import BaseEditView
 from wikkid.view.textfile import SaveNewTextContent
 
 
@@ -24,12 +25,10 @@ class MissingPage(BaseView):
         '%s Not found' % self.path
 
 
-class NewWikiPage(BaseView):
+class NewWikiPage(BaseEditView):
     """Show the edit page with no existing content."""
 
     for_interface = IMissingResource
-    name = 'edit'
-    template = 'edit_page'
 
     @property
     def rev_id(self):
@@ -43,4 +42,3 @@ class NewWikiPage(BaseView):
 class SaveNewTextFile(SaveNewTextContent):
 
     for_interface = IMissingResource
-    name = 'save'
