@@ -4,9 +4,9 @@ from distutils.core import setup
 
 setup(name='Wikkid',
       version='0.2',
-#      description='Python Distribution Utilities',
-#      author='Greg Ward',
-#      author_email='gward@python.net',
+      description="A wiki that is backed by Bazaar that allows local branching of the wiki for later merging. Also doesn't have any page locks and uses Bazaar's three way merging.",
+      author='Wikkid Committers',
+      author_email='wikkid-dev@lists.launchpad.net',
       url='https://launchpad.net/wikkid',
       scripts=['run.py'],
       packages=['wikkid',
