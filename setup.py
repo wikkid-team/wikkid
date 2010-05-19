@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+
+from distutils.core import setup
+
+setup(name='Wikkid',
+      version='0.2',
+#      description='Python Distribution Utilities',
+#      author='Greg Ward',
+#      author_email='gward@python.net',
+      url='https://launchpad.net/wikkid',
+      scripts=['run.py'],
+      packages=['wikkid',
+      'wikkid/interface',
+      'wikkid/contrib',
+      'wikkid/contrib/creole_1_1',
+      'wikkid/model',
+      'wikkid/user',
+      'wikkid/tests',
+      'wikkid/tests/views',
+      'wikkid/tests/formatters',
+      'wikkid/view',
+      'wikkid/filestore',
+      'wikkid/skin',
+      'wikkid/formatter',
+      'bzrlib.plugins.wikkid'],
+      package_dir={'bzrlib.plugins.wikkid':'plugin'},
+      package_data={'wikkid/skin':['default/*.html',
+                                   'default/favicon.ico',
+                                   'default/static/*']},
+     )
