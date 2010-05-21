@@ -3,12 +3,12 @@
 from distutils.core import setup
 
 setup(name='Wikkid',
-      version='0.2',
+      version='0.1',
       description="A wiki that is backed by Bazaar that allows local branching of the wiki for later merging. Also doesn't have any page locks and uses Bazaar's three way merging.",
       author='Wikkid Committers',
       author_email='wikkid-dev@lists.launchpad.net',
       url='https://launchpad.net/wikkid',
-      scripts=['run.py'],
+      scripts=['wikkid.py'],
       packages=['wikkid',
       'wikkid/interface',
       'wikkid/contrib',
