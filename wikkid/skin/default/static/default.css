@@ -51,7 +51,7 @@ Page layout
     height:60px;
     padding:10px;
     color:#333;
-    background:#f0cc36 url(../images/bg-header.gif) top repeat-x;
+    background:#f0cc36 url(bg-header.gif) top repeat-x;
     border-bottom:1px solid #a7a7a7;
     border-top:2px solid #f7a14e;
 }
@@ -59,7 +59,7 @@ Page layout
     height:21px;
     padding:5px;
     color:#333;
-    background:#fff url(../images/bg-navbar.gif) top repeat-x;
+    background:#fff url(bg-navbar.gif) top repeat-x;
     border-bottom:1px solid #d3d3d3;
     border-top:1px solid #fff;
 }
@@ -107,11 +107,11 @@ li {
 
 /* Custom Links */
 a[target='_blank'] {
-    background: url(../images/icon-blank.gif) right top no-repeat;
+    background: url(icon-blank.gif) right top no-repeat;
     padding-right: 13px;
 }
 a[href ^= "mailto:"] {
-    background: url(../images/icon-mailto.gif) right top no-repeat;
+    background: url(icon-mailto.gif) right top no-repeat;
     padding-right: 13px;
 }
 
@@ -121,7 +121,7 @@ a[href ^= "mailto:"] {
     display:inline;
     width:181px;
     height:60px;
-    background: url(../images/logo.png) center center no-repeat;
+    background: url(logo.png) center center no-repeat;
     text-indent: -300px;
 }
 .wikkidlogo a {
