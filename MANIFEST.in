@@ -1,0 +1,2 @@
+include INSTALL LICENCE README NEWS TODO Makefile MANIFEST.in
+recursive-include wikkid/skin *
