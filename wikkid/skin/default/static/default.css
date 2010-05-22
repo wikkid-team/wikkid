@@ -1,6 +1,15 @@
-/* ---------------------------------------
-Reset browser defaults & General styling
---------------------------------------- */
+/*
+ *
+ * Copyright (C) 2010 Wikkid Developers
+ *
+ * This software is licensed under the GNU Affero General Public License
+ * version 3 (see the file LICENSE).
+ */
+
+
+/*********************************************
+ *  Reset browser defaults & general styling
+ *********************************************/
 html, body, form, fieldset, legend, h1, h2, h3, h4, h5, h6, p, pre,
 blockquote, ul, ol, dl, li, address, img {
     margin:0;
@@ -15,8 +24,15 @@ a:link, a:visited, a:hover, a:focus, a:active {
     color:#1a7bbe;
     outline:none;
 }
-textarea{
+textarea {
+    width: 95%;
+    height: 400px;
+    border: 3px solid #cccccc;
+	padding: 5px;
     overflow:auto;
+}
+#commands {
+    float: right;
 }
 table {
     border-collapse: collapse;
@@ -26,8 +42,12 @@ img, fieldset {
     outline:none;
     border:none;
 }
-sup {vertical-align: text-top;}
-sub {vertical-align: text-bottom;}
+sup {
+    vertical-align: text-top;
+}
+sub {
+    vertical-align: text-bottom;
+}
 abbr, acronym {
     border-bottom: .1em dotted;
     cursor: help;
@@ -62,12 +82,14 @@ Page layout
     background:#fff url(bg-navbar.gif) top repeat-x;
     border-bottom:1px solid #d3d3d3;
     border-top:1px solid #fff;
+    font-size: 0.8em;
 }
 #main {
     padding:10px;
     color:#333;
     background:#fff;
     border-bottom:1px solid #dadada;
+    min-height: 6em;
 }
 #footer {
     padding:10px;
@@ -76,9 +98,12 @@ Page layout
     background:#f6f6f6;
     border-top:1px solid #fff;
 }
-/* ----------------------------
-Fonts
----------------------------- */
+
+
+/***********************************
+ *  Fonts
+ **********************************/
+
 h1, h2, h3, h4, h5, h6 {color:#eb6f00;}
 h1 { font-size: 1.8em; }
 h2 { font-size: 1.6em; }
@@ -91,8 +116,9 @@ p {
     margin:0 0 10px;
     line-height: 1.4em;
 }
-p.addedby {
+p.last-edit {
     font-size: 0.8em;
+    margin-left: 1em;
 }
 ul, ol, dl {
     list-style-position:inside;
@@ -105,7 +131,112 @@ li {
     margin:0 0 3px;
 }
 
-/* Custom Links */
+/***********************************
+ *  Directory listings
+ **********************************/
+
+.dir-listing {
+  width: 100%;
+}
+
+.dir-listing .even {
+  background: #e0e0e0;
+}
+
+.dir-listing .odd {
+  background: #efefef;
+}
+
+.dir-listing a {
+  padding: 2px 0px 2px 20px;
+  background-repeat: no-repeat;
+  background-position: 2px center;
+}
+
+.dir-listing .up {
+  background-image: url("ico_folder_up.gif");
+}
+
+.dir-listing .directory {
+  background-image: url("ico_folder.gif");
+}
+
+.dir-listing .file {
+  background-image: url("ico_file.gif");
+  background-position: 4px center;
+}
+
+
+/***********************************
+ *  Pygment styles
+ **********************************/
+
+.highlight .hll { background-color: #ffffcc }
+.highlight  { background: #f8f8f8; }
+.highlight .c { color: #408080; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
+.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #808080 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0040D0 } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #7D9029 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+
+/***********************************
+ *  Custom Links
+ **********************************/
 a[target='_blank'] {
     background: url(icon-blank.gif) right top no-repeat;
     padding-right: 13px;
@@ -115,7 +246,9 @@ a[href ^= "mailto:"] {
     padding-right: 13px;
 }
 
-/*** HEADER ***/
+/***********************************
+ *  Header
+ **********************************/
 .wikkidlogo {
     float:left;
     display:inline;
@@ -164,7 +297,9 @@ a[href ^= "mailto:"] {
     color:#000;
 }
 
-/*** NAVBAR ***/
+/***********************************
+ *  Navigation elements
+ **********************************/
 .breadcrumbs {
     padding: 4px 0;
     font-size: 0.8em;
@@ -217,7 +352,9 @@ input.finder {
     text-decoration:underline;
 }
 
-/*** table of contents ***/
+/***********************************
+ *  Table of contents
+ **********************************/
 #table-of-contents {
     float:right;
     display:inline;
