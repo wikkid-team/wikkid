@@ -34,7 +34,7 @@ class EditTextFile(BaseEditView):
         except UnicodeDecodeError:
             try:
                 return byte_string.decode('latin-1')
-            except:
+            except UnicodeDecodeError:
                 return byte_string.decode('ascii', 'replace')
 
 
