@@ -27,7 +27,15 @@ class EditTextFile(BaseEditView):
 
     @property
     def content(self):
-        return self.context.get_bytes()
+        # We want to pass unicode to the view.
+        byte_string = self.context.get_bytes()
+        try:
+            return byte_string.decode('utf-8')
+        except UnicodeDecodeError:
+            try:
+                return byte_string.decode('latin-1')
+            except:
+                return byte_string.decode('ascii', 'replace')
 
 
 class SaveNewTextContent(BaseView):
