@@ -19,5 +19,14 @@ setup(
     package_data={'wikkid/skin':['default/*.html',
                                  'default/favicon.ico',
                                  'default/static/*']},
+    install_requires=[
+        'zope.interface',
+        'twisted',
+        'jinja2',
+        'docutils',
+        'testtools',
+        'beautifulsoup',
+        'pygments',
+        ],
     test_suite='wikkid.tests',
     )
