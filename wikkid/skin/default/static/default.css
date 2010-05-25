@@ -16,7 +16,7 @@ blockquote, ul, ol, dl, li, address, img {
     padding:0;
 }
 body {
-    font:normal normal 1em/normal sans-serif;
+    font-family: "bitstream vera sans", "dejavu sans", verdana, sans-serif;
     color:#000;
     background:#f6f6f6;
 }
@@ -82,7 +82,6 @@ Page layout
     background:#fff url(bg-navbar.gif) top repeat-x;
     border-bottom:1px solid #d3d3d3;
     border-top:1px solid #fff;
-    font-size: 0.8em;
 }
 #main {
     padding:10px;
@@ -311,9 +310,9 @@ a[href ^= "mailto:"] {
     color:#1a7bbe;
 }
 #navbar ul {
-    float:right;
-    margin:0;
-    padding:0;
+    float: right;
+    margin: 4px 0;
+    padding: 0;
 }
 #navbar li {
     float:left;
