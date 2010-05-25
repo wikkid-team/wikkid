@@ -1,0 +1,15 @@
+Source: wikkid
+Maintainer: Wikkid Committers <wikkid-dev@lists.launchpad.net>
+Section: python
+Priority: optional
+Build-Depends: python-setuptools (>= 0.6b3), debhelper (>= 7), python-support (>= 0.8.4)
+Standards-Version: 3.7.2
+XS-Python-Version: current
+
+Package: python-wikkid
+Architecture: all
+Depends: ${python:Depends}
+XB-Python-Version: ${python:Versions}
+Provides: ${python:Provides}
+Description: A wiki that is backed by Bazaar that allows local branching 
+
