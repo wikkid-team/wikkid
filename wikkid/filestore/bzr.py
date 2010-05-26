@@ -129,33 +129,34 @@ class FileStore(object):
         current_rev = f.last_modified_in_revision
         wt = self.working_tree
         wt.lock_write()
-        current_lines = wt.get_file_lines(file_id)
-        basis = wt.branch.repository.revision_tree(parent_revision)
-        basis_lines = basis.get_file_lines(file_id)
-        # need to break content into lines.
-        ending = get_line_ending(current_lines)
-        # If the content doesn't end with a new line, add one.
-        new_lines = split_lines(content)
-        # Look at the end of the first string.
-        new_ending = get_line_ending(new_lines)
-        if ending != new_ending:
-            # I know this is horribly inefficient, but lets get it working
-            # first.
-            content = normalize_line_endings(content, ending)
+        try:
+            current_lines = wt.get_file_lines(file_id)
+            basis = wt.branch.repository.revision_tree(parent_revision)
+            basis_lines = basis.get_file_lines(file_id)
+            # need to break content into lines.
+            ending = get_line_ending(current_lines)
+            # If the content doesn't end with a new line, add one.
             new_lines = split_lines(content)
-        if not new_lines[-1].endswith(ending):
-            new_lines[-1] += ending
-        merge = Merge3(basis_lines, new_lines, current_lines)
-        result = list(merge.merge_lines()) # or merge_regions or whatever
-        conflicted = ('>>>>>>>' + ending) in result
-        if conflicted:
-            wt.unlock()
-            raise UpdateConflicts(''.join(result), current_rev)
-        else:
-            wt.bzrdir.root_transport.put_bytes(path, ''.join(result))
-            wt.commit(
-                message=commit_message, authors=[author],
-                specific_files=[path])
+            # Look at the end of the first string.
+            new_ending = get_line_ending(new_lines)
+            if ending != new_ending:
+                # I know this is horribly inefficient, but lets get it working
+                # first.
+                content = normalize_line_endings(content, ending)
+                new_lines = split_lines(content)
+            if not new_lines[-1].endswith(ending):
+                new_lines[-1] += ending
+            merge = Merge3(basis_lines, new_lines, current_lines)
+            result = list(merge.merge_lines()) # or merge_regions or whatever
+            conflicted = ('>>>>>>>' + ending) in result
+            if conflicted:
+                raise UpdateConflicts(''.join(result), current_rev)
+            else:
+                wt.bzrdir.root_transport.put_bytes(path, ''.join(result))
+                wt.commit(
+                    message=commit_message, authors=[author],
+                    specific_files=[path])
+        finally:
             wt.unlock()
 
     def list_directory(self, directory_path):
