@@ -7,6 +7,12 @@
 
 """The server class for the wiki."""
 
+try:
+    import _wikkid_path
+except ImportError:
+    # Not running from a branch.
+    pass
+
 import logging
 import optparse
 import sys
@@ -31,20 +37,27 @@ def setup_logging():
 
 
 def main(args):
+
+    usage = "Usage: %prog [options] <wiki-branch>"
     parser = optparse.OptionParser(
-        description="Run a Wikkid Wiki server.")
-    parser.add_option('--branch', help='The branch to use as a wiki.')
+        usage=usage,description="Run a Wikkid Wiki server.")
     parser.add_option('--port', type='int', default=8080,
                       help='The port to listen on.  Defaults to 8080.')
     options, args = parser.parse_args(sys.argv[1:])
-    if len(args):
-        print "Unexpected positional args:", args
+    if len(args) == 0:
+        print "No branch location specified.\n"
+        parser.print_usage()
         sys.exit(1)
+    if len(args) > 1:
+        print "Unexpected positional args:", args[1:], "\n"
+        parser.print_usage()
+        sys.exit(1)
+    branch = args[0]
     setup_logging()
     logger = logging.getLogger('wikkid')
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
 
-    working_tree = WorkingTree.open(options.branch)
+    working_tree = WorkingTree.open(branch)
     logger.info('Using: %s', working_tree)
     filestore = FileStore(working_tree)
     server = TwistedServer(
