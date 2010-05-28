@@ -10,7 +10,7 @@ Design Goals
 
 I believe it is better to start with the ideals.  So here goes...
 
- * Should be able to add the plugin to ~/.bazaar/plugins/wiki and serve
+ * Should be able to add the plugin to ~/.bazaar/plugins/wikkid and serve
    any Bazaar branch as a wiki using the command 'bzr wiki <path>'.
  * The rendering of pages needs to be abstracted from the http serving to
    allow the plugin to be used elsewhere as a library (like Launchpad).
