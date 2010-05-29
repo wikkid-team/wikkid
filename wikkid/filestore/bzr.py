@@ -13,6 +13,7 @@ from zope.interface import implements
 from bzrlib.errors import BinaryFile
 from bzrlib.merge3 import Merge3
 from bzrlib.osutils import split_lines
+from bzrlib.revision import NULL_REVISION
 from bzrlib.textfile import check_text_path
 from bzrlib.urlutils import basename, dirname, joinpath
 
@@ -60,6 +61,8 @@ class FileStore(object):
         """
         if commit_message is None or commit_message.strip() == '':
             commit_message = 'No description of change given.'
+        if parent_revision is None:
+            parent_revision = NULL_REVISION
         # Firstly we want to lock the tree for writing.
         self.working_tree.lock_write()
         try:
