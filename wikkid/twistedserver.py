@@ -78,7 +78,8 @@ class TwistedServer(object):
         self.skin = Skin(skin_name)
 
     def run(self):
-        self.logger.info('Listening on port %d' % self.port)
+        # Is there anyway to set the host?
+        self.logger.info('Wiki instance running at http://localhost:%d' % self.port)
         root = TwistedPage(
             self.resource_factory, self.logger, self.user_factory, self.skin)
         if self.skin.favicon is not None:
