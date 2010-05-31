@@ -59,9 +59,10 @@ abbr, acronym {
     clear:both;
     visibility:hidden;
 }
-/* -----------------------
-Page layout
------------------------ */
+
+/*********************************************
+ * Page layout
+*********************************************/
 #container {
     width:100%;
     color:#333;
@@ -98,6 +99,16 @@ Page layout
     border-top:1px solid #fff;
 }
 
+#message {
+    width: 76em;
+}
+
+.save-cancel {
+    margin: 1em 0 2em 0;
+}
+.save-cancel input {
+    font-size: 120%;
+}
 
 /***********************************
  *  Fonts

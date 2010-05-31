@@ -16,6 +16,10 @@ class BaseEditView(BaseView):
     template = 'edit_page'
 
     @property
+    def title(self):
+        return 'Editing "%s"' % self.context.base_name
+
+    @property
     def cancel_url(self):
         """The link for the cancel button."""
         return self.context.preferred_path
