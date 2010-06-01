@@ -7,6 +7,7 @@
 """View base class for editing text pages."""
 
 from wikkid.view.base import BaseView
+from wikkid.view.utils import expand_wiki_name
 
 
 class BaseEditView(BaseView):
@@ -14,6 +15,10 @@ class BaseEditView(BaseView):
 
     name = 'edit'
     template = 'edit_page'
+
+    @property
+    def title(self):
+        return 'Editing "%s"' % expand_wiki_name(self.context.base_name)
 
     @property
     def cancel_url(self):

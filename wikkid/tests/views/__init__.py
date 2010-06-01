@@ -13,6 +13,7 @@ def test_suite():
     names = [
         'breadcrumbs',
         'utils',
+        'edit',
         ]
     module_names = ['wikkid.tests.views.test_' + name for name in names]
     loader = unittest.TestLoader()
