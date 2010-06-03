@@ -15,6 +15,8 @@ TODO:
    That way we can just add to the environ for the user.
 """
 
+from webob import Request, Response
+
 
 class WikkidApp(object):
     """The main wikkid application."""
@@ -24,3 +26,7 @@ class WikkidApp(object):
 
     def __call__(self, environ, start_response):
         """The WSGI bit."""
+        request = Request(environ)
+        response = Response(
+            'Hello %s!' % request.params.get('name', 'World'))
+        return response(environ, start_response)
