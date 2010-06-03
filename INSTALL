@@ -15,3 +15,5 @@ python-docutils for the ReST formatter
 python-testtools - for running the test suite (optional)
 python-beautifulsoup - for testing of html (soon)
 python-pygments - for the syntax hilighting
+
+python-webob - for the WSGI application bits
