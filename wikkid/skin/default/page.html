@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% block title %}{{ view.title }}{% endblock %}
-{% block content %}{{ view.content }}{% endblock %}
+{% block content %}{{ view.content }}
+{% endblock %}
 {% block commands %}
 {% if view.user %}
 <a class="command" href="{{view.request_path}}?view=edit">Edit</a>
 <a class="command" href="{{context.dir_name}}?view=listing">Browse</a>
 {% endif %}
+{% endblock %}
+{% block footer %}
+<p class="last-edit">Last edited by <strong>{{ view.last_modified_by }}</strong>
+    on {{ view.last_modified_date }}</p>
 {% endblock %}
