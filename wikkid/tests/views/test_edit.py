@@ -19,7 +19,7 @@ class TestEdit(FactoryTestCase):
         self.user = TestUser('test@example.com', 'Test User')
         self.request = TestRequest()
 
-    def test_title_nexted(self):
+    def test_title_nested(self):
         """Test that a nested page returns the expected title"""
         factory = self.make_factory([
                 ('SomePage/SubPage/Nested.txt', 'some text')])
