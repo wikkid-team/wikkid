@@ -6,7 +6,6 @@
 
 """Tests for the wikkid.filestore.bzr.FileStore."""
 
-from datetime import datetime
 from textwrap import dedent
 
 from bzrlib.tests import TestCaseWithTransport
@@ -123,21 +122,3 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin, TestFileStore):
         self.assertEqual(
             'some\ndos\nline\nendings\n',
             curr.get_content())
-
-    def test_last_modified(self):
-        # Make sure that the timestamp and author are recorded.
-        start = datetime.utcnow()
-        filestore = self.make_filestore()
-        filestore.update_file(
-            'new-file.txt',
-            'some content',
-            'Test Author <test@example.com>',
-            None)
-        curr = filestore.get_file('new-file.txt')
-        end = datetime.utcnow()
-        # A new line is added to the end too.
-        self.assertEqual(
-            'Test Author <test@example.com>',
-            curr.last_modified_by)
-
-        self.assertTrue(start <= curr.last_modified_date <= end)
