@@ -10,6 +10,7 @@ Used primarily for test purposes, this class should be a fully functional
 filestore, albiet one that doesn't remember anything persistently.
 """
 
+from datetime import datetime
 from itertools import count
 
 from bzrlib.urlutils import dirname
@@ -36,13 +37,14 @@ class FileStore(object):
         self.path_map = {}
         if files is None:
             files = []
+        user = 'First User <first@example.com'
         for path, content in files:
             if path.endswith('/'):
-                self._ensure_dir(path[:-1])
+                self._ensure_dir(path[:-1], user)
             else:
-                self._add_file(path, content)
+                self._add_file(path, content, user)
 
-    def _ensure_dir(self, path):
+    def _ensure_dir(self, path, user):
         # If we are at the start, we are done.
         if not path:
             return
@@ -55,14 +57,14 @@ class FileStore(object):
                     % path)
             return
         # Check to make sure the parent is in there too.
-        self._ensure_dir(dirname(path))
-        new_dir = File(path, None, self._integer.next())
+        self._ensure_dir(dirname(path), user)
+        new_dir = File(path, None, self._integer.next(), user)
         self.file_id_map[new_dir.file_id] = new_dir
         self.path_map[new_dir.path] = new_dir
 
-    def _add_file(self, path, content):
-        self._ensure_dir(dirname(path))
-        new_file = File(path, content, self._integer.next())
+    def _add_file(self, path, content, user):
+        self._ensure_dir(dirname(path), user)
+        new_file = File(path, content, self._integer.next(), user)
         self.file_id_map[new_file.file_id] = new_file
         self.path_map[new_file.path] = new_file
 
@@ -78,9 +80,11 @@ class FileStore(object):
         """The `user` is updating the file at `path` with `content`."""
         existing_file = self.get_file(path)
         if existing_file is None:
-            self._add_file(path, content)
+            self._add_file(path, content, user)
         else:
             existing_file.content = content
+            existing_file.last_modified_by = user
+            existing_file.last_modified_date = datetime.utcnow()
 
     def list_directory(self, directory_path):
         """Return a list of File objects for in the directory path.
@@ -108,12 +112,12 @@ class File(BaseFile):
 
     implements(IFile)
 
-    def __init__(self, path, content, file_id):
+    def __init__(self, path, content, file_id, user):
         BaseFile.__init__(self, path, file_id)
         self.content = content
         self.last_modified_in_revision = None
-        self.last_modified_by = None
-        self.last_modified_date = None
+        self.last_modified_by = user
+        self.last_modified_date = datetime.utcnow()
         self.file_type = self._get_filetype()
 
     def _get_filetype(self):

@@ -10,6 +10,7 @@ from zope.interface import implements
 
 from wikkid.model.baseresource import BaseResource
 from wikkid.interface.resource import IFileResource, IUpdatableResource
+from wikkid.user.bzr import create_bzr_user_from_author_string
 
 
 class UpdatableResource(BaseResource):
@@ -42,7 +43,8 @@ class FileResource(UpdatableResource):
 
     @property
     def last_modified_by(self):
-        return self.file_resource.last_modified_by
+        return create_bzr_user_from_author_string(
+            self.file_resource.last_modified_by)
 
     def get_bytes(self):
         return self.file_resource.get_content()
