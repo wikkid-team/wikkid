@@ -36,5 +36,13 @@ class FileResource(UpdatableResource):
     def last_modified_in_revision(self):
         return self.file_resource.last_modified_in_revision
 
+    @property
+    def last_modified_date(self):
+        return self.file_resource.last_modified_date
+
+    @property
+    def last_modified_by(self):
+        return self.file_resource.last_modified_by
+
     def get_bytes(self):
         return self.file_resource.get_content()

@@ -113,6 +113,7 @@ class File(BaseFile):
         self.content = content
         self.last_modified_in_revision = None
         self.last_modified_by = None
+        self.last_modified_date = None
         self.file_type = self._get_filetype()
 
     def _get_filetype(self):
