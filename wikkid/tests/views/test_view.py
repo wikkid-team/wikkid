@@ -10,8 +10,8 @@ from wikkid.dispatcher import get_view
 from wikkid.tests.factory import FactoryTestCase
 from wikkid.tests.fakes import TestRequest, TestUser
 
-#XXX: This test fails, it seems to not actually commit, may need more faking
-class DisabledTestView(FactoryTestCase):
+
+class TestView(FactoryTestCase):
     """Test the display view."""
 
     def setUp(self):
@@ -25,5 +25,5 @@ class DisabledTestView(FactoryTestCase):
                 ('SomePage/SubPage/Nested.txt', 'some text')])
         info = factory.get_resource_at_path('/SomePage/SubPage/Nested.txt')
         view = get_view(info, 'view', self.request, self.user)
-        self.assertEqual('Test User', view.last_modified_by)
-
+        user = view.last_modified_by
+        self.assertEqual('First User', user.display_name)
