@@ -58,6 +58,9 @@ class BaseView(object):
             parent = parent.parent
         return reversed(crumbs)
 
+    def initialize(self):
+        """Provide post-construction initialization."""
+
     @property
     def breadcrumbs(self):
         return self._create_breadcrumbs()
