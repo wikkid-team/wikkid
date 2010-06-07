@@ -43,3 +43,15 @@ class TestDirectoryResource(TestCase, ProvidesMixin):
             listing, key=attrgetter('path'))
         self.assertEqual('/SomeDir', some_dir.path)
         self.assertEqual('/SomeDir.txt', some_wiki.path)
+
+    def test_user_for_file(self):
+        """Test that the user is a user object."""
+        factory = self.make_factory()
+        page = factory.get_resource_at_path('/testing')
+        page.put_bytes(
+            'hello world', 'Test User <test@example.com>', None, None)
+        new_page = factory.get_resource_at_path('/testing')
+        user = new_page.last_modified_by
+        self.assertEqual('Test User', user.display_name)
+        self.assertEqual('test@example.com', user.email)
+
