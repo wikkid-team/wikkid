@@ -34,11 +34,12 @@ class WikiPage(BaseView):
 
     @property
     def last_modified_by(self):
-        return self.context.file_resource.last_modified_by
+        return self.context.last_modified_by
 
     @property
     def last_modified_date(self):
-        return format_date(self.context.file_resource.last_modified_date)
+        return self.context.last_modified_date.strftime(
+            '%Y-%m-%d %H:%M:%S')
 
     def _render(self, skin):
         """If the page is not being viewed with the preferred path, redirect.
