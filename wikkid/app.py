@@ -16,12 +16,29 @@ TODO:
 """
 
 import logging
+import mimetypes
+import os.path
 import urllib
 
-from webob import exc, Request, Response
-
+from bzrlib import urlutils
+from webob import Request, Response
+from webob.exc import HTTPNotFound
 
 from wikkid.skin.loader import Skin
+
+
+def serve_file(filename):
+    if os.path.exists(filename):
+        basename = urlutils.basename(filename)
+        content_type = mimetypes.guess_type(basename)[0]
+        f = open(filename, 'rb')
+        try:
+            return Response(
+                f.read(), content_type=content_type)
+        finally:
+            f.close()
+    else:
+        return HTTPNotFound()
 
 
 class WikkidApp(object):
@@ -43,16 +60,16 @@ class WikkidApp(object):
         path = urllib.unquote(request.path)
         if path == '/favicon.ico':
             if self.skin.favicon is not None:
-                icon = open(self.skin.favicon, 'rb')
-                try:
-                    response = Response(
-                        icon.read(), content_type='image/x-icon')
-                finally:
-                    icon.close()
+                response = serve_file(self.skin.favicon)
             else:
-                response = exc.HTTPNotFound()
-        elif path.startswith('/static'):
-            response = exc.HTTPNotFound()
+                response = HTTPNotFound()
+        elif path.startswith('/static/'):
+            if self.skin.static_dir is not None:
+                response = serve_file(
+                    urlutils.joinpath(
+                        self.skin.static_dir, path[8:]))
+            else:
+                response = HTTPNotFound()
         else:
             response = Response(
                 'Hello %s!' % request.params.get('name', 'World'))
