@@ -15,18 +15,45 @@ TODO:
    That way we can just add to the environ for the user.
 """
 
-from webob import Request, Response
+import logging
+import urllib
+
+from webob import exc, Request, Response
+
+
+from wikkid.skin.loader import Skin
 
 
 class WikkidApp(object):
     """The main wikkid application."""
 
-    def __init__(self, filestore):
+    def __init__(self, filestore, skin_name=None):
         self.filestore = filestore
+        # Need to load the initial templates for the skin.
+        if skin_name is None:
+            skin_name = 'default'
+        self.skin = Skin(skin_name)
+        self.logger = logging.getLogger('wikkid')
 
     def __call__(self, environ, start_response):
         """The WSGI bit."""
         request = Request(environ)
-        response = Response(
-            'Hello %s!' % request.params.get('name', 'World'))
+
+        self.logger.info('request.path: %s', request.path)
+        path = urllib.unquote(request.path)
+        if path == '/favicon.ico':
+            if self.skin.favicon is not None:
+                icon = open(self.skin.favicon, 'rb')
+                try:
+                    response = Response(
+                        icon.read(), content_type='image/x-icon')
+                finally:
+                    icon.close()
+            else:
+                response = exc.HTTPNotFound()
+        elif path.startswith('/static'):
+            response = exc.HTTPNotFound()
+        else:
+            response = Response(
+                'Hello %s!' % request.params.get('name', 'World'))
         return response(environ, start_response)
