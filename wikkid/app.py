@@ -16,6 +16,7 @@ TODO:
 import logging
 import mimetypes
 import os.path
+import re
 import urllib
 
 from bzrlib import urlutils
@@ -37,6 +38,21 @@ def serve_file(filename):
             f.close()
     else:
         return HTTPNotFound()
+
+
+VIEW_MATCHER = re.compile('^(.*)/\+(\w+)$')
+
+
+def parse_url(path):
+    """Convert a path into a resource path and a view."""
+    match = VIEW_MATCHER.match(path)
+    if match is not None:
+        resource_path, view = match.groups()
+        if resource_path == '':
+            resource_path = '/'
+        return (resource_path, view)
+    else:
+        return (path, None)
 
 
 class WikkidApp(object):
