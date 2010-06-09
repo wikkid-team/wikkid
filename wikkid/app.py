@@ -23,6 +23,8 @@ from bzrlib import urlutils
 from webob import Request, Response
 from webob.exc import HTTPNotFound
 
+from wikkid.dispatcher import get_view
+from wikkid.model.factory import ResourceFactory
 from wikkid.skin.loader import Skin
 
 
@@ -60,6 +62,7 @@ class WikkidApp(object):
 
     def __init__(self, filestore, skin_name=None):
         self.filestore = filestore
+        self.resource_factory = ResourceFactory(self.filestore)
         # Need to load the initial templates for the skin.
         if skin_name is None:
             skin_name = 'default'
@@ -69,6 +72,8 @@ class WikkidApp(object):
     def __call__(self, environ, start_response):
         """The WSGI bit."""
         request = Request(environ)
+
+        # TODO: reject requests that aren't GET or POST
 
         self.logger.info('request.path: %s', request.path)
         path = urllib.unquote(request.path)
@@ -85,6 +90,9 @@ class WikkidApp(object):
             else:
                 response = HTTPNotFound()
         else:
-            response = Response(
-                'Hello %s!' % request.params.get('name', 'World'))
+            resource_path, action = parse_url(path)
+            model = self.resource_factory.get_resource_at_path(resource_path)
+            view = get_view(model, action, request)
+            response = Response(view.render(self.skin))
+
         return response(environ, start_response)
