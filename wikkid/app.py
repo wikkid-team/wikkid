@@ -7,10 +7,8 @@
 """A WSGI application for Wikkid.
 
 TODO:
- * serving the static files
  * url handling
  * redirects
- * skins
  * users - I'm thinking that we should do the users as a middleware.
    That way we can just add to the environ for the user.
 """
