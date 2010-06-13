@@ -6,9 +6,8 @@
 
 """Tests the display views."""
 
-from wikkid.dispatcher import get_view
 from wikkid.tests.factory import FactoryTestCase
-from wikkid.tests.fakes import TestRequest, TestUser
+from wikkid.tests.fakes import TestUser
 
 
 class TestView(FactoryTestCase):
@@ -17,13 +16,11 @@ class TestView(FactoryTestCase):
     def setUp(self):
         super(TestView, self).setUp()
         self.user = TestUser('test@example.com', 'Test User')
-        self.request = TestRequest()
 
     def test_last_modified_by(self):
         """Test that the last committer is displayed properly"""
         factory = self.make_factory([
                 ('SomePage/SubPage/Nested.txt', 'some text')])
-        info = factory.get_resource_at_path('/SomePage/SubPage/Nested.txt')
-        view = get_view(info, 'view', self.request, self.user)
+        view = self.get_view(factory, '/SomePage/SubPage/Nested', 'view')
         user = view.last_modified_by
         self.assertEqual('First User', user.display_name)

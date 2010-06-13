@@ -22,7 +22,7 @@ from zope.interface import providedBy
 _VIEW_REGISTRY = {}
 
 
-def get_view(obj, view_name, request, user):
+def get_view(obj, view_name, request):
     """Get the most relevant view for the object for the specified name.
 
     Iterate through the provided interfaces of the object and look in the view
@@ -32,7 +32,7 @@ def get_view(obj, view_name, request, user):
     for interface in interfaces:
         try:
             klass = _VIEW_REGISTRY[(interface, view_name)]
-            instance = klass(obj, request, user)
+            instance = klass(obj, request)
             instance.initialize()
             return instance
         except KeyError:

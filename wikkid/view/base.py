@@ -44,10 +44,11 @@ class BaseView(object):
 
     __metaclass__ = BaseViewMetaClass
 
-    def __init__(self, context, request, user):
+    def __init__(self, context, request):
         self.context = context
         self.request = request
-        self.user = user
+        if request is not None:
+            self.user = request.environ.get('wikkid.user', None)
         self.logger = logging.getLogger('wikkid')
 
     def _create_breadcrumbs(self):

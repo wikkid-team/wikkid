@@ -31,8 +31,7 @@ class TestBreadcrumbs(FactoryTestCase):
         # If the Home page is selected, but there is no content, the
         # breadcrumb is still Home.
         factory = self.make_factory()
-        info = factory.get_resource_at_path('/Home')
-        view = get_view(info, None, self.request, self.user)
+        view = self.get_view(factory, '/Home')
         self.assertBreadcrumbs(
             view,
             [('Home', '/Home')])
@@ -41,8 +40,7 @@ class TestBreadcrumbs(FactoryTestCase):
         # If the page is at the root of the tree, but isn't home, then the
         # first breadcrumb is home, and the second is the page.
         factory = self.make_factory()
-        info = factory.get_resource_at_path('/SamplePage')
-        view = get_view(info, None, self.request, self.user)
+        view = self.get_view(factory, '/SamplePage')
         self.assertBreadcrumbs(
             view,
             [('Home', '/Home'),
@@ -52,8 +50,7 @@ class TestBreadcrumbs(FactoryTestCase):
         # If the Home page is selected, but there is no content, the
         # breadcrumb is still Home.
         factory = self.make_factory()
-        info = factory.get_resource_at_path('/SamplePage/SubPage/Next')
-        view = get_view(info, None, self.request, self.user)
+        view = self.get_view(factory, '/SamplePage/SubPage/Next')
         self.assertBreadcrumbs(
             view,
             [('Home', '/Home'),
@@ -65,8 +62,7 @@ class TestBreadcrumbs(FactoryTestCase):
         # If a non-wiki style name is selected, the breadcrumbs are as a wiki
         # page.
         factory = self.make_factory()
-        info = factory.get_resource_at_path('/wikkid/views/base.py')
-        view = get_view(info, None, self.request, self.user)
+        view = self.get_view(factory, '/wikkid/views/base.py')
         self.assertBreadcrumbs(
             view,
             [('Home', '/Home'),
@@ -80,8 +76,7 @@ class TestBreadcrumbs(FactoryTestCase):
         factory = self.make_factory([
                 ('wikkid/views/base.py', 'A python file'),
                 ])
-        info = factory.get_resource_at_path('/wikkid/views/base.py')
-        view = get_view(info, None, self.request, self.user)
+        view = self.get_view(factory, '/wikkid/views/base.py')
         self.assertBreadcrumbs(
             view,
             [('Home', '/Home'),
@@ -95,8 +90,7 @@ class TestBreadcrumbs(FactoryTestCase):
         # directories, where the urls for the directories are the listing
         # urls.
         factory = self.make_factory()
-        info = factory.get_resource_at_path('/')
-        view = get_view(info, 'listing', self.request, self.user)
+        view = self.get_view(factory, '/', 'listing')
         self.assertBreadcrumbs(
             view,
             [('Home', '/Home'),
@@ -107,8 +101,7 @@ class TestBreadcrumbs(FactoryTestCase):
         # Names are not wiki expanded.
         factory = self.make_factory([
                 ('SomePage/SubPage/Nested.txt', 'some text')])
-        info = factory.get_resource_at_path('/SomePage/SubPage')
-        view = get_view(info, 'listing', self.request, self.user)
+        view = self.get_view(factory, '/SomePage/SubPage', 'listing')
         self.assertBreadcrumbs(
             view,
             [('Home', '/Home'),

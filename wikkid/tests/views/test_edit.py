@@ -6,7 +6,6 @@
 
 """Tests the edit views."""
 
-from wikkid.dispatcher import get_view
 from wikkid.tests.factory import FactoryTestCase
 from wikkid.tests.fakes import TestRequest, TestUser
 
@@ -23,7 +22,5 @@ class TestEdit(FactoryTestCase):
         """Test that a nested page returns the expected title"""
         factory = self.make_factory([
                 ('SomePage/SubPage/Nested.txt', 'some text')])
-        info = factory.get_resource_at_path('/SomePage/SubPage')
-        view = get_view(info, 'edit', self.request, self.user)
+        view = self.get_view(factory, '/SomePage/SubPage', 'edit')
         self.assertEqual('Editing "Sub Page"', view.title)
-
