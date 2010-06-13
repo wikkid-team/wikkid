@@ -85,6 +85,10 @@ class IFile(Interface):
 
     last_modified_by = Attribute("The person who last modified the file.")
 
+    last_modified_date = Attribute(
+        'The timestamp of the revision that last modified the file. '
+        'This is a naive datetime object in UTC.')
+
     def get_content():
         """Get the contents of the file.
 

@@ -32,7 +32,9 @@ def get_view(obj, view_name, request, user):
     for interface in interfaces:
         try:
             klass = _VIEW_REGISTRY[(interface, view_name)]
-            return klass(obj, request, user)
+            instance = klass(obj, request, user)
+            instance.initialize()
+            return instance
         except KeyError:
             pass
     # For example, if someone asked for 'raw' view on a directory or binary

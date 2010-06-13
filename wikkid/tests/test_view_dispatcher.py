@@ -45,10 +45,13 @@ class TestGetView(TestCase):
             name = 'name'
             def __init__(self, *args):
                 pass
+            def initialize(self):
+                self.initialized = True
         register_view(AView)
         obj = HasInterface()
         view = get_view(obj, 'name', None, None)
         self.assertIsInstance(view, AView)
+        self.assertTrue(view.initialized)
 
     def test_interface_view_registered_default(self):
         """If the object supports an interface, and the view is registered as
@@ -64,10 +67,13 @@ class TestGetView(TestCase):
             is_default = True
             def __init__(self, *args):
                 pass
+            def initialize(self):
+                self.initialized = True
         register_view(AView)
         obj = HasInterface()
         view = get_view(obj, None, None, None)
         self.assertIsInstance(view, AView)
+        self.assertTrue(view.initialized)
 
 
 class TestViewRegistration(TestCase):

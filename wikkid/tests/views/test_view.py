@@ -4,26 +4,26 @@
 # This software is licensed under the GNU Affero General Public License
 # version 3 (see the file LICENSE).
 
-"""Tests the edit views."""
+"""Tests the display views."""
 
 from wikkid.dispatcher import get_view
 from wikkid.tests.factory import FactoryTestCase
 from wikkid.tests.fakes import TestRequest, TestUser
 
 
-class TestEdit(FactoryTestCase):
-    """Test the edit view."""
+class TestView(FactoryTestCase):
+    """Test the display view."""
 
     def setUp(self):
-        super(TestEdit, self).setUp()
+        super(TestView, self).setUp()
         self.user = TestUser('test@example.com', 'Test User')
         self.request = TestRequest()
 
-    def test_title_nested(self):
-        """Test that a nested page returns the expected title"""
+    def test_last_modified_by(self):
+        """Test that the last committer is displayed properly"""
         factory = self.make_factory([
                 ('SomePage/SubPage/Nested.txt', 'some text')])
-        info = factory.get_resource_at_path('/SomePage/SubPage')
-        view = get_view(info, 'edit', self.request, self.user)
-        self.assertEqual('Editing "Sub Page"', view.title)
-
+        info = factory.get_resource_at_path('/SomePage/SubPage/Nested.txt')
+        view = get_view(info, 'view', self.request, self.user)
+        user = view.last_modified_by
+        self.assertEqual('First User', user.display_name)

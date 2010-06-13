@@ -51,6 +51,13 @@ class IFileResource(IUpdatableResource):
     last_modified_in_revision = Attribute(
         'The revision id where the file was last modified.')
 
+    last_modified_by = Attribute(
+        'The author of the revision that last modified the file.')
+
+    last_modified_date = Attribute(
+        'The timestamp of the revision that last modified the file. '
+        'This is a naive datetime object in UTC.')
+
 
 class IDirectoryResource(IResource):
     """A resource that relates to a file in the filestore."""

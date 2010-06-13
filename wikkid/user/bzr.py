@@ -15,6 +15,15 @@ from wikkid.interface.user import IUser, IUserFactory
 from wikkid.user.baseuser import BaseUser
 
 
+def create_bzr_user_from_author_string(author):
+    name, address = email.Utils.parseaddr(author)
+    if name:
+        display_name = name
+    else:
+        display_name = address
+    return User(address, display_name, author)
+
+
 class UserFactory(object):
     """Generate a user from local bazaar config."""
 
@@ -23,20 +32,15 @@ class UserFactory(object):
     def __init__(self, branch):
         """Use the user config from the branch."""
         config = branch.get_config()
-        self.committer_id = config.username()
-        name, address = email.Utils.parseaddr(self.committer_id)
-        self.email = address
-        if name:
-            self.display_name = name
-        else:
-            self.display_name = address
+        self.user = create_bzr_user_from_author_string(config.username())
         logger = logging.getLogger('wikkid')
         logger.info(
-            'Using bzr identity: "%s", "%s"', self.display_name, self.email)
+            'Using bzr identity: "%s", "%s"',
+            self.user.display_name, self.user.email)
 
     def create(self, request):
         """Create a User."""
-        return User(self.email, self.display_name, self.committer_id)
+        return self.user
 
 
 class User(BaseUser):

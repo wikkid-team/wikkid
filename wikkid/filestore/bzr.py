@@ -6,6 +6,7 @@
 
 """A bzr backed filestore."""
 
+from datetime import datetime
 import logging
 
 from zope.interface import implements
@@ -245,6 +246,13 @@ class File(BaseFile):
         repo = self.working_tree.branch.repository
         rev = repo.get_revision(self.last_modified_in_revision)
         return rev.get_apparent_authors()[0]
+
+    @property
+    def last_modified_date(self):
+        """Return the last modified date for the revision."""
+        repo = self.working_tree.branch.repository
+        rev = repo.get_revision(self.last_modified_in_revision)
+        return datetime.utcfromtimestamp(rev.timestamp)
 
     @property
     def _is_binary(self):
