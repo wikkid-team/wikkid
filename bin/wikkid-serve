@@ -22,7 +22,7 @@ from bzrlib.workingtree import WorkingTree
 from wikkid import version
 from wikkid.app import WikkidApp
 from wikkid.filestore.bzr import FileStore
-from wikkid.user.bzr import UserFactory
+from wikkid.user.bzr import LocalBazaarUserMiddleware
 
 
 def setup_logging():
@@ -62,6 +62,7 @@ def main(args):
     filestore = FileStore(working_tree)
 
     app = WikkidApp(filestore)
+    app = LocalBazaarUserMiddleware(app, working_tree.branch)
     from wsgiref.simple_server import make_server
     httpd = make_server('localhost', options.port, app)
     logger.info('Serving on http://localhost:%s', options.port)
