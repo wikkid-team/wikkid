@@ -8,7 +8,7 @@
 
 TODO:
  * url handling
- * redirects
+ * redirects <- I am here
  * users - I'm thinking that we should do the users as a middleware.
    That way we can just add to the environ for the user.
 """
@@ -21,7 +21,7 @@ import urllib
 
 from bzrlib import urlutils
 from webob import Request, Response
-from webob.exc import HTTPNotFound
+from webob.exc import HTTPException, HTTPNotFound
 
 from wikkid.dispatcher import get_view
 from wikkid.model.factory import ResourceFactory
@@ -92,7 +92,10 @@ class WikkidApp(object):
         else:
             resource_path, action = parse_url(path)
             model = self.resource_factory.get_resource_at_path(resource_path)
-            view = get_view(model, action, request)
-            response = Response(view.render(self.skin))
+            try:
+                view = get_view(model, action, request)
+                response = view.render(self.skin)
+            except HTTPException, e:
+                response = e
 
         return response(environ, start_response)

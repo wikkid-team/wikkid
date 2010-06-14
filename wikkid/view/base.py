@@ -8,6 +8,8 @@
 
 import logging
 
+from webob import Response
+
 from wikkid.dispatcher import register_view
 from wikkid.view.utils import title_for_filename
 from wikkid.interface.resource import IRootResource
@@ -93,10 +95,8 @@ class BaseView(object):
         """
         template = skin.get_template(self.template)
         content = template.render(**self.template_args())
-        self.request.setHeader(
-            'Content-Type', "text/html; charset=utf-8")
         # Return the encoded content.
-        return content.encode('utf-8')
+        return Response(content.encode('utf-8'))
 
     def render(self, skin):
         """Render the page.
