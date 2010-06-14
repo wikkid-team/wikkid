@@ -6,7 +6,6 @@
 
 """Tests the breadcrumbs for the views."""
 
-from wikkid.dispatcher import get_view
 from wikkid.tests.factory import FactoryTestCase
 from wikkid.tests.fakes import TestRequest, TestUser
 
