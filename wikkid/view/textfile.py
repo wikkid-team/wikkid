@@ -8,7 +8,7 @@
 
 import logging
 
-from twisted.web.util import redirectTo
+from webob.exc import HTTPTemporaryRedirect
 
 from wikkid.errors import UpdateConflicts
 from wikkid.interface.resource import ITextFile
@@ -60,7 +60,7 @@ class SaveNewTextContent(BaseView):
             self.context.put_bytes(
                 content, self.user.committer_id, rev_id, message)
 
-            return redirectTo(self.context.path, self.request)
+            raise HTTPTemporaryRedirect(location=self.context.path)
         except UpdateConflicts, e:
             # Show the edit page again.
             logger = logging.getLogger('wikkid')
