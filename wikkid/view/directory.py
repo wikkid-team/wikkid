@@ -53,10 +53,10 @@ class DirectoryListingPage(DirectoryBreadcrumbView):
             parent = self.context.parent_dir
             items.append(
                 ListingItem(
-                    parent, '%s?view=listing' % parent.path, 'up', name='..'))
+                    parent, '%s/+listing' % parent.path, 'up', name='..'))
         for item in sorted(directories, key=sort_key):
             items.append(
-                ListingItem(item, '%s?view=listing' % item.path, 'directory'))
+                ListingItem(item, '%s/+listing' % item.path, 'directory'))
         for item in sorted(files, key=sort_key):
             items.append(ListingItem(item, item.path, 'file'))
         self.items = items

@@ -38,6 +38,14 @@ class Breadcrumb(object):
             self.title = title
 
 
+def wikkid_url(context, view=None):
+    path = context.preferred_path
+    if view is None:
+        return path
+    else:
+        return '{0}/+{1}'.format(path, view)
+
+
 class BaseView(object):
     """The base view class.
 
@@ -85,6 +93,7 @@ class BaseView(object):
             'user': self.user,
             'context': self.context,
             'request': self.request,
+            'wikkid_url': wikkid_url,
             }
 
     def _render(self, skin):
