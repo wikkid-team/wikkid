@@ -6,6 +6,8 @@
 
 """Views associated with binary files."""
 
+from webob import Response
+
 from wikkid.interface.resource import IBinaryFile
 from wikkid.view.base import BaseView
 
@@ -18,5 +20,6 @@ class BinaryFile(BaseView):
     is_default = True
 
     def _render(self, skin):
-        self.request.setHeader('Content-Type', self.context.mimetype)
-        return self.context.get_bytes()
+        return Response(
+            body=self.context.get_bytes(),
+            content_type=self.context.mimetype)
