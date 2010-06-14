@@ -79,9 +79,9 @@ class TestBreadcrumbs(FactoryTestCase):
         self.assertBreadcrumbs(
             view,
             [('Home', '/Home'),
-             ('wiki root', '/?view=listing'),
-             ('wikkid', '/wikkid?view=listing'),
-             ('views', '/wikkid/views?view=listing'),
+             ('wiki root', '/+listing'),
+             ('wikkid', '/wikkid/+listing'),
+             ('views', '/wikkid/views/+listing'),
              ('base.py', '/wikkid/views/base.py')])
 
     def test_directory_breadcrumbs_root(self):
@@ -93,7 +93,7 @@ class TestBreadcrumbs(FactoryTestCase):
         self.assertBreadcrumbs(
             view,
             [('Home', '/Home'),
-             ('wiki root', '/?view=listing')])
+             ('wiki root', '/+listing')])
 
     def test_directory_breadcrumbs_nested(self):
         # For each directory after the root, a listing crumb is added.
@@ -104,6 +104,6 @@ class TestBreadcrumbs(FactoryTestCase):
         self.assertBreadcrumbs(
             view,
             [('Home', '/Home'),
-             ('wiki root', '/?view=listing'),
-             ('SomePage', '/SomePage?view=listing'),
+             ('wiki root', '/+listing'),
+             ('SomePage', '/SomePage/+listing'),
              ('SubPage', '/SomePage/SubPage')])

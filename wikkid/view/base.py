@@ -119,10 +119,10 @@ class DirectoryBreadcrumbView(BaseView):
                     current, suffix, title=current.base_name))
             current = current.parent_dir
             # Add listings to subsequent urls.
-            suffix='?view=listing'
+            suffix='/+listing'
         # Add in the root dir.
         crumbs.append(Breadcrumb(
-                current, url='/?view=listing', title='wiki root'))
+                current, url='/+listing', title='wiki root'))
         # And add in the default page.
         crumbs.append(Breadcrumb(current.default_resource))
         return reversed(crumbs)
