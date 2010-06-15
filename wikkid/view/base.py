@@ -38,7 +38,7 @@ class Breadcrumb(object):
             self.title = title
 
 
-def wikkid_url(context, view=None):
+def canonical_url(context, view=None):
     path = context.preferred_path
     if view is None:
         return path
@@ -93,7 +93,7 @@ class BaseView(object):
             'user': self.user,
             'context': self.context,
             'request': self.request,
-            'wikkid_url': wikkid_url,
+            'canonical_url': canonical_url,
             }
 
     def _render(self, skin):
