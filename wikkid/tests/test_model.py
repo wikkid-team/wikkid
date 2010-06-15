@@ -8,20 +8,11 @@
 
 from operator import attrgetter
 
-from testtools import TestCase
-
-from wikkid.filestore.volatile import FileStore
 from wikkid.interface.resource import IDirectoryResource
-from wikkid.model.factory import ResourceFactory
-from wikkid.tests import ProvidesMixin
+from wikkid.tests.factory import FactoryTestCase
 
 
-class TestDirectoryResource(TestCase, ProvidesMixin):
-
-    def make_factory(self, content=None):
-        """Make a server with a volatile filestore."""
-        filestore = FileStore(content)
-        return ResourceFactory(filestore)
+class TestDirectoryResource(FactoryTestCase):
 
     def test_implements_interface(self):
         """DirectoryResource implements IDirectoryResource."""
