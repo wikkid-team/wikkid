@@ -29,12 +29,16 @@ class TestCanonicalUrl(FactoryTestCase):
         self.assertEqual('/+listing', canonical_url(root, 'listing'))
 
     def test_default(self):
-        factory = self.make_factory()
+        factory = self.make_factory([
+            ('Home.txt', 'Some content'),
+            ])
         root = factory.get_resource_at_path('/')
         self.assertEqual('/Home', canonical_url(root.default_resource))
 
     def test_default_view(self):
-        factory = self.make_factory()
+        factory = self.make_factory([
+            ('Home.txt', 'Some content'),
+            ])
         root = factory.get_resource_at_path('/')
         self.assertEqual(
             '/Home/+edit',
@@ -81,6 +85,17 @@ class TestCanonicalUrl(FactoryTestCase):
             ])
         page = factory.get_resource_at_path('/simple.py')
         self.assertEqual('/simple.py/+edit', canonical_url(page, 'edit'))
+
+    def test_missing(self):
+        factory = self.make_factory()
+        root = factory.get_resource_at_path('/MissingPage')
+        self.assertEqual('/MissingPage', canonical_url(root))
+
+    def test_missing_view(self):
+        factory = self.make_factory()
+        root = factory.get_resource_at_path('/MissingPage')
+        self.assertEqual('/MissingPage/+edit', canonical_url(root, 'edit'))
+
 
 
 
