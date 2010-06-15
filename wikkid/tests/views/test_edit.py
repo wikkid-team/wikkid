@@ -6,11 +6,11 @@
 
 """Tests the edit views."""
 
-from wikkid.tests.factory import FactoryTestCase
+from wikkid.tests.factory import ViewTestCase
 from wikkid.tests.fakes import TestUser
 
 
-class TestEdit(FactoryTestCase):
+class TestEdit(ViewTestCase):
     """Test the edit view."""
 
     def setUp(self):

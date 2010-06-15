@@ -6,11 +6,11 @@
 
 """Tests the display views."""
 
-from wikkid.tests.factory import FactoryTestCase
+from wikkid.tests.factory import ViewTestCase
 from wikkid.tests.fakes import TestUser
 
 
-class TestView(FactoryTestCase):
+class TestView(ViewTestCase):
     """Test the display view."""
 
     def setUp(self):

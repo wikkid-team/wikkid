@@ -6,11 +6,11 @@
 
 """Tests the breadcrumbs for the views."""
 
-from wikkid.tests.factory import FactoryTestCase
+from wikkid.tests.factory import ViewTestCase
 from wikkid.tests.fakes import TestRequest, TestUser
 
 
-class TestBreadcrumbs(FactoryTestCase):
+class TestBreadcrumbs(ViewTestCase):
     """The breadcrumbs lead the user back home."""
 
     # Don't test the breadcrumbs for the root object directly here as it will
