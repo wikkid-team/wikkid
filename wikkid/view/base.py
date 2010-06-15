@@ -45,6 +45,8 @@ def canonical_url(context, view=None):
     if view is None:
         return path
     else:
+        if path == '/':
+            path = ''
         return '{0}/+{1}'.format(path, view)
 
 
