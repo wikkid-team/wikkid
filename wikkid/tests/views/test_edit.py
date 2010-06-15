@@ -7,7 +7,7 @@
 """Tests the edit views."""
 
 from wikkid.tests.factory import FactoryTestCase
-from wikkid.tests.fakes import TestRequest, TestUser
+from wikkid.tests.fakes import TestUser
 
 
 class TestEdit(FactoryTestCase):
@@ -16,7 +16,6 @@ class TestEdit(FactoryTestCase):
     def setUp(self):
         super(TestEdit, self).setUp()
         self.user = TestUser('test@example.com', 'Test User')
-        self.request = TestRequest()
 
     def test_title_nested(self):
         """Test that a nested page returns the expected title"""
