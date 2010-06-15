@@ -7,6 +7,7 @@
 """The base view class."""
 
 import logging
+import re
 
 from webob import Response
 
@@ -39,11 +40,27 @@ class Breadcrumb(object):
 
 
 def canonical_url(context, view=None):
+    """The one true URL for the context object."""
     path = context.preferred_path
     if view is None:
         return path
     else:
         return '{0}/+{1}'.format(path, view)
+
+
+VIEW_MATCHER = re.compile('^(.*)/\+(\w+)$')
+
+
+def parse_url(path):
+    """Convert a path into a resource path and a view."""
+    match = VIEW_MATCHER.match(path)
+    if match is not None:
+        resource_path, view = match.groups()
+        if resource_path == '':
+            resource_path = '/'
+        return (resource_path, view)
+    else:
+        return (path, None)
 
 
 class BaseView(object):

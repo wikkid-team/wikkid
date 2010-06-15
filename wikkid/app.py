@@ -16,7 +16,6 @@ TODO:
 import logging
 import mimetypes
 import os.path
-import re
 import urllib
 
 from bzrlib import urlutils
@@ -26,6 +25,7 @@ from webob.exc import HTTPException, HTTPNotFound
 from wikkid.dispatcher import get_view
 from wikkid.model.factory import ResourceFactory
 from wikkid.skin.loader import Skin
+from wikkid.view.base import parse_url
 
 
 def serve_file(filename):
@@ -40,21 +40,6 @@ def serve_file(filename):
             f.close()
     else:
         return HTTPNotFound()
-
-
-VIEW_MATCHER = re.compile('^(.*)/\+(\w+)$')
-
-
-def parse_url(path):
-    """Convert a path into a resource path and a view."""
-    match = VIEW_MATCHER.match(path)
-    if match is not None:
-        resource_path, view = match.groups()
-        if resource_path == '':
-            resource_path = '/'
-        return (resource_path, view)
-    else:
-        return (path, None)
 
 
 class WikkidApp(object):
