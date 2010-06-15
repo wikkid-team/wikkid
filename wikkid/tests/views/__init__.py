@@ -14,6 +14,7 @@ def test_suite():
         'breadcrumbs',
         'utils',
         'edit',
+        'urls',
         'view',
         ]
     module_names = ['wikkid.tests.views.test_' + name for name in names]
