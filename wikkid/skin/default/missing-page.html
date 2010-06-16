@@ -15,7 +15,7 @@
 {% endblock %}
 {% block commands %}
 {% if view.user %}
-<a href="{{view.request_path}}/+edit">Edit</a>
+<a href="{{ canonical_url(context, 'edit') }}">Edit</a>
 {% endif %}
 {% if context.get_dir_name %}
 <a class="command" href="{{context.path}}/+listing">Browse</a>

@@ -28,11 +28,8 @@ class BaseViewMetaClass(type):
 class Breadcrumb(object):
     """Breadcrumbs exist to give the user quick links up the path chain."""
 
-    def __init__(self, context, suffix='', url=None, title=None):
-        if url is not None:
-            self.path = url
-        else:
-            self.path = context.path + suffix
+    def __init__(self, context, view=None, title=None):
+        self.path = canonical_url(context, view)
         if title is None:
             self.title = title_for_filename(context.base_name)
         else:
@@ -115,17 +112,15 @@ class DirectoryBreadcrumbView(BaseView):
     def _create_breadcrumbs(self):
         crumbs = []
         current = self.context
-        suffix = ''
+        view = None
         while not IRootResource.providedBy(current):
             crumbs.append(Breadcrumb(
-                    current, suffix, title=current.base_name))
+                    current, view, title=current.base_name))
             current = current.parent_dir
             # Add listings to subsequent urls.
-            suffix='/+listing'
+            view = 'listing'
         # Add in the root dir.
-        crumbs.append(Breadcrumb(
-                current, url='/+listing', title='wiki root'))
+        crumbs.append(Breadcrumb(current, 'listing', title='wiki root'))
         # And add in the default page.
         crumbs.append(Breadcrumb(current.default_resource))
         return reversed(crumbs)
-
