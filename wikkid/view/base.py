@@ -7,11 +7,11 @@
 """The base view class."""
 
 import logging
-import re
 
 from webob import Response
 
 from wikkid.dispatcher import register_view
+from wikkid.view.urls import canonical_url
 from wikkid.view.utils import title_for_filename
 from wikkid.interface.resource import IRootResource
 
@@ -37,32 +37,6 @@ class Breadcrumb(object):
             self.title = title_for_filename(context.base_name)
         else:
             self.title = title
-
-
-def canonical_url(context, view=None):
-    """The one true URL for the context object."""
-    path = context.preferred_path
-    if view is None:
-        return path
-    else:
-        if path == '/':
-            path = ''
-        return '{0}/+{1}'.format(path, view)
-
-
-VIEW_MATCHER = re.compile('^(.*)/\+(\w+)$')
-
-
-def parse_url(path):
-    """Convert a path into a resource path and a view."""
-    match = VIEW_MATCHER.match(path)
-    if match is not None:
-        resource_path, view = match.groups()
-        if resource_path == '':
-            resource_path = '/'
-        return (resource_path, view)
-    else:
-        return (path, None)
 
 
 class BaseView(object):

@@ -8,7 +8,7 @@
 
 from wikkid.tests import TestCase
 from wikkid.tests.factory import FactoryTestCase
-from wikkid.view.base import canonical_url, parse_url
+from wikkid.view.urls import canonical_url, parse_url
 
 
 class TestCanonicalUrl(FactoryTestCase):

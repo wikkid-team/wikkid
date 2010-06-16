@@ -25,7 +25,7 @@ from webob.exc import HTTPException, HTTPNotFound
 from wikkid.dispatcher import get_view
 from wikkid.model.factory import ResourceFactory
 from wikkid.skin.loader import Skin
-from wikkid.view.base import parse_url
+from wikkid.view.urls import parse_url
 
 
 def serve_file(filename):
