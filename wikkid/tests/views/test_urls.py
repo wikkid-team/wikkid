@@ -6,17 +6,13 @@
 
 """Tests the edit views."""
 
+from wikkid.tests import TestCase
 from wikkid.tests.factory import FactoryTestCase
-from wikkid.tests.fakes import TestUser
-from wikkid.view.base import canonical_url
+from wikkid.view.base import canonical_url, parse_url
 
 
 class TestCanonicalUrl(FactoryTestCase):
-    """Test the edit view."""
-
-    def setUp(self):
-        super(TestCanonicalUrl, self).setUp()
-        self.user = TestUser('test@example.com', 'Test User')
+    """Test the wikkid.view.base.canonical_url."""
 
     def test_root(self):
         factory = self.make_factory()
@@ -46,17 +42,18 @@ class TestCanonicalUrl(FactoryTestCase):
 
     def test_wiki_page(self):
         factory = self.make_factory([
-            ('SomeDir.txt', 'Some content'),
+            ('SomeDir/SomePage.txt', 'Some content'),
             ])
-        page = factory.get_resource_at_path('/SomeDir')
-        self.assertEqual('/SomeDir', canonical_url(page))
+        page = factory.get_resource_at_path('/SomeDir/SomePage')
+        self.assertEqual('/SomeDir/SomePage', canonical_url(page))
 
     def test_wiki_page_view(self):
         factory = self.make_factory([
-            ('SomeDir.txt', 'Some content'),
+            ('SomeDir/SomePage.txt', 'Some content'),
             ])
-        page = factory.get_resource_at_path('/SomeDir')
-        self.assertEqual('/SomeDir/+edit', canonical_url(page, 'edit'))
+        page = factory.get_resource_at_path('/SomeDir/SomePage')
+        self.assertEqual(
+            '/SomeDir/SomePage/+edit', canonical_url(page, 'edit'))
 
     def test_wiki_page_full_url(self):
         factory = self.make_factory([
@@ -97,6 +94,27 @@ class TestCanonicalUrl(FactoryTestCase):
         self.assertEqual('/MissingPage/+edit', canonical_url(root, 'edit'))
 
 
+class TestParseUrl(TestCase):
+    """Tests for wikkid.view.base.parse_url."""
 
+    def test_root(self):
+        path, view = parse_url('/')
+        self.assertEqual('/', path)
+        self.assertIs(None, view)
+
+    def test_root_view(self):
+        path, view = parse_url('/+listing')
+        self.assertEqual('/', path)
+        self.assertEqual('listing', view)
+
+    def test_path(self):
+        path, view = parse_url('/some/path')
+        self.assertEqual('/some/path', path)
+        self.assertIs(None, view)
+
+    def test_path_view(self):
+        path, view = parse_url('/some/path/+view')
+        self.assertEqual('/some/path', path)
+        self.assertEqual('view', view)
 
 
