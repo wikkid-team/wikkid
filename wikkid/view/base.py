@@ -70,6 +70,17 @@ class BaseView(object):
     def title(self):
         return title_for_filename(self.context.base_name)
 
+    @property
+    def last_modified_by(self):
+        return self.context.last_modified_by
+
+    @property
+    def last_modified_date(self):
+        last_modified = self.context.last_modified_date
+        if last_modified is None:
+            return None
+        return last_modified.strftime('%Y-%m-%d %H:%M:%S')
+
     def before_render(self):
         """A hook to do things before rendering."""
 
