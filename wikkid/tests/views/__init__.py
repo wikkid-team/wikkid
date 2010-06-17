@@ -14,6 +14,7 @@ def test_suite():
         'breadcrumbs',
         'utils',
         'edit',
+        'root',
         'urls',
         'view',
         ]

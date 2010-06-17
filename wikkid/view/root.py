@@ -21,5 +21,6 @@ class RootPage(BaseView):
 
     def _render(self, skin):
         """Redirect to Home (or the default page)."""
-        preferred = self.context.preferred_path
+        default_resource = self.context.default_resource
+        preferred = default_resource.preferred_path
         raise HTTPTemporaryRedirect(location=preferred)
