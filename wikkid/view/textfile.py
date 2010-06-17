@@ -8,7 +8,7 @@
 
 import logging
 
-from webob.exc import HTTPTemporaryRedirect
+from webob.exc import HTTPSeeOther
 
 from wikkid.errors import UpdateConflicts
 from wikkid.interface.resource import ITextFile
@@ -49,18 +49,20 @@ class SaveNewTextContent(BaseView):
         If it conflicts, render the edit, otherwise render the page (ideally
         redirect back to the plain page.
         """
+        # TODO: barf on a GET
         # TODO: barf if there is no user.
-        content = self.request.args['content'][0]
-        message = self.request.args['message'][0]
-        if 'rev-id' in self.request.args:
-            rev_id = self.request.args['rev-id'][0]
+        params = self.request.params
+        content = params['content']
+        message = params['message']
+        if 'rev-id' in params:
+            rev_id = params['rev-id']
         else:
             rev_id = None
         try:
             self.context.put_bytes(
                 content, self.user.committer_id, rev_id, message)
 
-            raise HTTPTemporaryRedirect(location=self.context.path)
+            raise HTTPSeeOther(location=self.context.path)
         except UpdateConflicts, e:
             # Show the edit page again.
             logger = logging.getLogger('wikkid')

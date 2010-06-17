@@ -4,7 +4,7 @@
 {% if view.message %}
 <div class="message">{{ view.message }}</div>
 {% endif %}
-<form method="post" action="{{ view.request_path }}">
+<form method="post" action="{{ view.save_url }}">
   <textarea name="content">{{ view.content }}</textarea>
   Describe the change: <input type="text" id="message" name="message" value=""/>
   {% if view.rev_id %}

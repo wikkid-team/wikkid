@@ -23,3 +23,10 @@ class TestEdit(ViewTestCase):
                 ('SomePage/SubPage/Nested.txt', 'some text')])
         view = self.get_view(factory, '/SomePage/SubPage', 'edit')
         self.assertEqual('Editing "Sub Page"', view.title)
+
+    def test_urls(self):
+        """Check the urls for saving and cancel."""
+        factory = self.make_factory()
+        view = self.get_view(factory, '/NewPage', 'edit')
+        self.assertEqual('/NewPage', view.cancel_url)
+        self.assertEqual('/NewPage/+save', view.save_url)

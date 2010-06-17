@@ -6,7 +6,7 @@
 
 """Test views for the root object."""
 
-from webob.exc import HTTPTemporaryRedirect
+from webob.exc import HTTPSeeOther
 
 from wikkid.tests.factory import ViewTestCase
 
@@ -19,7 +19,7 @@ class TestRootViews(ViewTestCase):
         factory = self.make_factory()
         view = self.get_view(factory, '/')
         error = self.assertRaises(
-            HTTPTemporaryRedirect,
+            HTTPSeeOther,
             view.render,
             None)
         self.assertEqual('/Home', error.headers['Location'])

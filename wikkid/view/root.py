@@ -6,7 +6,7 @@
 
 """View classes for the wiki root."""
 
-from webob.exc import HTTPTemporaryRedirect
+from webob.exc import HTTPSeeOther
 
 from wikkid.interface.resource import IRootResource
 from wikkid.view.base import BaseView
@@ -23,4 +23,4 @@ class RootPage(BaseView):
         """Redirect to Home (or the default page)."""
         default_resource = self.context.default_resource
         preferred = default_resource.preferred_path
-        raise HTTPTemporaryRedirect(location=preferred)
+        raise HTTPSeeOther(location=preferred)
