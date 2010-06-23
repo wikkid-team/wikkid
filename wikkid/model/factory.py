@@ -107,9 +107,6 @@ class ResourceFactory(object):
             directlyProvides(resource, IDefaultPage)
         return resource
 
-    def _is_default(self, dir_name, base_name):
-        return base_name == self.DEFAULT_PATH and dir_name == '/'
-
     def get_preferred_path(self, path):
         """Get the preferred path for the path passed in.
 
