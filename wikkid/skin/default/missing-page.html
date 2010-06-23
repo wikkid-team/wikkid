@@ -8,7 +8,7 @@
   Create a new page: {{ view.title }}
 </a></p>
 
-<p><a href="{{ request.application_url }}/+listing">
+<p><a href="{{ canonical_url(context.root_resource, 'listing') }}">
   Browse the wiki content
 </a></p>
 
@@ -18,6 +18,6 @@
 <a href="{{ canonical_url(context, 'edit') }}">Edit</a>
 {% endif %}
 {% if context.get_dir_name %}
-<a class="command" href="{{context.path}}/+listing">Browse</a>
+<a class="command" href="{{ canonical_url(context.root_resource, 'listing') }}">Browse</a>
 {% endif %}
 {% endblock %}

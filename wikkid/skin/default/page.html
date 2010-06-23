@@ -9,7 +9,7 @@
 {% if context.dir_name %}
 <a class="command" href="{{context.dir_name}}/+listing">Browse</a>
 {% else %}
-<a class="command" href="{{request.application_url}}/+listing">Browse</a>
+<a class="command" href="{{ canonical_url(context.root_resource, 'listing') }}">Browse</a>
 {% endif %}
 {% endblock %}
 {% block footer %}
