@@ -8,8 +8,64 @@
 
 from operator import attrgetter
 
-from wikkid.interface.resource import IDirectoryResource
+from wikkid.interface.resource import (
+    IDirectoryResource, IMissingResource, IRootResource, IWikiTextFile)
 from wikkid.tests.factory import FactoryTestCase
+
+
+class TestBaseRootResource(FactoryTestCase):
+    """Tests for BaseResource.root_resource."""
+
+    def test_root_can_get_root(self):
+        """Even the root resource can get the root resource."""
+        factory = self.make_factory()
+        resource = factory.get_resource_at_path('/')
+        root = resource.root_resource
+        self.assertProvides(root, IRootResource)
+
+    def test_missing_can_get_root(self):
+        """Even the root resource can get the root resource."""
+        factory = self.make_factory()
+        resource = factory.get_resource_at_path('/MissingPage')
+        root = resource.root_resource
+        self.assertProvides(root, IRootResource)
+
+
+class TestBaseDefaultResource(FactoryTestCase):
+    """Tests for BaseResource.default_resource."""
+
+    def test_default_when_missing(self):
+        """If the default is missing, then a missing resource is returned for
+        the default path.
+        """
+        factory = self.make_factory()
+        resource = factory.get_resource_at_path('/')
+        home = resource.default_resource
+        self.assertProvides(home, IMissingResource)
+        self.assertEqual('/Home', home.preferred_path)
+
+    def test_default_when_exists(self):
+        """If the default exists, the default wiki page is returned."""
+        factory = self.make_factory([
+                ('Home.txt', 'Some content'),
+                ])
+        resource = factory.get_resource_at_path('/')
+        home = resource.default_resource
+        self.assertProvides(home, IWikiTextFile)
+        self.assertEqual('/Home', home.preferred_path)
+
+    def test_default_different_name(self):
+        """If the default name has been overridden, then the default_resource
+        attribute returns the correct name.
+        """
+        factory = self.make_factory([
+                ('FrontPage.txt', 'Some content'),
+                ])
+        factory.DEFAULT_PATH = 'FrontPage'
+        resource = factory.get_resource_at_path('/')
+        home = resource.default_resource
+        self.assertProvides(home, IWikiTextFile)
+        self.assertEqual('/FrontPage', home.preferred_path)
 
 
 class TestDirectoryResource(FactoryTestCase):

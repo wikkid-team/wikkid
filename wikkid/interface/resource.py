@@ -21,6 +21,14 @@ class IResource(Interface):
         'This is either the filename as it directly corresponds to the '
         'path, or a related wiki page location.')
 
+    root_resource = Attribute(
+        'The root resource is the object that represents the root of the wiki.'
+        )
+
+    default_resource = Attribute(
+        'The default resource is the default wiki page.'
+        )
+
 
 class IUpdatableResource(IResource):
     """Reflects either a file either missing or actual."""

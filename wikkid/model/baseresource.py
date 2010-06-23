@@ -47,8 +47,10 @@ class BaseResource(object):
 
     @property
     def default_resource(self):
+        """Any resource should be able to get to the default resource."""
         return self.factory.get_default_resource()
 
     @property
     def root_resource(self):
+        """Any resource should be able to get to the root resource."""
         return self.factory.get_resource_at_path('/')
