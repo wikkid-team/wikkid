@@ -20,7 +20,7 @@ class UpdatableResource(BaseResource):
 
     def put_bytes(self, bytes, committer, rev_id, commit_msg):
         """Update the file resource."""
-        self.server.filestore.update_file(
+        self.factory.filestore.update_file(
             self.write_filename, bytes, committer, rev_id, commit_msg)
 
 

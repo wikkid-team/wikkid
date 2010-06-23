@@ -9,6 +9,10 @@
 from zope.interface import Attribute, Interface
 
 
+class IDefaultPage(Interface):
+    """A marker interface for the default wiki page."""
+
+
 class IResource(Interface):
     """The base resource interface."""
 
@@ -20,6 +24,14 @@ class IResource(Interface):
         'The full path of the file to write to in the filestore. '
         'This is either the filename as it directly corresponds to the '
         'path, or a related wiki page location.')
+
+    root_resource = Attribute(
+        'The root resource is the object that represents the root of the wiki.'
+        )
+
+    default_resource = Attribute(
+        'The default resource is the default wiki page.'
+        )
 
 
 class IUpdatableResource(IResource):

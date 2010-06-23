@@ -214,35 +214,3 @@ class TestFactoryGetPreferredPath(FactoryTestCase):
         self.assertEqual('/a.b.txt', factory.get_preferred_path('/a.b.txt'))
         self.assertEqual('/a', factory.get_preferred_path('/a.txt'))
         self.assertEqual('/a/b', factory.get_preferred_path('/a/b.txt'))
-
-
-class TestFactoryGetParentInfo(FactoryTestCase):
-    """Test the get_parent_info method of the Factory class."""
-
-    def test_get_parent_info_root(self):
-        # The parent of root is None.
-        factory = self.make_factory()
-        info = factory.get_resource_at_path('/')
-        self.assertIs(None, factory.get_parent_info(info))
-
-    def test_get_parent_info_page(self):
-        # If a non default page in the root directory is asked for, the parent
-        # of that page is the default home page.
-        factory = self.make_factory()
-        info = factory.get_resource_at_path('/MissingPage')
-        parent = factory.get_parent_info(info)
-        self.assertEqual('/Home', parent.path)
-
-    def test_get_parent_home_page(self):
-        # If a non default page in the root directory is asked for, the parent
-        # of that page is the default home page.
-        factory = self.make_factory()
-        info = factory.get_resource_at_path('/Home')
-        parent = factory.get_parent_info(info)
-        self.assertIs(None, parent)
-
-    def test_get_parent_subdir(self):
-        factory = self.make_factory()
-        info = factory.get_resource_at_path('/SomePage/SubPage')
-        parent = factory.get_parent_info(info)
-        self.assertEqual('/SomePage', parent.path)

@@ -30,7 +30,7 @@ class DirectoryMethods(object):
     def get_listing(self):
         """Return a list of resources that are in this directory."""
         dir_name = self.get_dir_name()
-        filestore = self.server.filestore
+        filestore = self.factory.filestore
         listing = []
         for entry in filestore.list_directory(dir_name):
             if entry.file_type == FileType.DIRECTORY:
@@ -41,7 +41,7 @@ class DirectoryMethods(object):
                 dir_resource = None
             file_path = entry.path
             listing.append(
-                self.server.get_resource(
+                self.factory.get_resource(
                     '/' + file_path, file_path, file_resource, dir_resource))
 
         return listing

@@ -20,10 +20,9 @@ import sys
 from bzrlib.workingtree import WorkingTree
 
 from wikkid import version
+from wikkid.app import WikkidApp
 from wikkid.filestore.bzr import FileStore
-from wikkid.model.factory import ResourceFactory
-from wikkid.twistedserver import TwistedServer
-from wikkid.user.bzr import UserFactory
+from wikkid.user.bzr import LocalBazaarUserMiddleware
 
 
 def setup_logging():
@@ -61,11 +60,16 @@ def main(args):
     working_tree = WorkingTree.open(branch)
     logger.info('Using: %s', working_tree)
     filestore = FileStore(working_tree)
-    server = TwistedServer(
-        ResourceFactory(filestore),
-        UserFactory(working_tree.branch),
-        port=options.port)
-    server.run()
+
+    app = WikkidApp(filestore)
+    app = LocalBazaarUserMiddleware(app, working_tree.branch)
+    from wsgiref.simple_server import make_server
+    httpd = make_server('localhost', options.port, app)
+    logger.info('Serving on http://localhost:%s', options.port)
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        logger.info('Done.')
 
 
 if __name__ == "__main__":

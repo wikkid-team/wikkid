@@ -6,9 +6,7 @@
 
 """View classes to control the rendering of wiki pages."""
 
-from bzrlib.osutils import format_date
-
-from twisted.web.util import redirectTo
+from webob.exc import HTTPTemporaryRedirect
 
 from wikkid.formatter.registry import get_wiki_formatter
 from wikkid.interface.resource import IWikiTextFile
@@ -32,15 +30,6 @@ class WikiPage(BaseView):
         content, formatter = get_wiki_formatter(bytes, 'rest')
         return formatter.format(self.context.base_name, content)
 
-    @property
-    def last_modified_by(self):
-        return self.context.last_modified_by
-
-    @property
-    def last_modified_date(self):
-        return self.context.last_modified_date.strftime(
-            '%Y-%m-%d %H:%M:%S')
-
     def _render(self, skin):
         """If the page is not being viewed with the preferred path, redirect.
 
@@ -48,6 +37,6 @@ class WikiPage(BaseView):
         """
         preferred = self.context.preferred_path
         if self.context.path != preferred:
-            return redirectTo(preferred, self.request)
+            raise HTTPTemporaryRedirect(location=preferred)
         else:
             return super(WikiPage, self)._render(skin)
