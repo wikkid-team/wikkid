@@ -4,14 +4,7 @@
 # This software is licensed under the GNU Affero General Public License
 # version 3 (see the file LICENSE).
 
-"""A WSGI application for Wikkid.
-
-TODO:
- * url handling
- * redirects <- I am here
- * users - I'm thinking that we should do the users as a middleware.
-   That way we can just add to the environ for the user.
-"""
+"""A WSGI application for Wikkid."""
 
 import logging
 import mimetypes
