@@ -129,16 +129,3 @@ class ResourceFactory(object):
             return path
         else:
             return joinpath(dirname(path), filename)
-
-    def get_parent_info(self, resource):
-        """Get the resource info for the parent of path."""
-
-        if resource.path == '/':
-            return None
-        base_name = resource.base_name
-        dir_name = resource.dir_name
-        if self._is_default(dir_name, base_name):
-            return None
-        if dir_name == '/':
-            dir_name += self.DEFAULT_PATH
-        return self.get_resource_at_path(dir_name)
