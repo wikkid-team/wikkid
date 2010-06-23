@@ -6,11 +6,7 @@
 {% if view.user %}
 <a class="command" href="{{ canonical_url(context, 'edit') }}">Edit</a>
 {% endif %}
-{% if context.dir_name %}
-<a class="command" href="{{context.dir_name}}/+listing">Browse</a>
-{% else %}
-<a class="command" href="{{ canonical_url(context.root_resource, 'listing') }}">Browse</a>
-{% endif %}
+<a class="command" href="{{ canonical_url(context.parent, 'listing') }}">Browse</a>
 {% endblock %}
 {% block footer %}
 <p class="last-edit">Last edited by <strong title="{{view.last_modified_by.committer_id}}">{{ view.last_modified_by.display_name }}</strong>
