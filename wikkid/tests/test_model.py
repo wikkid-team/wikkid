@@ -9,7 +9,8 @@
 from operator import attrgetter
 
 from wikkid.interface.resource import (
-    IDirectoryResource, IMissingResource, IRootResource, IWikiTextFile)
+    IDefaultPage, IDirectoryResource, IMissingResource, IRootResource,
+    IWikiTextFile)
 from wikkid.tests.factory import FactoryTestCase
 
 
@@ -42,6 +43,7 @@ class TestBaseDefaultResource(FactoryTestCase):
         resource = factory.get_resource_at_path('/')
         home = resource.default_resource
         self.assertProvides(home, IMissingResource)
+        self.assertProvides(home, IDefaultPage)
         self.assertEqual('/Home', home.preferred_path)
 
     def test_default_when_exists(self):
@@ -52,6 +54,7 @@ class TestBaseDefaultResource(FactoryTestCase):
         resource = factory.get_resource_at_path('/')
         home = resource.default_resource
         self.assertProvides(home, IWikiTextFile)
+        self.assertProvides(home, IDefaultPage)
         self.assertEqual('/Home', home.preferred_path)
 
     def test_default_different_name(self):
@@ -65,7 +68,45 @@ class TestBaseDefaultResource(FactoryTestCase):
         resource = factory.get_resource_at_path('/')
         home = resource.default_resource
         self.assertProvides(home, IWikiTextFile)
+        self.assertProvides(home, IDefaultPage)
         self.assertEqual('/FrontPage', home.preferred_path)
+
+
+class TestBaseParent(FactoryTestCase):
+    """Tests for the BaseResource.parent attribute."""
+
+    def test_parent_for_root(self):
+        """Root shouldn't have a parent."""
+        factory = self.make_factory()
+        root = factory.get_root_resource()
+        self.assertIs(None, root.parent)
+
+    def test_parent_for_default(self):
+        """The default's parent should be root."""
+        factory = self.make_factory()
+        home = factory.get_default_resource()
+        parent = home.parent
+        self.assertProvides(parent, IRootResource)
+
+    def test_parent_for_page(self):
+        """Any page in the root directory has root as its parent."""
+        factory = self.make_factory([
+                ('SomeDir.txt', 'Some content'),
+                ])
+        home = factory.get_resource_at_path('/SomeDir')
+        parent = home.parent
+        self.assertProvides(parent, IRootResource)
+
+    def test_parent_for_subpage(self):
+        """The path of the parent should be the parent directory."""
+        factory = self.make_factory([
+                ('SomeDir/', None),
+                ('SomeDir.txt', 'Some content'),
+                ])
+        missing = factory.get_resource_at_path('/SomeDir/NoPage')
+        parent = missing.parent
+        expected = factory.get_resource_at_path('/SomeDir')
+        self.assertEquals(expected.preferred_path, parent.preferred_path)
 
 
 class TestDirectoryResource(FactoryTestCase):

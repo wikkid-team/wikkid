@@ -9,6 +9,10 @@
 from zope.interface import Attribute, Interface
 
 
+class IDefaultPage(Interface):
+    """A marker interface for the default wiki page."""
+
+
 class IResource(Interface):
     """The base resource interface."""
 

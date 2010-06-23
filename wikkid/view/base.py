@@ -13,7 +13,8 @@ from webob import Response
 from wikkid.dispatcher import register_view
 from wikkid.view.urls import canonical_url
 from wikkid.view.utils import title_for_filename
-from wikkid.interface.resource import IRootResource
+from wikkid.interface.resource import IDefaultPage, IRootResource
+
 
 class BaseViewMetaClass(type):
     """This metaclass registers the view with the view registry."""
@@ -53,10 +54,13 @@ class BaseView(object):
 
     def _create_breadcrumbs(self):
         crumbs = [Breadcrumb(self.context)]
-        parent = getattr(self.context, 'parent', None)
-        while parent is not None:
-            crumbs.append(Breadcrumb(parent))
-            parent = parent.parent
+        current = self.context.parent
+        while not IRootResource.providedBy(current):
+            crumbs.append(Breadcrumb(current))
+            current = current.parent
+        # And add in the default page if the context isn't the default.
+        if not IDefaultPage.providedBy(self.context):
+            crumbs.append(Breadcrumb(current.default_resource))
         return reversed(crumbs)
 
     def initialize(self):
@@ -127,7 +131,7 @@ class DirectoryBreadcrumbView(BaseView):
         while not IRootResource.providedBy(current):
             crumbs.append(Breadcrumb(
                     current, view, title=current.base_name))
-            current = current.parent_dir
+            current = current.parent
             # Add listings to subsequent urls.
             view = 'listing'
         # Add in the root dir.

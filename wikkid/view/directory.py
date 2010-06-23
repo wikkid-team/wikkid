@@ -51,7 +51,7 @@ class DirectoryListingPage(DirectoryBreadcrumbView):
         items = []
         # If we are looking at / don't add a parent dir.
         if self.context.path != '/':
-            parent = self.context.parent_dir
+            parent = self.context.parent
             items.append(
                 ListingItem(parent, 'listing', 'up', name='..'))
         for item in sorted(directories, key=sort_key):

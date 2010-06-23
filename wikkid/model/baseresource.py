@@ -36,11 +36,6 @@ class BaseResource(object):
 
     @property
     def parent(self):
-        return self.factory.get_parent_info(self)
-
-    @property
-    def parent_dir(self):
-        """Return the directory containing this resource."""
         if IRootResource.providedBy(self):
             return None
         return self.factory.get_resource_at_path(self.dir_name)
