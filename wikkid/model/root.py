@@ -40,9 +40,5 @@ class RootResource(DirectoryResource):
         return "<RootResource '/'>"
 
     @property
-    def default_resource(self):
-        return self.server.get_default_resource()
-
-    @property
     def preferred_path(self):
         return '/'
