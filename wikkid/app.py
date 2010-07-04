@@ -62,9 +62,13 @@ class WikkidApp(object):
                 response = HTTPNotFound()
         elif path.startswith('/static/'):
             if self.skin.static_dir is not None:
-                response = serve_file(
-                    urlutils.joinpath(
-                        self.skin.static_dir, path[8:]))
+                static_dir = self.skin.static_dir.rstrip(os.sep) + os.sep
+                static_file = os.path.abspath(
+                    urlutils.joinpath(static_dir, path[8:]))
+                if static_file.startswith(static_dir):
+                    response = serve_file(static_file)
+                else:
+                    response = HTTPNotFound()
             else:
                 response = HTTPNotFound()
         else:
