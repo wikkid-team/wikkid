@@ -17,8 +17,8 @@ class TestApp(TestCase):
 
     def test_traverse_above_static_not_possible_with_relative_path(self):
         """
-        Traversal above the static folder, by forging a malicious request for
-        example, is not possible.
+        Traversal above the static folder, by forging a malicious request with
+        a relative path for example, is not possible.
         """
         environ = {
             "REQUEST_METHOD": "GET",
@@ -34,8 +34,8 @@ class TestApp(TestCase):
 
     def test_traverse_above_static_not_possible_with_absolute_path(self):
         """
-        Traversal above the static folder, by forging a malicious request for
-        example, is not possible.
+        Traversal above the static folder, by forging a malicious request
+        including an absolute path for example, is not possible.
         """
         this_file = os.path.abspath(__file__)
         environ = {
