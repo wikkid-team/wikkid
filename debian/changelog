@@ -1,5 +1,5 @@
 wikkid (0.1-1~ppa) lucid; urgency=low
 
-  * source package automatically created by stdeb 0.5.1
+  * Initial release of Wikkid Wiki.  Very basic wiki functionality.
 
- -- Wikkid Committers <wikkid-dev@lists.launchpad.net>  Mon, 24 May 2010 20:51:01 -0400
+ -- Tim Penhey <tim@penhey.net>  Mon, 24 May 2010 20:51:01 -0400
