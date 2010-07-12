@@ -1,5 +1,5 @@
 Source: wikkid
-Maintainer: Wikkid Committers <wikkid-dev@lists.launchpad.net>
+Maintainer: Wikkid Developers <wikkid-dev@lists.launchpad.net>
 Section: python
 Priority: optional
 Build-Depends: python-setuptools (>= 0.6b3), debhelper (>= 7), python-support (>= 0.8.4)
