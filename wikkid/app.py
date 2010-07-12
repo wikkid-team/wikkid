@@ -52,8 +52,6 @@ class WikkidApp(object):
         request = Request(environ)
 
         # TODO: reject requests that aren't GET or POST
-
-        self.logger.info('request.path: %s', request.path)
         path = urllib.unquote(request.path)
         if path == '/favicon.ico':
             if self.skin.favicon is not None:
