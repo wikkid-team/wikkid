@@ -1,11 +1,7 @@
 A location for general notes
 ============================
 
-* Really should have a way to decouple the url generation from the
-  Server class and the views themselves.  Probably want something like
-  a method that takes a model object, and view class and generates an URL.
-
-* Add a nice error page instead of the twisted.web error page.
+* Add a nice error page.
 
 * Add in a file id for text editing so we can track edits during page moves
 
@@ -20,6 +16,8 @@ A location for general notes
 
 * Define formatter in the first line of wiki text
   # <format> <reserved for later use - like acls or locking>
+
+  * This is mostly done now, although not really documented.
 
 * AJAX editing of source files (avoid page refreshes)
 
