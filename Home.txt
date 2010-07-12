@@ -1,0 +1,10 @@
+Wikkid Wiki Home
+================
+
+Wikkid is a wiki that uses Bazaar as a way to store the content.
+
+
+
+Browse the source_.
+
+.. _source: /+listing
