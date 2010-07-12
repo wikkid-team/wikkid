@@ -1,0 +1,68 @@
+==============
+Wikkid Hacking
+==============
+
+Everyone wants a wiki.  Wiki's remember changes.  It makes sense to have
+a real DVCS backed wiki.
+
+
+Design Goals
+------------
+
+I believe it is better to start with the ideals.  So here goes...
+
+* It should be easy and simple to download the source and use as a
+  Bazaar plugin
+* Have full test coverage.
+* Use other libraries rather than rolling our own.
+* The rendering of pages needs to be abstracted from the http serving to
+  allow the plugin to be used elsewhere as a library (like Launchpad).
+* Use zope interfaces to define clean boundaries between the path traversal,
+  rendering, and store access.
+
+
+Directory Outline
+-----------------
+
+* **wikkid.contrib**: Third party libraries that aren't suitably packaged
+* **wikkid.filestore**: Implementations of the underlying filestore.
+  Currently there is the Bazaar based one, and a simplistic filestore that
+  just uses some in-memory dictionaries.
+* **wikkid.formatter**: The different formatters used to render the text files
+  as HTML.  Currently there are formatters for Creold, ReST, and Pygments.
+* **wikkid.interface**: All the zope interface definitions are in this module.
+* **wikkid.model**: The model objects representing the different things that
+  you end up hitting through file traversal, like missing pages, directories,
+  binary files and of course, wiki pages.
+* **wikkid.skin**: Currently only the default skin, and code around the
+  loading and using of skins.
+* **wikkid.tests**: All the tests live here.
+* **wikkid.user**: Code specific to how we handle users.  Pretty simplistic
+  right now.
+* **wikkid.view**: The views on the model objects.  These are the things
+  that actually make the magic happen.
+
+
+Getting Involved
+----------------
+
+Contributing to Wikkid is easy.
+
+Get a local copy of the trunk branch_, make your changes, and push your branch
+to Launchpad_.  If you don't have a Launchpad account, follow the
+instructions to `create a new user`_ and add an SSH key.
+
+.. _branch: https://launchpad.net/+branch/wikkid
+.. _Launchpad: https://launchpad.net
+.. _`create a new user`: https://help.launchpad.net/YourAccount/NewAccount
+
+Once your branch is on Launchpad, propose the branch for merging, and the
+other developers will get notified automagically.
+
+Authentication
+--------------
+
+Use the `repoze.who`_ library.  This acts as a WSGI middleware and
+most importantly, it is written and maintained by someone else.
+
+.. _`repoze.who`: http://static.repoze.org/whodocs/
