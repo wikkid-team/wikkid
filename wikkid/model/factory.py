@@ -9,8 +9,10 @@
 import logging
 
 from bzrlib.urlutils import basename, dirname, joinpath
+from zope.interface import directlyProvides
 
 from wikkid.interface.filestore import FileType
+from wikkid.interface.resource import IDefaultPage
 from wikkid.model.binary import BinaryResource
 from wikkid.model.directory import DirectoryResource
 from wikkid.model.missing import MissingResource
@@ -67,6 +69,10 @@ class ResourceFactory(object):
         """Return the Home resource."""
         return self.get_resource_at_path('/' + self.DEFAULT_PATH)
 
+    def get_root_resource(self):
+        """Return the root resource."""
+        return self.get_resource_at_path('/')
+
     def get_resource_at_path(self, path):
         """Get the resource from the filestore for the specified path.
 
@@ -76,8 +82,10 @@ class ResourceFactory(object):
         """
         assert path.startswith('/')
         file_path = path[1:]
-        if file_path == '':
+        is_default = False
+        if file_path == '' or file_path == self.DEFAULT_PATH:
             file_path = self.DEFAULT_PATH
+            is_default = True
 
         dir_resource = None
         file_resource = self.filestore.get_file(file_path)
@@ -93,10 +101,11 @@ class ResourceFactory(object):
             file_path += '.txt'
             file_resource = self.filestore.get_file(file_path)
 
-        return self.get_resource(path, file_path, file_resource, dir_resource)
-
-    def _is_default(self, dir_name, base_name):
-        return base_name == self.DEFAULT_PATH and dir_name == '/'
+        resource = self.get_resource(
+            path, file_path, file_resource, dir_resource)
+        if is_default:
+            directlyProvides(resource, IDefaultPage)
+        return resource
 
     def get_preferred_path(self, path):
         """Get the preferred path for the path passed in.
@@ -117,16 +126,3 @@ class ResourceFactory(object):
             return path
         else:
             return joinpath(dirname(path), filename)
-
-    def get_parent_info(self, resource):
-        """Get the resource info for the parent of path."""
-
-        if resource.path == '/':
-            return None
-        base_name = resource.base_name
-        dir_name = resource.dir_name
-        if self._is_default(dir_name, base_name):
-            return None
-        if dir_name == '/':
-            dir_name += self.DEFAULT_PATH
-        return self.get_resource_at_path(dir_name)

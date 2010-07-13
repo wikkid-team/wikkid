@@ -6,6 +6,7 @@
 
 """A bzr backed filestore."""
 
+from datetime import datetime
 import logging
 
 from zope.interface import implements
@@ -13,6 +14,7 @@ from zope.interface import implements
 from bzrlib.errors import BinaryFile
 from bzrlib.merge3 import Merge3
 from bzrlib.osutils import split_lines
+from bzrlib.revision import NULL_REVISION
 from bzrlib.textfile import check_text_path
 from bzrlib.urlutils import basename, dirname, joinpath
 
@@ -60,6 +62,8 @@ class FileStore(object):
         """
         if commit_message is None or commit_message.strip() == '':
             commit_message = 'No description of change given.'
+        if parent_revision is None:
+            parent_revision = NULL_REVISION
         # Firstly we want to lock the tree for writing.
         self.working_tree.lock_write()
         try:
@@ -129,33 +133,34 @@ class FileStore(object):
         current_rev = f.last_modified_in_revision
         wt = self.working_tree
         wt.lock_write()
-        current_lines = wt.get_file_lines(file_id)
-        basis = wt.branch.repository.revision_tree(parent_revision)
-        basis_lines = basis.get_file_lines(file_id)
-        # need to break content into lines.
-        ending = get_line_ending(current_lines)
-        # If the content doesn't end with a new line, add one.
-        new_lines = split_lines(content)
-        # Look at the end of the first string.
-        new_ending = get_line_ending(new_lines)
-        if ending != new_ending:
-            # I know this is horribly inefficient, but lets get it working
-            # first.
-            content = normalize_line_endings(content, ending)
+        try:
+            current_lines = wt.get_file_lines(file_id)
+            basis = wt.branch.repository.revision_tree(parent_revision)
+            basis_lines = basis.get_file_lines(file_id)
+            # need to break content into lines.
+            ending = get_line_ending(current_lines)
+            # If the content doesn't end with a new line, add one.
             new_lines = split_lines(content)
-        if not new_lines[-1].endswith(ending):
-            new_lines[-1] += ending
-        merge = Merge3(basis_lines, new_lines, current_lines)
-        result = list(merge.merge_lines()) # or merge_regions or whatever
-        conflicted = ('>>>>>>>' + ending) in result
-        if conflicted:
-            wt.unlock()
-            raise UpdateConflicts(''.join(result), current_rev)
-        else:
-            wt.bzrdir.root_transport.put_bytes(path, ''.join(result))
-            wt.commit(
-                message=commit_message, authors=[author],
-                specific_files=[path])
+            # Look at the end of the first string.
+            new_ending = get_line_ending(new_lines)
+            if ending != new_ending:
+                # I know this is horribly inefficient, but lets get it working
+                # first.
+                content = normalize_line_endings(content, ending)
+                new_lines = split_lines(content)
+            if not new_lines[-1].endswith(ending):
+                new_lines[-1] += ending
+            merge = Merge3(basis_lines, new_lines, current_lines)
+            result = list(merge.merge_lines()) # or merge_regions or whatever
+            conflicted = ('>>>>>>>' + ending) in result
+            if conflicted:
+                raise UpdateConflicts(''.join(result), current_rev)
+            else:
+                wt.bzrdir.root_transport.put_bytes(path, ''.join(result))
+                wt.commit(
+                    message=commit_message, authors=[author],
+                    specific_files=[path])
+        finally:
             wt.unlock()
 
     def list_directory(self, directory_path):
@@ -241,6 +246,13 @@ class File(BaseFile):
         repo = self.working_tree.branch.repository
         rev = repo.get_revision(self.last_modified_in_revision)
         return rev.get_apparent_authors()[0]
+
+    @property
+    def last_modified_date(self):
+        """Return the last modified date for the revision."""
+        repo = self.working_tree.branch.repository
+        rev = repo.get_revision(self.last_modified_in_revision)
+        return datetime.utcfromtimestamp(rev.timestamp)
 
     @property
     def _is_binary(self):

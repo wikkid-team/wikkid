@@ -5,3 +5,6 @@
 # version 3 (see the file LICENSE).
 
 """A Distributed Wiki."""
+
+
+version = "0.2dev"

@@ -18,5 +18,5 @@ class BaseUser(object):
     def gravatar(self):
         url = "http://www.gravatar.com/avatar/"
         url += hashlib.md5(self.email).hexdigest()
-        url += "?s=40&d=identicon"
+        url += "?s=50&d=identicon"
         return url

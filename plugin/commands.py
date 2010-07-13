@@ -6,10 +6,9 @@ from bzrlib.option import Option
 
 from bzrlib.workingtree import WorkingTree
 
+from wikkid.app import WikkidApp
 from wikkid.filestore.bzr import FileStore
-from wikkid.model.factory import ResourceFactory
-from wikkid.twistedserver import TwistedServer
-from wikkid.user.bzr import UserFactory
+from wikkid.user.bzr import LocalBazaarUserMiddleware
 
 DEFAULT_PORT = 8080
 
@@ -42,8 +41,13 @@ class cmd_wikkid(Command):
         working_tree = WorkingTree.open(branch)
         logger.info('Using: %s', working_tree)
         filestore = FileStore(working_tree)
-        server = TwistedServer(
-            ResourceFactory(filestore),
-            UserFactory(working_tree.branch),
-            port=port)
-        server.run()
+
+        app = WikkidApp(filestore)
+        app = LocalBazaarUserMiddleware(app, working_tree.branch)
+        from wsgiref.simple_server import make_server
+        httpd = make_server('localhost', port, app)
+        logger.info('Serving on http://localhost:%s', port)
+        try:
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            logger.info('Done.')

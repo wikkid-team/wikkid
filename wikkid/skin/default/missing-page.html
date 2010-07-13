@@ -4,20 +4,20 @@
 
 <p>The page you are looking for isn't here.<p>
 
-<p><a href="{{ context.path }}?view=edit">
+<p><a href="{{ canonical_url(context, 'edit') }}">
   Create a new page: {{ view.title }}
 </a></p>
 
-<p><a href="/?view=listing">
+<p><a href="{{ canonical_url(context.root_resource, 'listing') }}">
   Browse the wiki content
 </a></p>
 
 {% endblock %}
 {% block commands %}
 {% if view.user %}
-<a href="{{view.request_path}}?view=edit">Edit</a>
+<a href="{{ canonical_url(context, 'edit') }}">Edit</a>
 {% endif %}
 {% if context.get_dir_name %}
-<a class="command" href="{{context.path}}?view=listing">Browse</a>
+<a class="command" href="{{ canonical_url(context.root_resource, 'listing') }}">Browse</a>
 {% endif %}
 {% endblock %}

@@ -16,7 +16,7 @@ class BaseResource(object):
 
     def __init__(self, server, path, write_filename,
                  file_resource, dir_resource):
-        self.server = server
+        self.factory = server
         self.path = path
         self.write_filename = write_filename
         self.file_resource = file_resource
@@ -24,7 +24,7 @@ class BaseResource(object):
 
     @property
     def preferred_path(self):
-        return self.server.get_preferred_path(self.path)
+        return self.factory.get_preferred_path(self.path)
 
     @property
     def base_name(self):
@@ -36,11 +36,16 @@ class BaseResource(object):
 
     @property
     def parent(self):
-        return self.server.get_parent_info(self)
-
-    @property
-    def parent_dir(self):
-        """Return the directory containing this resource."""
         if IRootResource.providedBy(self):
             return None
-        return self.server.get_resource_at_path(self.dir_name)
+        return self.factory.get_resource_at_path(self.dir_name)
+
+    @property
+    def default_resource(self):
+        """Any resource should be able to get to the default resource."""
+        return self.factory.get_default_resource()
+
+    @property
+    def root_resource(self):
+        """Any resource should be able to get to the root resource."""
+        return self.factory.get_resource_at_path('/')

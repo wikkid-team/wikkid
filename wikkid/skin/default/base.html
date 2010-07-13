@@ -9,34 +9,44 @@
   {% endblock %}
 </head>
 <body>
+<div id="container">
   <div id="header">
-    <div id="user">
+    <div class="wikkidlogo"><a href="/"><strong>Wikkid Wiki</strong></a></div>
+    <div id="logged">
       {% if view.user %}
-      {{ view.user.display_name }}
-      <img class="gravatar" src="{{ view.user.gravatar }}" />
+
+        <div class="user-thumbnail"><img class="gravatar" src="{{ view.user.gravatar }}" /></div>
+        <strong>{{ view.user.display_name }}</strong>
       {% else %}
-      Login...
+        <div id="login">
+            <a href="#">Have an account?</a> <a href="#"><img src="images/btn-login.gif" alt="login" /></a>
+        </div>
       {% endif %}
     </div>
-    <span class="wikkid">Wikkid</span>
-
   </div>
-  <div id="location">
-    <div id="commands">{% block commands %}{% endblock %}</div>
-{% for crumb in view.breadcrumbs %}
-  {% if loop.last %}
-    <span class="crumb">{{ crumb.title }}</span>
-  {% else %}
-    <a href="{{ crumb.path }}" class="crumb">{{ crumb.title }}</a> &raquo;
-  {% endif %}
-{% endfor %}
-
+  <div id="navbar">
+    <ul>
+        <li>{% block commands %}{% endblock %}</li>
+    </ul>
+  <div class="breadcrumbs">
+    {% for crumb in view.breadcrumbs %}
+      {% if loop.last %}
+        <span class="crumb">{{ crumb.title }}</span>
+      {% else %}
+        <a href="{{ crumb.path }}" class="crumb">{{ crumb.title }}</a> &raquo;
+      {% endif %}
+    {% endfor %}
   </div>
-  <div id="content">{% block content %}{% endblock %}</div>
+  </div>
+  <div id="main">
+    {% block content %}{% endblock %}
+  </div>
+  {% block footer %}{% endblock %}
   <div id="footer">
     &copy; 2010
-    <a href="https://launchpad.net/~wikkid">Wikkid Developers</a>,
+    <a href="https://launchpad.net/~wikkid">Wikkid Hackers</a>,
     All rights reserved.
   </div>
+</div>
 </body>
 </html>

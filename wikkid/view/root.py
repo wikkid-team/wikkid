@@ -6,7 +6,7 @@
 
 """View classes for the wiki root."""
 
-from twisted.web.util import redirectTo
+from webob.exc import HTTPSeeOther
 
 from wikkid.interface.resource import IRootResource
 from wikkid.view.base import BaseView
@@ -21,5 +21,6 @@ class RootPage(BaseView):
 
     def _render(self, skin):
         """Redirect to Home (or the default page)."""
-        preferred = self.context.preferred_path
-        return redirectTo(preferred, self.request)
+        default_resource = self.context.default_resource
+        preferred = default_resource.preferred_path
+        raise HTTPSeeOther(location=preferred)

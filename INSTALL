@@ -7,11 +7,11 @@ setup tools for those that like it like that.
 Dependancies
 ------------
 
-python-zope.interface for the interfaces
-python-twisted or the twisted.web libraries
 bzr for the filestore and merging
-python-jinja2 for the templating
-python-docutils for the ReST formatter
-python-testtools - for running the test suite (optional)
 python-beautifulsoup - for testing of html (soon)
+python-docutils for the ReST formatter
+python-jinja2 for the templating
 python-pygments - for the syntax hilighting
+python-testtools - for running the test suite (optional)
+python-webob - for the WSGI application bits
+python-zope.interface for the interfaces

@@ -7,16 +7,22 @@
 
 """The server class for the wiki."""
 
+try:
+    import _wikkid_path
+except ImportError:
+    # Not running from a branch.
+    pass
+
 import logging
 import optparse
 import sys
 
 from bzrlib.workingtree import WorkingTree
 
+from wikkid import version
+from wikkid.app import WikkidApp
 from wikkid.filestore.bzr import FileStore
-from wikkid.model.factory import ResourceFactory
-from wikkid.twistedserver import TwistedServer
-from wikkid.user.bzr import UserFactory
+from wikkid.user.bzr import LocalBazaarUserMiddleware
 
 
 def setup_logging():
@@ -31,27 +37,39 @@ def setup_logging():
 
 
 def main(args):
+
+    usage = "Usage: %prog [options] <wiki-branch>"
     parser = optparse.OptionParser(
-        description="Run a Wikkid Wiki server.")
-    parser.add_option('--branch', help='The branch to use as a wiki.')
+        usage=usage, description="Run a Wikkid Wiki server.", version=version)
     parser.add_option('--port', type='int', default=8080,
                       help='The port to listen on.  Defaults to 8080.')
     options, args = parser.parse_args(sys.argv[1:])
-    if len(args):
-        print "Unexpected positional args:", args
+    if len(args) == 0:
+        print "No branch location specified.\n"
+        parser.print_usage()
         sys.exit(1)
+    if len(args) > 1:
+        print "Unexpected positional args:", args[1:], "\n"
+        parser.print_usage()
+        sys.exit(1)
+    branch = args[0]
     setup_logging()
     logger = logging.getLogger('wikkid')
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
 
-    working_tree = WorkingTree.open(options.branch)
+    working_tree = WorkingTree.open(branch)
     logger.info('Using: %s', working_tree)
     filestore = FileStore(working_tree)
-    server = TwistedServer(
-        ResourceFactory(filestore),
-        UserFactory(working_tree.branch),
-        port=options.port)
-    server.run()
+
+    app = WikkidApp(filestore)
+    app = LocalBazaarUserMiddleware(app, working_tree.branch)
+    from wsgiref.simple_server import make_server
+    httpd = make_server('localhost', options.port, app)
+    logger.info('Serving on http://localhost:%s', options.port)
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        logger.info('Done.')
 
 
 if __name__ == "__main__":

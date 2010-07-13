@@ -4,14 +4,14 @@
 {% if view.message %}
 <div class="message">{{ view.message }}</div>
 {% endif %}
-<form method="post" action="{{ view.request_path }}">
+<form method="post" action="{{ view.save_url }}">
   <textarea name="content">{{ view.content }}</textarea>
-  Describe the change: <input type="text" name="message" value=""/>
+  Describe the change: <input type="text" id="message" name="message" value=""/>
   {% if view.rev_id %}
   <input type="hidden" name="rev-id" value="{{ view.rev_id }}"/>
   {% endif %}
-  <div>
-  <input type="Submit" name="action" value="save" />
+  <div class="save-cancel">
+  <input type="Submit" name="action" value="Save" />
   or <a href="{{ view.cancel_url }}">Cancel</a>
   </div>
 </form>
