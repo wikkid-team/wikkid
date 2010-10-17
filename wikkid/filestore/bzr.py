@@ -29,6 +29,8 @@ def normalize_line_endings(content, ending='\n'):
 
 def get_line_ending(lines):
     """Work out the line ending used in lines."""
+    if len(lines) == 0:
+        return '\n'
     first = lines[0]
     if first.endswith('\r\n'):
         return '\r\n'
@@ -148,7 +150,7 @@ class FileStore(object):
                 # first.
                 content = normalize_line_endings(content, ending)
                 new_lines = split_lines(content)
-            if not new_lines[-1].endswith(ending):
+            if len(new_lines) > 0 and not new_lines[-1].endswith(ending):
                 new_lines[-1] += ending
             merge = Merge3(basis_lines, new_lines, current_lines)
             result = list(merge.merge_lines()) # or merge_regions or whatever
