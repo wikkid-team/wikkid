@@ -99,7 +99,7 @@ abbr, acronym {
     border-top:1px solid #fff;
 }
 
-#message {
+#description {
     width: 76em;
 }
 
@@ -108,6 +108,9 @@ abbr, acronym {
 }
 .save-cancel input {
     font-size: 120%;
+}
+.message {
+    color: red;
 }
 
 /***********************************

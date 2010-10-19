@@ -48,8 +48,7 @@ class EditTextFile(BaseEditView):
         return formatter.format(self.context.base_name, content)
 
 
-
-class SaveNewTextContent(BaseView):
+class SaveNewTextContent(BaseEditView):
     """Update the text of a file."""
 
     name = 'save'
@@ -64,26 +63,27 @@ class SaveNewTextContent(BaseView):
         # TODO: barf if there is no user.
         params = self.request.params
         content = params['content']
-        message = params['message']
-        if 'rev-id' in params:
-            rev_id = params['rev-id']
+        description = params['description']
+        rev_id = params.get('rev-id', None)
+        preview = params.get('preview', None)
+        if preview is not None:
+            pass
         else:
-            rev_id = None
-        try:
-            self.context.put_bytes(
-                content, self.user.committer_id, rev_id, message)
+            try:
+                self.context.put_bytes(
+                    content, self.user.committer_id, rev_id, description)
 
-            raise HTTPSeeOther(location=self.context.path)
-        except UpdateConflicts, e:
-            # Show the edit page again.
-            logger = logging.getLogger('wikkid')
-            logger.info('Conflicts detected: \n%r\n', e.content)
-            self.template = 'edit_page'
-            self.rev_id = e.basis_rev
-            self.content = e.content
-            self.message = "Conflicts detected during merge."
-            self.cancel_url = self.context.preferred_path
-            return super(SaveNewTextContent, self)._render(skin)
+                raise HTTPSeeOther(location=self.context.path)
+            except UpdateConflicts, e:
+                # Show the edit page again.
+                logger = logging.getLogger('wikkid')
+                logger.info('Conflicts detected: \n%r\n', e.content)
+                self.rev_id = e.basis_rev
+                self.content = e.content
+                self.message = "Conflicts detected during merge."
+
+        self.description = description
+        return super(SaveNewTextContent, self)._render(skin)
 
 
 class UpdateTextFile(SaveNewTextContent):
