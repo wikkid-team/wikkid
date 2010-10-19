@@ -109,8 +109,13 @@ abbr, acronym {
 .save-cancel input {
     font-size: 120%;
 }
+
 .message {
     color: red;
+}
+
+.preview {
+    background-image: url("preview.png");
 }
 
 /***********************************
