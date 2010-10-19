@@ -18,8 +18,10 @@
   or <a href="{{ view.cancel_url }}">Cancel</a>
   </div>
 </form>
+{% if view.preview_content %}
 <hr />
 <div style="background-color: #CCCCCC">
-{{ view.rendered_content }}
+{{ view.preview_content }}
 </div>
+{% endif %}
 {% endblock %}

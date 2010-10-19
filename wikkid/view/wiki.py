@@ -12,16 +12,16 @@ from wikkid.formatter.registry import get_wiki_formatter
 from wikkid.interface.resource import IWikiTextFile
 from wikkid.view.base import BaseView
 
-def format_context(context):
-    """ Format the context with the right formatter.
+
+def format_content(bytes, base_name):
+    """ Format the content with the right formatter.
 
     Check the first line of the content to see if it specifies a
     formatter. The default is currently ReST, but we should have it
     configurable shortly.
     """
-    bytes = context.get_bytes()
     content, formatter = get_wiki_formatter(bytes, 'rest')
-    return formatter.format(context.base_name, content)
+    return formatter.format(base_name, content)
     
 
 class WikiPage(BaseView):
@@ -34,7 +34,8 @@ class WikiPage(BaseView):
 
     @property
     def content(self):
-        return format_context(self.context)
+        bytes = self.context.get_bytes()
+        return format_content(bytes, self.context.base_name)
 
     def _render(self, skin):
         """If the page is not being viewed with the preferred path, redirect.

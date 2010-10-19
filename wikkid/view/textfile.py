@@ -15,6 +15,7 @@ from wikkid.formatter.registry import get_wiki_formatter
 from wikkid.interface.resource import ITextFile
 from wikkid.view.base import BaseView
 from wikkid.view.edit import BaseEditView
+from wikkid.view.wiki import format_content
 
 
 class EditTextFile(BaseEditView):
@@ -38,15 +39,6 @@ class EditTextFile(BaseEditView):
             except UnicodeDecodeError:
                 return byte_string.decode('ascii', 'replace')
 
-    @property
-    def rendered_content(self):
-        bytes = self.context.get_bytes()
-        # Check the first line of the content to see if it specifies a
-        # formatter. The default is currently ReST, but we should have it
-        # configurable shortly.
-        content, formatter = get_wiki_formatter(bytes, 'rest')
-        return formatter.format(self.context.base_name, content)
-
 
 class SaveNewTextContent(BaseEditView):
     """Update the text of a file."""
@@ -67,7 +59,11 @@ class SaveNewTextContent(BaseEditView):
         rev_id = params.get('rev-id', None)
         preview = params.get('preview', None)
         if preview is not None:
-            pass
+            self.rev_id = rev_id
+            self.description = description
+            self.content = content
+            self.preview_content = format_content(
+                content, self.context.base_name)
         else:
             try:
                 self.context.put_bytes(
