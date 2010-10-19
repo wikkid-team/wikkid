@@ -11,6 +11,7 @@ import logging
 from webob.exc import HTTPSeeOther
 
 from wikkid.errors import UpdateConflicts
+from wikkid.formatter.registry import get_wiki_formatter
 from wikkid.interface.resource import ITextFile
 from wikkid.view.base import BaseView
 from wikkid.view.edit import BaseEditView
@@ -36,6 +37,16 @@ class EditTextFile(BaseEditView):
                 return byte_string.decode('latin-1')
             except UnicodeDecodeError:
                 return byte_string.decode('ascii', 'replace')
+
+    @property
+    def rendered_content(self):
+        bytes = self.context.get_bytes()
+        # Check the first line of the content to see if it specifies a
+        # formatter. The default is currently ReST, but we should have it
+        # configurable shortly.
+        content, formatter = get_wiki_formatter(bytes, 'rest')
+        return formatter.format(self.context.base_name, content)
+
 
 
 class SaveNewTextContent(BaseView):
