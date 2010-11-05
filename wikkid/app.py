@@ -19,6 +19,7 @@ from wikkid.dispatcher import get_view
 from wikkid.model.factory import ResourceFactory
 from wikkid.skin.loader import Skin
 from wikkid.view.urls import parse_url
+from fileutils import *
 
 
 def serve_file(filename):
@@ -27,8 +28,15 @@ def serve_file(filename):
         content_type = mimetypes.guess_type(basename)[0]
         f = open(filename, 'rb')
         try:
-            return Response(
-                f.read(), content_type=content_type)
+            #import pdb; pdb.set_trace()
+	    res = Response(content_type=content_type, conditional_response=True)
+            res.app_iter = FileIterable(filename)
+            res.content_length = os.path.getsize(filename)
+            res.last_modified = os.path.getmtime(filename)
+            res.etag = '%s-%s-%s' % (os.path.getmtime(filename),
+			    os.path.getsize(filename),
+			    hash(filename))
+	    return res
         finally:
             f.close()
     else:
