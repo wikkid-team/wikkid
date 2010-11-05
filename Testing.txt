@@ -1,9 +1,9 @@
 # textile
 
-Markdown Test Page
-==================
+h1. Textile Test Page
 
-This is a test file. I want to test whether using different formatters works or not. This should be using *markdown*.
 
-Second Level Headings too!
---------------------------
+This is a _test_ file. I want to test whether using different formatters works or not. This should be using *markdown*.
+
+h2. Second Level Headings too!
+
