@@ -13,6 +13,7 @@ from wikkid.formatter.creoleformatter import CreoleFormatter
 from wikkid.formatter.pygmentsformatter import PygmentsFormatter
 from wikkid.formatter.restformatter import RestructuredTextFormatter
 from wikkid.formatter.markdownformatter import MarkdownFormatter
+from wikkid.formatter.textileformatter import TextileFormatter
 
 
 class FormatterRegistry(object):
@@ -23,7 +24,8 @@ class FormatterRegistry(object):
             'rest': RestructuredTextFormatter(),
             'creole': CreoleFormatter(),
             'pygments': PygmentsFormatter(),
-            'markdown': MarkdownFormatter()
+            'markdown': MarkdownFormatter(),
+            'textile': TextileFormatter()
             }
 
     def __getitem__(self, formatter):

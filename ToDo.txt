@@ -7,8 +7,6 @@ A location for general notes
 
 * Add in the ability to move pages
 
-* Add markdown and textile formatters
-
 * Lock pages as read-only (see also merging)
   Is this really locked, or is it a restricted ACL?
 
