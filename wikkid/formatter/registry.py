@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Wikkid Developers
 #
@@ -11,6 +12,7 @@ import re
 from wikkid.formatter.creoleformatter import CreoleFormatter
 from wikkid.formatter.pygmentsformatter import PygmentsFormatter
 from wikkid.formatter.restformatter import RestructuredTextFormatter
+from wikkid.formatter.markdownformatter import MarkdownFormatter
 
 
 class FormatterRegistry(object):
@@ -20,7 +22,8 @@ class FormatterRegistry(object):
         self._formatters = {
             'rest': RestructuredTextFormatter(),
             'creole': CreoleFormatter(),
-            'pygments': PygmentsFormatter()
+            'pygments': PygmentsFormatter(),
+            'markdown': MarkdownFormatter()
             }
 
     def __getitem__(self, formatter):
