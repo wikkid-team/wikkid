@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Wikkid Developers
 #
@@ -24,6 +25,17 @@ class MissingPage(BaseView):
     def content(self):
         '%s Not found' % self.path
 
+class MissingDirectory(BaseView):
+    #"""A wiki Directory that does not exist."""
+    
+    for_interface = IMissingResource
+    name = 'listing'
+    is_default = True
+    template = 'missing-dir'
+    
+    @property
+    def content(self):
+        '%s Not found' % self.path
 
 class NewWikiPage(BaseEditView):
     """Show the edit page with no existing content."""

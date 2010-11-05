@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Wikkid Developers.
 #
@@ -26,19 +27,18 @@ def serve_file(filename):
     if os.path.exists(filename):
         basename = urlutils.basename(filename)
         content_type = mimetypes.guess_type(basename)[0]
-        f = open(filename, 'rb')
-        try:
-            #import pdb; pdb.set_trace()
-	    res = Response(content_type=content_type, conditional_response=True)
-            res.app_iter = FileIterable(filename)
-            res.content_length = os.path.getsize(filename)
-            res.last_modified = os.path.getmtime(filename)
-            res.etag = '%s-%s-%s' % (os.path.getmtime(filename),
-			    os.path.getsize(filename),
-			    hash(filename))
-	    return res
-        finally:
-            f.close()
+
+        res = Response(content_type=content_type, conditional_response=True)
+        res.app_iter = FileIterable(filename)
+        res.content_length = os.path.getsize(filename)
+        res.last_modified = os.path.getmtime(filename)
+        # Todo: is this the best value for the etag? 
+        # perhaps md5 would be a better alternative
+        res.etag = '%s-%s-%s' % (os.path.getmtime(filename),
+            os.path.getsize(filename),
+            hash(filename))
+        return res
+
     else:
         return HTTPNotFound()
 
