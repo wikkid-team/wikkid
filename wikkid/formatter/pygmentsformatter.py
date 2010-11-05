@@ -29,6 +29,7 @@ class PygmentsFormatter(object):
         content.
         """
         try:
+            import pdb; pdb.set_trace()
             lexer = guess_lexer_for_filename(filename, text)
             return highlight(text, lexer, HtmlFormatter())
         except ClassNotFound:
