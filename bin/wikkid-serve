@@ -1,4 +1,5 @@
 #! /usr/bin/python
+# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Wikkid Developers.
 #
@@ -23,6 +24,7 @@ from wikkid import version
 from wikkid.app import WikkidApp
 from wikkid.filestore.bzr import FileStore
 from wikkid.user.bzr import LocalBazaarUserMiddleware
+from wikkid.context import ExecutionContext
 
 
 def setup_logging():
@@ -41,9 +43,19 @@ def main(args):
     usage = "Usage: %prog [options] <wiki-branch>"
     parser = optparse.OptionParser(
         usage=usage, description="Run a Wikkid Wiki server.", version=version)
+    parser.add_option('--host', type='string', default='localhost',
+		      help='The interface to listen on. Defaults to \'localhost\'')
     parser.add_option('--port', type='int', default=8080,
                       help='The port to listen on.  Defaults to 8080.')
+    parser.add_option('--default-format', type='string', default='rest', dest='default_formatter',
+		      help='Specify the default formatter to use. Defaults to \'rest\'')
     options, args = parser.parse_args(sys.argv[1:])
+    
+    # create execution context object, and add processed command line args to it
+    e = ExecutionContext()
+    # kinda ugly, but the only way to do it. 
+    e.add_context(vars(options))
+    
     if len(args) == 0:
         print "No branch location specified.\n"
         parser.print_usage()
@@ -64,8 +76,8 @@ def main(args):
     app = WikkidApp(filestore)
     app = LocalBazaarUserMiddleware(app, working_tree.branch)
     from wsgiref.simple_server import make_server
-    httpd = make_server('localhost', options.port, app)
-    logger.info('Serving on http://localhost:%s', options.port)
+    httpd = make_server(options.host, options.port, app)
+    logger.info('Serving on http://%s:%s', options.host, options.port)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

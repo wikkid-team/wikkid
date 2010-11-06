@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Wikkid Developers
 #
@@ -11,6 +12,7 @@ from webob.exc import HTTPTemporaryRedirect
 from wikkid.formatter.registry import get_wiki_formatter
 from wikkid.interface.resource import IWikiTextFile
 from wikkid.view.base import BaseView
+from wikkid.context import ExecutionContext
 
 
 class WikiPage(BaseView):
@@ -25,9 +27,9 @@ class WikiPage(BaseView):
     def content(self):
         bytes = self.context.get_bytes()
         # Check the first line of the content to see if it specifies a
-        # formatter. The default is currently ReST, but we should have it
-        # configurable shortly.
-        content, formatter = get_wiki_formatter(bytes, 'rest')
+        # formatter. We get the default formatter from the execution context:
+        e = ExecutionContext()
+        content, formatter = get_wiki_formatter(bytes, e.get('default_formatter','rest'))
         return formatter.format(self.context.base_name, content)
 
     def _render(self, skin):
