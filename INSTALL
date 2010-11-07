@@ -11,6 +11,7 @@ bzr for the filestore and merging
 python-beautifulsoup - for testing of html (soon)
 python-docutils for the ReST formatter
 python-jinja2 for the templating
+python-lxml for the creole parser
 python-pygments - for the syntax hilighting
 python-testtools - for running the test suite (optional)
 python-webob - for the WSGI application bits
