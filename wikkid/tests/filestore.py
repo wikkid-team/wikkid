@@ -12,7 +12,7 @@ from wikkid.errors import FileExists
 from wikkid.interface.filestore import FileType, IFile, IFileStore
 
 
-class TestFileStore:
+class TestFileStore(object):
     """Tests for the filestore and files."""
 
     def test_filestore_provides_IFileStore(self):
