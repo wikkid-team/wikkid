@@ -1,4 +1,4 @@
-#
+# -*- coding: utf-8 -*-
 # Copyright (C) 2010 Wikkid Developers.
 #
 # This software is licensed under the GNU Affero General Public License
@@ -153,5 +153,14 @@ class TestCreoleFormatter(TestCase):
         result = self.formatter.format('filename', text)
         soup = BeautifulSoup(result)
         self.assertEqual('printf()', soup.code.string)
+        
+    def test_unicode(self):
+        # I have no idea what this says. Taken from:
+        # http://www.humancomp.org/unichtm/calblur8.htm
+        # It's simplified chinese, in utf-8, apparently
+        text = u'个专为语文教学而设计的电脑软件'
+        result = self.formatter.format('format', text)
+        soup = BeautifulSoup(result)
+        self.assertEqual(soup.p.string.strip(), text)
 
     
