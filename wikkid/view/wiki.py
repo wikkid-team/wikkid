@@ -28,8 +28,8 @@ class WikiPage(BaseView):
         bytes = self.context.get_bytes()
         # Check the first line of the content to see if it specifies a
         # formatter. We get the default formatter from the execution context:
-        e = ExecutionContext()
-        content, formatter = get_wiki_formatter(bytes, e.get('default_formatter','rest'))
+        content, formatter = get_wiki_formatter(bytes, 
+                        self.execution_context.get('default_formatter','rest'))
         return formatter.format(self.context.base_name, content)
 
     def _render(self, skin):

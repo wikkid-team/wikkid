@@ -13,7 +13,7 @@ from wikkid.formatter.textileformatter import TextileFormatter
 from wikkid.tests import TestCase
 
 
-class TestCreoleFormatter(TestCase):
+class TestTextileFormatter(TestCase):
     """Tests for the creole formatter."""
 
     def setUp(self):
@@ -22,17 +22,17 @@ class TestCreoleFormatter(TestCase):
 
     def test_detailed_headings(self):
         text = dedent("""\
-		h1. Heading 1
+        h1. Heading 1
 
-		h2. Heading 2
+        h2. Heading 2
 
-		h3. Heading 3
+        h3. Heading 3
 
-		h4. Heading 4
-		 
-		h5. Heading 5
+        h4. Heading 4
+        
+        h5. Heading 5
 
-		h6. Heading 6""")
+        h6. Heading 6""")
         result = self.formatter.format('filename', text)
         soup = BeautifulSoup(result)
         self.assertEqual('Heading 1', soup.h1.string)
@@ -45,10 +45,10 @@ class TestCreoleFormatter(TestCase):
 
     def test_inline_link(self):
         # A paragraph containing a wiki word.
-        text = "A link to the FrontPage:http://127.0.0.1 helps."
+        text = 'A link to the "FrontPage":http://127.0.0.1 helps.'
         result = self.formatter.format('filename', text)
         soup = BeautifulSoup(result)
-	self.assertEqual('http://127.0.0.1', soup.a['href'])
+        self.assertEqual('http://127.0.0.1', soup.a['href'])
 
     def test_emphasis(self):
         text = 'We can have _emphasis_ and *strong* as well!'

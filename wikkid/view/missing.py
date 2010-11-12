@@ -30,7 +30,6 @@ class MissingDirectory(BaseView):
     
     for_interface = IMissingResource
     name = 'listing'
-    is_default = True
     template = 'missing-dir'
     
     @property

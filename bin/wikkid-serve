@@ -41,20 +41,22 @@ def setup_logging():
 def main(args):
 
     usage = "Usage: %prog [options] <wiki-branch>"
-    parser = optparse.OptionParser(
-        usage=usage, description="Run a Wikkid Wiki server.", version=version)
+    parser = optparse.OptionParser(usage=usage, 
+                                   description="Run a Wikkid Wiki server.", 
+                                   version=version)
     parser.add_option('--host', type='string', default='localhost',
-		      help='The interface to listen on. Defaults to \'localhost\'')
+                      help='The interface to listen on. Defaults to \'localhost\'')
     parser.add_option('--port', type='int', default=8080,
                       help='The port to listen on.  Defaults to 8080.')
-    parser.add_option('--default-format', type='string', default='rest', dest='default_formatter',
-		      help='Specify the default formatter to use. Defaults to \'rest\'')
+    parser.add_option('--default-format', type='string', default='rest', 
+                      dest='default_formatter',
+                      help='Specify the default formatter to use. Defaults to \'rest\'')
     options, args = parser.parse_args(sys.argv[1:])
     
     # create execution context object, and add processed command line args to it
-    e = ExecutionContext()
+    ec = ExecutionContext()
     # kinda ugly, but the only way to do it. 
-    e.add_context(vars(options))
+    ec.add_context(vars(options))
     
     if len(args) == 0:
         print "No branch location specified.\n"
@@ -73,7 +75,7 @@ def main(args):
     logger.info('Using: %s', working_tree)
     filestore = FileStore(working_tree)
 
-    app = WikkidApp(filestore)
+    app = WikkidApp(filestore, execution_context=ec)
     app = LocalBazaarUserMiddleware(app, working_tree.branch)
     from wsgiref.simple_server import make_server
     httpd = make_server(options.host, options.port, app)

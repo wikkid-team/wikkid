@@ -10,6 +10,7 @@
 
 from textile import textile
 from zope.interface import implements
+
 from wikkid.interface.formatter import ITextFormatter
 
 

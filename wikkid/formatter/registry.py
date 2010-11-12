@@ -21,11 +21,11 @@ class FormatterRegistry(object):
 
     def __init__(self):
         self._formatters = {
-            'rest': RestructuredTextFormatter(),
             'creole': CreoleFormatter(),
-            'pygments': PygmentsFormatter(),
             'markdown': MarkdownFormatter(),
-            'textile': TextileFormatter()
+            'pygments': PygmentsFormatter(),
+            'rest': RestructuredTextFormatter(),
+            'textile': TextileFormatter(),
             }
 
     def __getitem__(self, formatter):

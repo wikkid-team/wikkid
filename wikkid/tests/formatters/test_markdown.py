@@ -34,21 +34,23 @@ class TestCreoleFormatter(TestCase):
         soup = BeautifulSoup(result)
         self.assertEqual('Heading 1', soup.h1.string)
         self.assertEqual('Heading 2', soup.h2.string)
-        self.assertEqual('Simple sentence.', soup.p.string.strip()) # we don't care about whitespace on <p> tags, and markdown inserts newlines.
+        # we don't care about whitespace on <p> tags, and markdown inserts 
+        # newlines.
+        self.assertEqual('Simple sentence.', soup.p.string.strip()) 
 
     def test_detailed_headings(self):
         text = dedent("""\
-		# Heading 1
+        # Heading 1
 
-		## Heading 2
+        ## Heading 2
 
-		### Heading 3
+        ### Heading 3
 
-		#### Heading 4
-		 
-		##### Heading 5
+        #### Heading 4
+        
+        ##### Heading 5
 
-		###### Heading 6""")
+        ###### Heading 6""")
         result = self.formatter.format('filename', text)
         soup = BeautifulSoup(result)
         self.assertEqual('Heading 1', soup.h1.string)
@@ -61,30 +63,30 @@ class TestCreoleFormatter(TestCase):
 
     def test_inline_link(self):
         # A paragraph containing a wiki word.
-	text = "A link to the [FrontPage](http://127.0.0.1) helps."
+        text = "A link to the [FrontPage](http://127.0.0.1) helps."
         result = self.formatter.format('filename', text)
         soup = BeautifulSoup(result)
-	self.assertEqual('http://127.0.0.1', soup.a['href'])
+        self.assertEqual('http://127.0.0.1', soup.a['href'])
 
     def test_reference_link(self):
         # A paragraph containing a wiki word.
-	text = dedent("""\
+        text = dedent("""\
                         This is [an example][id] reference-style link.
 
                         [id]: http://127.0.0.1
                         """)
         result = self.formatter.format('filename', text)
         soup = BeautifulSoup(result)
-	self.assertEqual('http://127.0.0.1', soup.a['href'])
+        self.assertEqual('http://127.0.0.1', soup.a['href'])
 
     def test_emphasis(self):
         texts = ('We can have *emphasis* and **strong** as well!',
                  'We can have _emphasis_ and __strong__ as well!')
         for text in texts:
-                result = self.formatter.format('filename', text)
-                soup = BeautifulSoup(result)
-                self.assertEqual('emphasis', soup.em.string)
-                self.assertEqual('strong', soup.strong.string)
+            result = self.formatter.format('filename', text)
+            soup = BeautifulSoup(result)
+            self.assertEqual('emphasis', soup.em.string)
+            self.assertEqual('strong', soup.strong.string)
 
     def test_blockquote(self):
         text = dedent('''\
@@ -135,16 +137,16 @@ class TestCreoleFormatter(TestCase):
         self.assertEqual(soup.pre.code.string.strip(), 'Some Code inside pre tags')
 
     def test_hr(self):
-            # test different HR types:
-            texts = ('* * *',
-                     '***',
-                     '*********',
-                     '- - - -',
-                     '------------------')
-            for text in texts:
-                    result = self.formatter.format('filename', text)
-                    soup = BeautifulSoup(result)
-                    self.assertTrue(soup.hr is not None)
+        # test different HR types:
+        texts = ('* * *',
+                 '***',
+                 '*********',
+                 '- - - -',
+                 '------------------')
+        for text in texts:
+            result = self.formatter.format('filename', text)
+            soup = BeautifulSoup(result)
+            self.assertTrue(soup.hr is not None)
 
     def test_code(self):
         text = 'use the `printf()` function'

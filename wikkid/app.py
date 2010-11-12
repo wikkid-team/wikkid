@@ -20,7 +20,8 @@ from wikkid.dispatcher import get_view
 from wikkid.model.factory import ResourceFactory
 from wikkid.skin.loader import Skin
 from wikkid.view.urls import parse_url
-from fileutils import *
+from wikkid.fileutils import FileIterable
+from wikkid.context import ExecutionContext
 
 
 def serve_file(filename):
@@ -46,7 +47,9 @@ def serve_file(filename):
 class WikkidApp(object):
     """The main wikkid application."""
 
-    def __init__(self, filestore, skin_name=None):
+    def __init__(self, filestore, skin_name=None, 
+                 execution_context = ExecutionContext()):
+        self.execution_context = execution_context
         self.filestore = filestore
         self.resource_factory = ResourceFactory(self.filestore)
         # Need to load the initial templates for the skin.
@@ -81,7 +84,7 @@ class WikkidApp(object):
             resource_path, action = parse_url(path)
             model = self.resource_factory.get_resource_at_path(resource_path)
             try:
-                view = get_view(model, action, request)
+                view = get_view(model, action, request, self.execution_context)
                 response = view.render(self.skin)
             except HTTPException, e:
                 response = e
