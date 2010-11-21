@@ -21,7 +21,7 @@ class MissingPage(BaseView):
     template = 'missing'
 
     def make_response(self, body):
-        response = super(BaseView, self).make_response(body)
+        response = super(MissingPage, self).make_response(body)
         response.status = "404 Not Found"
         return response
 
