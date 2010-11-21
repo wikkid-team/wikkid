@@ -20,6 +20,11 @@ class MissingPage(BaseView):
     is_default = True
     template = 'missing'
 
+    def make_response(self, body):
+        response = super(BaseView, self).make_response(body)
+        response.status = "404 Not Found"
+        return response
+
     @property
     def content(self):
         '%s Not found' % self.path

@@ -110,7 +110,15 @@ class BaseView(object):
         template = skin.get_template(self.template)
         content = template.render(**self.template_args())
         # Return the encoded content.
-        return Response(content.encode('utf-8'))
+        return self.make_response(content.encode('utf-8'))
+
+    def make_response(self, body):
+        """Construct the response object for this request.
+
+        :param body: The body of the response, as a unicode string.
+        :return: A `Response` object.
+        """
+        return Response(body)
 
     def render(self, skin):
         """Render the page.
