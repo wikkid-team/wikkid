@@ -16,12 +16,12 @@ from bzrlib import urlutils
 from webob import Request, Response
 from webob.exc import HTTPException, HTTPNotFound
 
+from wikkid.context import ExecutionContext
 from wikkid.dispatcher import get_view
+from wikkid.fileutils import FileIterable
 from wikkid.model.factory import ResourceFactory
 from wikkid.skin.loader import Skin
 from wikkid.view.urls import parse_url
-from wikkid.fileutils import FileIterable
-from wikkid.context import ExecutionContext
 
 
 def serve_file(filename):
@@ -33,7 +33,7 @@ def serve_file(filename):
         res.app_iter = FileIterable(filename)
         res.content_length = os.path.getsize(filename)
         res.last_modified = os.path.getmtime(filename)
-        # Todo: is this the best value for the etag? 
+        # Todo: is this the best value for the etag?
         # perhaps md5 would be a better alternative
         res.etag = '%s-%s-%s' % (os.path.getmtime(filename),
             os.path.getsize(filename),
@@ -47,8 +47,9 @@ def serve_file(filename):
 class WikkidApp(object):
     """The main wikkid application."""
 
-    def __init__(self, filestore, skin_name=None, 
-                 execution_context = ExecutionContext()):
+    def __init__(self, filestore, skin_name=None, execution_context=None):
+        if execution_context is None:
+            execution_context = ExecutionContext()
         self.execution_context = execution_context
         self.filestore = filestore
         self.resource_factory = ResourceFactory(self.filestore)

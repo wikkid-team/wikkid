@@ -12,7 +12,6 @@ from webob.exc import HTTPTemporaryRedirect
 from wikkid.formatter.registry import get_wiki_formatter
 from wikkid.interface.resource import IWikiTextFile
 from wikkid.view.base import BaseView
-from wikkid.context import ExecutionContext
 
 
 class WikiPage(BaseView):
@@ -28,8 +27,8 @@ class WikiPage(BaseView):
         bytes = self.context.get_bytes()
         # Check the first line of the content to see if it specifies a
         # formatter. We get the default formatter from the execution context:
-        content, formatter = get_wiki_formatter(bytes, 
-                        self.execution_context.get('default_formatter','rest'))
+        content, formatter = get_wiki_formatter(
+            bytes, self.execution_context.default_format)
         return formatter.format(self.context.base_name, content)
 
     def _render(self, skin):
