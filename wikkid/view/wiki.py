@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Wikkid Developers
 #
@@ -25,9 +26,9 @@ class WikiPage(BaseView):
     def content(self):
         bytes = self.context.get_bytes()
         # Check the first line of the content to see if it specifies a
-        # formatter. The default is currently ReST, but we should have it
-        # configurable shortly.
-        content, formatter = get_wiki_formatter(bytes, 'rest')
+        # formatter. We get the default formatter from the execution context:
+        content, formatter = get_wiki_formatter(
+            bytes, self.execution_context.default_format)
         return formatter.format(self.context.base_name, content)
 
     def _render(self, skin):

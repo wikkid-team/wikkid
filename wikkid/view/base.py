@@ -45,7 +45,8 @@ class BaseView(object):
 
     __metaclass__ = BaseViewMetaClass
 
-    def __init__(self, context, request):
+    def __init__(self, context, request, execution_context):
+        self.execution_context = execution_context
         self.context = context
         self.request = request
         if request is not None:

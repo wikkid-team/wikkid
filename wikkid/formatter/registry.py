@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Wikkid Developers
 #
@@ -12,19 +13,35 @@ from wikkid.formatter.creoleformatter import CreoleFormatter
 from wikkid.formatter.pygmentsformatter import PygmentsFormatter
 from wikkid.formatter.restformatter import RestructuredTextFormatter
 
+# Both textile and markdown are optional.
+try:
+    from wikkid.formatter.markdownformatter import MarkdownFormatter
+    has_markdown = True
+except ImportError:
+    has_markdown = False
+try:
+    from wikkid.formatter.textileformatter import TextileFormatter
+    has_textile = True
+except ImportError:
+    has_textile = False
+
 
 class FormatterRegistry(object):
     """Has a dictionary of formatters based on name."""
 
     def __init__(self):
-        self._formatters = {
-            'rest': RestructuredTextFormatter(),
+        self.formatters = {
             'creole': CreoleFormatter(),
-            'pygments': PygmentsFormatter()
+            'pygments': PygmentsFormatter(),
+            'rest': RestructuredTextFormatter(),
             }
+        if has_markdown:
+            self.formatters['markdown'] = MarkdownFormatter()
+        if has_textile:
+            self.formatters['textile'] = TextileFormatter()
 
     def __getitem__(self, formatter):
-        return self._formatters[formatter]
+        return self.formatters[formatter]
 
 
 formatter_registry = FormatterRegistry()
