@@ -4,9 +4,10 @@
 # This software is licensed under the GNU Affero General Public License
 # version 3 (see the file LICENSE).
 
-"""Tests for the wikkid.formatter.markdownformatter module."""
+"""Tests for the wikkid.formatter.textileformatter module."""
 
 from textwrap import dedent
+
 from BeautifulSoup import BeautifulSoup
 
 from wikkid.formatter.textileformatter import TextileFormatter
@@ -14,7 +15,7 @@ from wikkid.tests import TestCase
 
 
 class TestTextileFormatter(TestCase):
-    """Tests for the creole formatter."""
+    """Tests for the textile formatter."""
 
     def setUp(self):
         TestCase.setUp(self)
@@ -22,17 +23,18 @@ class TestTextileFormatter(TestCase):
 
     def test_detailed_headings(self):
         text = dedent("""\
-        h1. Heading 1
+            h1. Heading 1
 
-        h2. Heading 2
+            h2. Heading 2
 
-        h3. Heading 3
+            h3. Heading 3
 
-        h4. Heading 4
-        
-        h5. Heading 5
+            h4. Heading 4
 
-        h6. Heading 6""")
+            h5. Heading 5
+
+            h6. Heading 6
+            """)
         result = self.formatter.format('filename', text)
         soup = BeautifulSoup(result)
         self.assertEqual('Heading 1', soup.h1.string)
@@ -59,39 +61,39 @@ class TestTextileFormatter(TestCase):
 
     def test_blockquote(self):
         text = dedent('''\
-                        Some Text
+            Some Text
 
-                        bq. This is a block quoted paragraph
-                        that spans multiple lines.
+            bq. This is a block quoted paragraph
+            that spans multiple lines.
 
-                        Some more text
-                        ''')
+            Some more text.
+            ''')
         result = self.formatter.format('filename', text)
         soup = BeautifulSoup(result)
         self.assertTrue(soup.blockquote is not None)
 
     def test_lists(self):
         text = dedent('''\
-                       Some Text.
+            Some Text.
 
-                       * UL 1
-                       * UL 2
-                       * UL 3
+            * UL 1
+            * UL 2
+            * UL 3
 
-                       Some More Text! 
+            Some More Text!
 
-                       # OL 1
-                       # OL 2
-                       # OL 3
-                         ''')
+            # OL 1
+            # OL 2
+            # OL 3
+            ''')
         result = self.formatter.format('filename', text)
         soup = BeautifulSoup(result)
-        
+
         self.assertTrue(soup.ul)
         ulNodes = soup.ul.findAll('li')
         for i in range(3):
             self.assertEqual('UL %d' % (i+1), ulNodes[i].string.strip())
-        
+
         self.assertTrue(soup.ol)
         olNodes = soup.ol.findAll('li')
         for i in range(3):
@@ -99,23 +101,19 @@ class TestTextileFormatter(TestCase):
 
     def test_code_blocks(self):
         text = dedent('''\
-                        Some Normal Text.
+            Some Normal Text.
 
-                        @Some Code inside pre tags@
+            @Some Code inside pre tags@
 
-                        More Normal text.
-                        ''')
+            More Normal text.
+            ''')
         result = self.formatter.format('filename', text)
         soup = BeautifulSoup(result)
         self.assertEqual(soup.code.string.strip(), 'Some Code inside pre tags')
-        
+
     def test_unicode(self):
-        # I have no idea what this says. Taken from:
-        # http://www.humancomp.org/unichtm/calblur8.htm
-        # It's simplified chinese, in utf-8, apparently
-        text = u'个专为语文教学而设计的电脑软件'
+        # Test the unicode support of the textile formatter.
+        text = u'\N{SNOWMAN}'
         result = self.formatter.format('format', text)
         soup = BeautifulSoup(result)
         self.assertEqual(soup.p.string.strip(), text)
-
-    
