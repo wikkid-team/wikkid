@@ -10,7 +10,13 @@ from textwrap import dedent
 
 from BeautifulSoup import BeautifulSoup
 
-from wikkid.formatter.markdownformatter import MarkdownFormatter
+# The markdown formatter is optional.  If the MarkdownFormatter is not
+# available, the tests are skipped.
+try:
+    from wikkid.formatter.markdownformatter import MarkdownFormatter
+    has_markdown = True
+except ImportError:
+    has_markdown = False
 from wikkid.tests import TestCase
 
 
@@ -19,7 +25,10 @@ class TestMarkdownFormatter(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.formatter = MarkdownFormatter()
+        if has_markdown:
+            self.formatter = MarkdownFormatter()
+        else:
+            self.skip('markdown formatter not available')
 
     def test_simple_headings(self):
         # A simple heading and a paragraph.
@@ -115,28 +124,30 @@ class TestMarkdownFormatter(TestCase):
         result = self.formatter.format('filename', text)
         soup = BeautifulSoup(result)
 
-        self.assertTrue(soup.ul)
+        self.assertIsNot(None, soup.ul)
         ulNodes = soup.ul.findAll('li')
         self.assertEqual(
             ['UL 1', 'UL 2', 'UL 3'],
             [node.string.strip() for node in ulNodes])
 
-        self.assertTrue(soup.ol)
+        self.assertIsNot(None, soup.ol)
         olNodes = soup.ol.findAll('li')
-        for i in range(3):
-            self.assertEqual('OL %d' % (i+1), olNodes[i].string.strip())
+        self.assertEqual(
+            ['OL 1', 'OL 2', 'OL 3'],
+            [node.string.strip() for node in olNodes])
 
     def test_code_blocks(self):
-        text = dedent('''\
-                        Some Normal Text.
+        text = dedent("""\
+            Some Normal Text.
 
-                            Some Code inside pre tags
+                Some Code inside pre tags
 
-                        More Normal text.
-                        ''')
+            More Normal text.
+            """)
         result = self.formatter.format('filename', text)
         soup = BeautifulSoup(result)
-        self.assertEqual(soup.pre.code.string.strip(), 'Some Code inside pre tags')
+        self.assertEqual(
+            soup.pre.code.string.strip(), 'Some Code inside pre tags')
 
     def test_hr(self):
         # test different HR types:
@@ -148,7 +159,7 @@ class TestMarkdownFormatter(TestCase):
         for text in texts:
             result = self.formatter.format('filename', text)
             soup = BeautifulSoup(result)
-            self.assertTrue(soup.hr is not None)
+            self.assertIsNot(None, soup.hr)
 
     def test_code(self):
         text = 'use the `printf()` function'
@@ -157,12 +168,8 @@ class TestMarkdownFormatter(TestCase):
         self.assertEqual('printf()', soup.code.string)
 
     def test_unicode(self):
-        # I have no idea what this says. Taken from:
-        # http://www.humancomp.org/unichtm/calblur8.htm
-        # It's simplified chinese, in utf-8, apparently
-        text = u'个专为语文教学而设计的电脑软件'
+        # Test the unicode support of the markdown formatter.
+        text = u'\N{SNOWMAN}'
         result = self.formatter.format('format', text)
         soup = BeautifulSoup(result)
         self.assertEqual(soup.p.string.strip(), text)
-
-

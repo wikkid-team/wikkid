@@ -12,24 +12,36 @@ import re
 from wikkid.formatter.creoleformatter import CreoleFormatter
 from wikkid.formatter.pygmentsformatter import PygmentsFormatter
 from wikkid.formatter.restformatter import RestructuredTextFormatter
-from wikkid.formatter.markdownformatter import MarkdownFormatter
-from wikkid.formatter.textileformatter import TextileFormatter
+
+# Both textile and markdown are optional.
+try:
+    from wikkid.formatter.markdownformatter import MarkdownFormatter
+    has_markdown = True
+except ImportError:
+    has_markdown = False
+try:
+    from wikkid.formatter.textileformatter import TextileFormatter
+    has_textile = True
+except ImportError:
+    has_textile = False
 
 
 class FormatterRegistry(object):
     """Has a dictionary of formatters based on name."""
 
     def __init__(self):
-        self._formatters = {
+        self.formatters = {
             'creole': CreoleFormatter(),
-            'markdown': MarkdownFormatter(),
             'pygments': PygmentsFormatter(),
             'rest': RestructuredTextFormatter(),
-            'textile': TextileFormatter(),
             }
+        if has_markdown:
+            self.formatters['markdown'] = MarkdownFormatter()
+        if has_textile:
+            self.formatters['textile'] = TextileFormatter()
 
     def __getitem__(self, formatter):
-        return self._formatters[formatter]
+        return self.formatters[formatter]
 
 
 formatter_registry = FormatterRegistry()

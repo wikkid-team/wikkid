@@ -10,7 +10,13 @@ from textwrap import dedent
 
 from BeautifulSoup import BeautifulSoup
 
-from wikkid.formatter.textileformatter import TextileFormatter
+# The textile formatter is optional.  If the MarkdownFormatter is not
+# available, the tests are skipped.
+try:
+    from wikkid.formatter.textileformatter import TextileFormatter
+    has_textile = True
+except ImportError:
+    has_textile = False
 from wikkid.tests import TestCase
 
 
@@ -19,7 +25,10 @@ class TestTextileFormatter(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.formatter = TextileFormatter()
+        if has_textile:
+            self.formatter = TextileFormatter()
+        else:
+            self.skip('textile formatter not available')
 
     def test_detailed_headings(self):
         text = dedent("""\
