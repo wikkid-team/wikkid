@@ -57,7 +57,7 @@ def main(args):
     parser.add_option(
         '--default-format', type='string', default=DEFAULT_FORMAT,
         help=("Specify the default wiki format to use. Defaults to %r"
-              % DEFAULT_FORMATTER))
+              % DEFAULT_FORMAT))
     options, args = parser.parse_args(sys.argv[1:])
 
     execution_context = ExecutionContext(
