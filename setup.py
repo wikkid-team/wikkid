@@ -15,6 +15,7 @@ setup(
     author_email='wikkid-dev@lists.launchpad.net',
     url='https://launchpad.net/wikkid',
     scripts=['bin/wikkid-serve'],
+    data_files=[('share/man/man1', ['wikkid-serve.1']),],
     packages=find_packages(),
     package_dir={'bzrlib.plugins.wikkid':'plugin'},
     package_data={'wikkid/skin':['default/*.html',
