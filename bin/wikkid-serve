@@ -34,7 +34,7 @@ from wikkid.user.bzr import LocalBazaarUserMiddleware
 
 def setup_logging():
     """Set up a logger sending to stderr."""
-    handler = logging.StreamHandler(strm=sys.stderr)
+    handler = logging.StreamHandler(sys.stderr)
     fmt = '%(asctime)s %(levelname)-7s %(message)s'
     formatter = logging.Formatter(
         fmt=fmt, datefmt="%Y-%m-%d %H:%M:%S")
