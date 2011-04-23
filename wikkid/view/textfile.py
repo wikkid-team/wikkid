@@ -62,8 +62,9 @@ class SaveNewTextContent(BaseEditView):
             self.rev_id = rev_id
             self.description = description
             self.content = content
+            default_format = self.execution_context.default_format
             self.preview_content = format_content(
-                content, self.context.base_name)
+                content, self.context.base_name, default_format)
         else:
             try:
                 self.context.put_bytes(
