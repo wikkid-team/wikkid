@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Wikkid Developers.
 #
@@ -15,7 +16,9 @@ from bzrlib import urlutils
 from webob import Request, Response
 from webob.exc import HTTPException, HTTPNotFound
 
+from wikkid.context import ExecutionContext
 from wikkid.dispatcher import get_view
+from wikkid.fileutils import FileIterable
 from wikkid.model.factory import ResourceFactory
 from wikkid.skin.loader import Skin
 from wikkid.view.urls import parse_url
@@ -25,12 +28,18 @@ def serve_file(filename):
     if os.path.exists(filename):
         basename = urlutils.basename(filename)
         content_type = mimetypes.guess_type(basename)[0]
-        f = open(filename, 'rb')
-        try:
-            return Response(
-                f.read(), content_type=content_type)
-        finally:
-            f.close()
+
+        res = Response(content_type=content_type, conditional_response=True)
+        res.app_iter = FileIterable(filename)
+        res.content_length = os.path.getsize(filename)
+        res.last_modified = os.path.getmtime(filename)
+        # Todo: is this the best value for the etag?
+        # perhaps md5 would be a better alternative
+        res.etag = '%s-%s-%s' % (os.path.getmtime(filename),
+            os.path.getsize(filename),
+            hash(filename))
+        return res
+
     else:
         return HTTPNotFound()
 
@@ -38,7 +47,10 @@ def serve_file(filename):
 class WikkidApp(object):
     """The main wikkid application."""
 
-    def __init__(self, filestore, skin_name=None):
+    def __init__(self, filestore, skin_name=None, execution_context=None):
+        if execution_context is None:
+            execution_context = ExecutionContext()
+        self.execution_context = execution_context
         self.filestore = filestore
         self.resource_factory = ResourceFactory(self.filestore)
         # Need to load the initial templates for the skin.
@@ -73,7 +85,7 @@ class WikkidApp(object):
             resource_path, action = parse_url(path)
             model = self.resource_factory.get_resource_at_path(resource_path)
             try:
-                view = get_view(model, action, request)
+                view = get_view(model, action, request, self.execution_context)
                 response = view.render(self.skin)
             except HTTPException, e:
                 response = e

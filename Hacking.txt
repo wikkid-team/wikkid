@@ -29,7 +29,8 @@ Directory Outline
   Currently there is the Bazaar based one, and a simplistic filestore that
   just uses some in-memory dictionaries.
 * **wikkid.formatter**: The different formatters used to render the text files
-  as HTML.  Currently there are formatters for Creold, ReST, and Pygments.
+  as HTML.  Currently there are formatters for Creold, ReST, textile, markdown 
+  and Pygments.
 * **wikkid.interface**: All the zope interface definitions are in this module.
 * **wikkid.model**: The model objects representing the different things that
   you end up hitting through file traversal, like missing pages, directories,

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010 Wikkid Developers
 #
@@ -13,14 +14,14 @@ from wikkid.interface.resource import IWikiTextFile
 from wikkid.view.base import BaseView
 
 
-def format_content(bytes, base_name):
+def format_content(bytes, base_name, context):
     """ Format the content with the right formatter.
 
     Check the first line of the content to see if it specifies a
     formatter. The default is currently ReST, but we should have it
     configurable shortly.
     """
-    content, formatter = get_wiki_formatter(bytes, 'rest')
+    content, formatter = get_wiki_formatter(bytes, context.default_format)
     return formatter.format(base_name, content)
 
 
@@ -35,7 +36,8 @@ class WikiPage(BaseView):
     @property
     def content(self):
         bytes = self.context.get_bytes()
-        return format_content(bytes, self.context.base_name)
+        return format_content(
+            bytes, self.context.base_name, self.execution_context)
 
     def _render(self, skin):
         """If the page is not being viewed with the preferred path, redirect.

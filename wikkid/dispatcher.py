@@ -17,12 +17,13 @@ from bzrlib.urlutils import dirname, joinpath
 
 from zope.interface import providedBy
 
+from wikkid.context import ExecutionContext
 
 # The view registry needs to map an Interface and a name to a class.
 _VIEW_REGISTRY = {}
 
 
-def get_view(obj, view_name, request):
+def get_view(obj, view_name, request, ec=ExecutionContext()):
     """Get the most relevant view for the object for the specified name.
 
     Iterate through the provided interfaces of the object and look in the view
@@ -32,7 +33,7 @@ def get_view(obj, view_name, request):
     for interface in interfaces:
         try:
             klass = _VIEW_REGISTRY[(interface, view_name)]
-            instance = klass(obj, request)
+            instance = klass(obj, request, ec)
             instance.initialize()
             return instance
         except KeyError:
