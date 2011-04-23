@@ -22,7 +22,7 @@ def format_content(bytes, base_name):
     """
     content, formatter = get_wiki_formatter(bytes, 'rest')
     return formatter.format(base_name, content)
-    
+
 
 class WikiPage(BaseView):
     """A wiki page is a page that is going to be rendered for viewing."""
