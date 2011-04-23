@@ -6,13 +6,22 @@
 {% endif %}
 <form method="post" action="{{ view.save_url }}">
   <textarea name="content">{{ view.content }}</textarea>
-  Describe the change: <input type="text" id="message" name="message" value=""/>
+  Describe the change:
+  <input type="text" id="description" name="description"
+    value="{{ view.description }}" />
   {% if view.rev_id %}
   <input type="hidden" name="rev-id" value="{{ view.rev_id }}"/>
   {% endif %}
   <div class="save-cancel">
-  <input type="Submit" name="action" value="Save" />
+  <input type="Submit" name="save" value="Save" />
+  <input type="Submit" name="preview" value="Preview" />
   or <a href="{{ view.cancel_url }}">Cancel</a>
   </div>
 </form>
+{% if view.preview_content %}
+<hr />
+<div class="preview">
+{{ view.preview_content }}
+</div>
+{% endif %}
 {% endblock %}
