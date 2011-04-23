@@ -8,6 +8,8 @@
 
 import os.path
 
+from webob.request import environ_from_url
+
 from wikkid.app import WikkidApp
 from wikkid.filestore.volatile import FileStore
 from wikkid.tests import TestCase
@@ -20,10 +22,7 @@ class TestApp(TestCase):
         Traversal above the static folder, by forging a malicious request with
         a relative path for example, is not possible.
         """
-        environ = {
-            "REQUEST_METHOD": "GET",
-            "PATH_INFO": "/static/../page.html",
-            }
+        environ = environ_from_url("/static/../page.html")
 
         def start_response(status, headers):
             self.assertEqual("404 Not Found", status)
@@ -38,10 +37,7 @@ class TestApp(TestCase):
         including an absolute path for example, is not possible.
         """
         this_file = os.path.abspath(__file__)
-        environ = {
-            "REQUEST_METHOD": "GET",
-            "PATH_INFO": "/static/" + this_file,
-            }
+        environ = environ_from_url("/static/" + this_file)
 
         def start_response(status, headers):
             self.assertEqual("404 Not Found", status)
