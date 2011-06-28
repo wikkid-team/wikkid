@@ -29,6 +29,7 @@ setup(
         'testtools',
         'beautifulsoup',
         'pygments',
+        'webob',
         ],
     test_suite='wikkid.tests',
     )
