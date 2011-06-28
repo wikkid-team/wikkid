@@ -22,14 +22,16 @@ setup(
                                  'default/favicon.ico',
                                  'default/static/*']},
     install_requires=[
-        'zope.interface',
-        'twisted',
-        'jinja2',
         'docutils',
-        'testtools',
-        'beautifulsoup',
+        'jinja2',
         'pygments',
+        'twisted',
         'webob',
+        'zope.interface',
+        ],
+    test_requires=[
+        'beautifulsoup',
+        'testtools',
         ],
     test_suite='wikkid.tests',
     )
