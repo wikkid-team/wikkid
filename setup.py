@@ -21,6 +21,7 @@ setup(
     package_data={'wikkid/skin':['default/*.html',
                                  'default/favicon.ico',
                                  'default/static/*']},
+    include_package_data=True,
     install_requires=[
         'docutils',
         'jinja2',

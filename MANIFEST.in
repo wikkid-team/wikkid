@@ -1,2 +1,3 @@
 include INSTALL LICENCE Hacking.txt Home.txt NEWS ToDo.txt Makefile MANIFEST.in
+global-include *.html *.gif *.png *.css *.ico
 recursive-include wikkid/skin *
