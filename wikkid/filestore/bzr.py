@@ -43,13 +43,13 @@ class FileStore(object):
 
     implements(IFileStore)
 
-    def __init__(self, working_tree):
-        self.working_tree = working_tree
+    def __init__(self, tree):
+        self.tree = tree
         self.logger = logging.getLogger('wikkid')
 
     def get_file(self, path):
         """Return an object representing the file at specified path."""
-        file_id = self.working_tree.path2id(path)
+        file_id = self.tree.path2id(path)
         if file_id is None:
             return None
         else:
@@ -67,11 +67,11 @@ class FileStore(object):
         if parent_revision is None:
             parent_revision = NULL_REVISION
         # Firstly we want to lock the tree for writing.
-        self.working_tree.lock_write()
+        self.tree.lock_write()
         try:
             # Look to see if the path is there.  If it is then we are doing an
             # update.  If it isn't we are doing an add.
-            file_id = self.working_tree.path2id(path)
+            file_id = self.tree.path2id(path)
             if file_id is None:
                 self._add_file(path, content, author, commit_message)
             else:
@@ -80,7 +80,7 @@ class FileStore(object):
                     file_id, path, content, author, parent_revision,
                     commit_message)
         finally:
-            self.working_tree.unlock()
+            self.tree.unlock()
 
     def _ensure_directory_or_nonexistant(self, dir_path):
         """Ensure the dir_path defines a directory or doesn't exist.
@@ -112,7 +112,7 @@ class FileStore(object):
         # end of file conflicts nicer.
         if not content.endswith('\n'):
             content += '\n'
-        t = self.working_tree.bzrdir.root_transport
+        t = self.tree.bzrdir.root_transport
         # Get a transport for the path we want.
         self._ensure_directory_or_nonexistant(dirname(path))
         t = t.clone(dirname(path))
@@ -120,8 +120,8 @@ class FileStore(object):
         # Put the file there.
         # TODO: UTF-8 encode text files?
         t.put_bytes(basename(path), content)
-        self.working_tree.smart_add([t.local_abspath('.')])
-        self.working_tree.commit(
+        self.tree.smart_add([t.local_abspath('.')])
+        self.tree.commit(
             message=commit_message,
             authors=[author])
 
@@ -133,7 +133,7 @@ class FileStore(object):
         """
         f = File(self, path, file_id)
         current_rev = f.last_modified_in_revision
-        wt = self.working_tree
+        wt = self.tree
         wt.lock_write()
         try:
             current_lines = wt.get_file_lines(file_id)
@@ -177,7 +177,7 @@ class FileStore(object):
             if directory is None or directory.file_type != FileType.DIRECTORY:
                 return None
         listing = []
-        wt = self.working_tree
+        wt = self.tree
         wt.lock_read()
         try:
             for fp, fc, fkind, fid, entry in wt.list_files(
@@ -204,9 +204,9 @@ class File(BaseFile):
         BaseFile.__init__(self, path, file_id)
         self.filestore = filestore
         # This isn't entirely necessary.
-        self.working_tree = self.filestore.working_tree
+        self.tree = self.filestore.tree
         self.file_type = self._get_filetype()
-        bt = self.working_tree.basis_tree()
+        bt = self.tree.basis_tree()
         bt.lock_read()
         try:
             inv_file = bt.inventory[self.file_id]
@@ -216,7 +216,7 @@ class File(BaseFile):
 
     def _get_filetype(self):
         """Work out the filetype based on the mimetype if possible."""
-        is_directory = ('directory' == self.working_tree.kind(self.file_id))
+        is_directory = ('directory' == self.tree.kind(self.file_id))
         if is_directory:
             return FileType.DIRECTORY
         else:
@@ -232,27 +232,27 @@ class File(BaseFile):
     def get_content(self):
         if self.file_id is None:
             return None
-        self.working_tree.lock_read()
+        self.tree.lock_read()
         try:
             # basis_tree is a revision tree, queries the repositry.
             # to get the stuff off the filesystem use the working tree
             # which needs to start with that.  WorkingTree.open('.').
             # branch = tree.branch.
-            return self.working_tree.get_file_text(self.file_id)
+            return self.tree.get_file_text(self.file_id)
         finally:
-            self.working_tree.unlock()
+            self.tree.unlock()
 
     @property
     def last_modified_by(self):
         """Return the first author for the revision."""
-        repo = self.working_tree.branch.repository
+        repo = self.tree.branch.repository
         rev = repo.get_revision(self.last_modified_in_revision)
         return rev.get_apparent_authors()[0]
 
     @property
     def last_modified_date(self):
         """Return the last modified date for the revision."""
-        repo = self.working_tree.branch.repository
+        repo = self.tree.branch.repository
         rev = repo.get_revision(self.last_modified_in_revision)
         return datetime.utcfromtimestamp(rev.timestamp)
 
@@ -260,7 +260,7 @@ class File(BaseFile):
     def _is_binary(self):
         """True if the file is binary."""
         try:
-            check_text_path(self.working_tree.abspath(self.path))
+            check_text_path(self.tree.abspath(self.path))
             return False
         except BinaryFile:
             return True
@@ -268,7 +268,7 @@ class File(BaseFile):
     @property
     def is_directory(self):
         """Is this file a directory?"""
-        return 'directory' == self.working_tree.kind(self.file_id)
+        return 'directory' == self.tree.kind(self.file_id)
 
     def update(self, content, user):
         raise NotImplementedError()
