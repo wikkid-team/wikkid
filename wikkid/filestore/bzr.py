@@ -12,6 +12,7 @@ import logging
 from zope.interface import implements
 
 from bzrlib.errors import BinaryFile, MalformedTransform
+from bzrlib.generate_ids import gen_file_id
 from bzrlib.merge3 import Merge3
 from bzrlib.osutils import splitpath, split_lines
 from bzrlib.revision import NULL_REVISION
@@ -69,12 +70,11 @@ def create_parents(tt, path, trans_id):
     prev_trans_id = trans_id
     for parent_path, tail in iter_paths(path):
         trans_id = tt.trans_id_tree_path(parent_path)
-        tt.adjust_path(tail, trans_id, prev_trans_id)
         if tt.tree_kind(trans_id) is not None:
             break
+        tt.adjust_path(tail, trans_id, prev_trans_id)
         tt.create_directory(trans_id)
-        tt.version_file(trans_id, trans_id)
-        prev_name = tail
+        tt.version_file(gen_file_id(tail), trans_id)
         prev_trans_id = trans_id
 
 
@@ -348,7 +348,8 @@ class BranchFileStore(FileStore):
                 if tt.tree_kind(trans_id) is not None:
                     tt.delete_contents(trans_id)
                 else:
-                    tt.version_file(trans_id, trans_id)
+                    name = splitpath(path)[-1]
+                    tt.version_file(gen_file_id(name), trans_id)
                     create_parents(tt, path, trans_id)
                 tt.create_file(content, trans_id)
                 try:
