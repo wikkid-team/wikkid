@@ -11,7 +11,10 @@ from textwrap import dedent
 from bzrlib.tests import TestCaseWithTransport
 
 from wikkid.errors import UpdateConflicts
-from wikkid.filestore.bzr import FileStore
+from wikkid.filestore.bzr import (
+    BranchFileStore,
+    FileStore,
+    )
 from wikkid.tests import ProvidesMixin
 from wikkid.tests.filestore import TestFileStore
 
@@ -134,3 +137,14 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin, TestFileStore):
             'test.txt', '', 'Test Author <test@example.com>', base_rev)
         curr = filestore.get_file('test.txt')
         self.assertEqual('', curr.get_content())
+
+
+class TestBranchFileStore(TestBzrFileStore):
+
+    def make_filestore(self, contents=None):
+        tree = self.make_branch_and_tree('.')
+        if contents:
+            self.build_tree_contents(contents)
+        tree.smart_add(['.'])
+        tree.commit(message='Initial commit', authors=['test@example.com'])
+        return BranchFileStore(tree.branch)
