@@ -7,4 +7,4 @@
 """A Distributed Wiki."""
 
 
-version = "0.2dev"
+version = "0.2"

@@ -1,0 +1,15 @@
+=======
+Changes
+=======
+
+0.2
+---
+
+* Changed from twisted.web to webob WSGI for serving the branches
+* Show who last modified the file on the wiki page
+* Add a Home.txt so wikkid works nicely on itself
+* Fix the setup packaging dependencies
+* Add textile and markdown formatters
+* Add the ability to use a branch rather than a working tree
+* Adds a simple man page for wikkid-serve
+* Fixed for python 2.7
