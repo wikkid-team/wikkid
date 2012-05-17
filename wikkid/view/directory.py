@@ -14,9 +14,9 @@ from wikkid.view.urls import canonical_url
 class ListingItem(object):
     """An item to be shown in the directory listing."""
 
-    def __init__(self, context, view, css_class, name=None):
+    def __init__(self, context, request, view, css_class, name=None):
         self.context = context
-        self.url = canonical_url(self.context, view)
+        self.url = canonical_url(self.context, request, view)
         if name is None:
             name = context.base_name
         self.name = name
@@ -53,11 +53,11 @@ class DirectoryListingPage(DirectoryBreadcrumbView):
         if self.context.path != '/':
             parent = self.context.parent
             items.append(
-                ListingItem(parent, 'listing', 'up', name='..'))
+                ListingItem(parent, self.request, 'listing', 'up', name='..'))
         for item in sorted(directories, key=sort_key):
-            items.append(ListingItem(item, 'listing', 'directory'))
+            items.append(ListingItem(item, self.request, 'listing', 'directory'))
         for item in sorted(files, key=sort_key):
-            items.append(ListingItem(item, None, 'file'))
+            items.append(ListingItem(item, self.request, None, 'file'))
         self.items = items
 
     @property

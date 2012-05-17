@@ -24,7 +24,7 @@ class BaseEditView(BaseView):
     @property
     def save_url(self):
         """The link for the cancel button."""
-        return canonical_url(self.context, 'save')
+        return canonical_url(self.context, self.request, 'save')
 
     @property
     def cancel_url(self):
