@@ -11,6 +11,7 @@ import os.path
 from webob.request import environ_from_url
 
 from wikkid.app import WikkidApp
+from wikkid.context import ExecutionContext
 from wikkid.filestore.volatile import FileStore
 from wikkid.tests import TestCase
 
@@ -59,11 +60,33 @@ class TestApp(TestCase):
 
     def test_getting_static_style_css_works_with_script_name(self):
 
-        environ = environ_from_url("/static/default.css")
-        environ['SCRIPT_NAME'] = '/test'
+        environ = environ_from_url("/test/static/default.css")
         def start_response(status, headers):
             self.assertEqual("200 OK", status)
 
         filestore = FileStore()
-        app = WikkidApp(filestore)
+        context = ExecutionContext(script_name="/test")
+        app = WikkidApp(filestore, execution_context=context)
+        app(environ, start_response)
+
+    def test_getting_static_style_css_works_with_script_name_multiple_segments(self):
+
+        environ = environ_from_url("/p/project-name/wiki/static/default.css")
+        def start_response(status, headers):
+            self.assertEqual("200 OK", status)
+
+        filestore = FileStore()
+        context = ExecutionContext(script_name="/p/project-name/wiki")
+        app = WikkidApp(filestore, execution_context=context)
+        app(environ, start_response)
+
+    def test_getting_anything_outside_script_name_fails(self):
+
+        environ = environ_from_url("/foo/bar")
+        def start_response(status, headers):
+            self.assertEqual("404 Not Found", status)
+
+        filestore = FileStore()
+        context = ExecutionContext(script_name="/test")
+        app = WikkidApp(filestore, execution_context=context)
         app(environ, start_response)

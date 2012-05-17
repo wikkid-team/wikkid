@@ -36,4 +36,8 @@ class ExecutionContext(object):
         self.host = host
         self.port = port
         self.default_format = default_format
+        # TODO: make sure the script_name if set starts with a slash and
+        # doesn't finish with one.
+        if script_name is None:
+            script_name = ''
         self.script_name = script_name
