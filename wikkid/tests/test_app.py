@@ -59,7 +59,7 @@ class TestApp(TestCase):
 
     def test_getting_static_style_css_works_with_script_name(self):
 
-        environ = environ_from_url("/test/static/default.css")
+        environ = environ_from_url("/static/default.css")
         environ['SCRIPT_NAME'] = '/test'
         def start_response(status, headers):
             self.assertEqual("200 OK", status)
