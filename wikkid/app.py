@@ -66,7 +66,7 @@ class WikkidApp(object):
         request = Request(environ)
         path = urllib.unquote(request.path)
         script_name = self.execution_context.script_name
-        if not path.startswith(script_name):
+        if not path.startswith(script_name + '/'):
             return HTTPNotFound()
 
         shifted_prefix = ''
