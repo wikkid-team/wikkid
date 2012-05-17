@@ -5,14 +5,14 @@
   <title>{% block title %}{% endblock %} - Wikkid</title>
 
   <link type="text/css" rel="stylesheet" media="screen, print"
-        href="/static/default.css" />
-  <link rel="shortcut icon" href="/favicon.ico" />
+        href="{{ request.script_name }}/static/default.css" />
+  <link rel="shortcut icon" href="{{ request.script_name }}/favicon.ico" />
   {% endblock %}
 </head>
 <body>
 <div id="container">
   <div id="header">
-    <div class="wikkidlogo"><a href="/"><strong>Wikkid Wiki</strong></a></div>
+    <div class="wikkidlogo"><a href="{{ request.script_name }}/"><strong>Wikkid Wiki</strong></a></div>
     <div id="logged">
       {% if view.user %}
 
@@ -44,7 +44,7 @@
   </div>
   {% block footer %}{% endblock %}
   <div id="footer">
-    &copy; 2010
+    &copy; 2010-2012
     <a href="https://launchpad.net/~wikkid">Wikkid Hackers</a>,
     All rights reserved.
   </div>

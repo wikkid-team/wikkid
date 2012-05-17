@@ -11,11 +11,18 @@ import os.path
 from webob.request import environ_from_url
 
 from wikkid.app import WikkidApp
+from wikkid.context import ExecutionContext
 from wikkid.filestore.volatile import FileStore
 from wikkid.tests import TestCase
 
 
 class TestApp(TestCase):
+
+    def assert_not_found(self, status, headers):
+        self.assertEqual("404 Not Found", status)
+
+    def assert_ok(self, status, headers):
+        self.assertEqual("200 OK", status)
 
     def test_traverse_above_static_not_possible_with_relative_path(self):
         """
@@ -23,13 +30,9 @@ class TestApp(TestCase):
         a relative path for example, is not possible.
         """
         environ = environ_from_url("/static/../page.html")
-
-        def start_response(status, headers):
-            self.assertEqual("404 Not Found", status)
-
         filestore = FileStore()
         app = WikkidApp(filestore)
-        app(environ, start_response)
+        app(environ, self.assert_not_found)
 
     def test_traverse_above_static_not_possible_with_absolute_path(self):
         """
@@ -38,10 +41,35 @@ class TestApp(TestCase):
         """
         this_file = os.path.abspath(__file__)
         environ = environ_from_url("/static/" + this_file)
-
-        def start_response(status, headers):
-            self.assertEqual("404 Not Found", status)
-
         filestore = FileStore()
         app = WikkidApp(filestore)
-        app(environ, start_response)
+        app(environ, self.assert_not_found)
+
+    def test_getting_static_style_css_works(self):
+
+        environ = environ_from_url("/static/default.css")
+        filestore = FileStore()
+        app = WikkidApp(filestore)
+        app(environ, self.assert_ok)
+
+    def test_getting_static_style_css_works_with_script_name(self):
+
+        environ = environ_from_url("/test/static/default.css")
+        filestore = FileStore()
+        context = ExecutionContext(script_name="/test")
+        app = WikkidApp(filestore, execution_context=context)
+        app(environ, self.assert_ok)
+
+    def test_getting_static_style_css_works_with_script_name_multiple_segments(self):
+        environ = environ_from_url("/p/project-name/wiki/static/default.css")
+        filestore = FileStore()
+        context = ExecutionContext(script_name="/p/project-name/wiki")
+        app = WikkidApp(filestore, execution_context=context)
+        app(environ, self.assert_ok)
+
+    def test_getting_anything_outside_script_name_fails(self):
+        environ = environ_from_url("/foo/bar")
+        filestore = FileStore()
+        context = ExecutionContext(script_name="/test")
+        app = WikkidApp(filestore, execution_context=context)
+        app(environ, self.assert_not_found)

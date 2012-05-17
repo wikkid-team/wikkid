@@ -70,7 +70,8 @@ class SaveNewTextContent(BaseEditView):
                 self.context.put_bytes(
                     content, self.user.committer_id, rev_id, description)
 
-                raise HTTPSeeOther(location=self.context.path)
+                location = self.canonical_url(self.context)
+                raise HTTPSeeOther(location=location)
             except UpdateConflicts, e:
                 # Show the edit page again.
                 logger = logging.getLogger('wikkid')

@@ -11,6 +11,7 @@ import logging
 import mimetypes
 import os.path
 import urllib
+from wsgiref.util import shift_path_info
 
 from bzrlib import urlutils
 from webob import Request, Response
@@ -59,35 +60,50 @@ class WikkidApp(object):
         self.skin = Skin(skin_name)
         self.logger = logging.getLogger('wikkid')
 
-    def __call__(self, environ, start_response):
-        """The WSGI bit."""
-        request = Request(environ)
-
+    def process_call(self, environ):
+        """The actual implementation of dealing with the call."""
         # TODO: reject requests that aren't GET or POST
+        request = Request(environ)
         path = urllib.unquote(request.path)
+        script_name = self.execution_context.script_name
+        if not path.startswith(script_name + '/'):
+            return HTTPNotFound()
+
+        shifted_prefix = ''
+        while shifted_prefix != script_name:
+            shifted = shift_path_info(environ)
+            shifted_prefix = '{0}/{1}'.format(shifted_prefix, shifted)
+        # Now we are just interested in the path_info having ignored the
+        # script name.
+        path = urllib.unquote(request.path_info)
+
         if path == '/favicon.ico':
             if self.skin.favicon is not None:
-                response = serve_file(self.skin.favicon)
+                return serve_file(self.skin.favicon)
             else:
-                response = HTTPNotFound()
-        elif path.startswith('/static/'):
+                return HTTPNotFound()
+
+        if path.startswith('/static/'):
             if self.skin.static_dir is not None:
                 static_dir = self.skin.static_dir.rstrip(os.sep) + os.sep
                 static_file = os.path.abspath(
                     urlutils.joinpath(static_dir, path[8:]))
                 if static_file.startswith(static_dir):
-                    response = serve_file(static_file)
+                    return serve_file(static_file)
                 else:
-                    response = HTTPNotFound()
+                    return HTTPNotFound()
             else:
-                response = HTTPNotFound()
-        else:
-            resource_path, action = parse_url(path)
-            model = self.resource_factory.get_resource_at_path(resource_path)
-            try:
-                view = get_view(model, action, request, self.execution_context)
-                response = view.render(self.skin)
-            except HTTPException, e:
-                response = e
+                return HTTPNotFound()
 
+        resource_path, action = parse_url(path)
+        model = self.resource_factory.get_resource_at_path(resource_path)
+        try:
+            view = get_view(model, action, request, self.execution_context)
+            return view.render(self.skin)
+        except HTTPException, e:
+            return e
+
+    def __call__(self, environ, start_response):
+        """The WSGI bit."""
+        response = self.process_call(environ)
         return response(environ, start_response)

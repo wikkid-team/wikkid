@@ -24,12 +24,12 @@ def parse_url(path):
         return (path, None)
 
 
-def canonical_url(context, view=None):
+def canonical_url(context, request, view=None):
     """The one true URL for the context object."""
     path = context.preferred_path
     if view is None:
-        return path
+        return '{0}{1}'.format(request.script_name, path)
     else:
         if path == '/':
             path = ''
-        return '{0}/+{1}'.format(path, view)
+        return '{0}{1}/+{2}'.format(request.script_name, path, view)
