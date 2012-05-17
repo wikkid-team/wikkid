@@ -32,6 +32,7 @@ setup(
         ],
     test_requires=[
         'beautifulsoup',
+        'bzrlib.tests',
         'testtools',
         ],
     test_suite='wikkid.tests',
