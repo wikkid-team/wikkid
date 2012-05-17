@@ -107,3 +107,16 @@ class TestBreadcrumbs(ViewTestCase):
              ('wiki root', '/+listing'),
              ('SomePage', '/SomePage/+listing'),
              ('SubPage', '/SomePage/SubPage')])
+
+    def test_directory_breadcrumbs_nested_with_script_name(self):
+        # For each directory after the root, a listing crumb is added.
+        # Names are not wiki expanded.
+        factory = self.make_factory([
+                ('SomePage/SubPage/Nested.txt', 'some text')])
+        view = self.get_view(factory, '/SomePage/SubPage', 'listing', '/p/wiki')
+        self.assertBreadcrumbs(
+            view,
+            [('Home', '/p/wiki/Home'),
+             ('wiki root', '/p/wiki/+listing'),
+             ('SomePage', '/p/wiki/SomePage/+listing'),
+             ('SubPage', '/p/wiki/SomePage/SubPage')])
