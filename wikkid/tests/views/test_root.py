@@ -45,3 +45,12 @@ class TestRootViews(ViewTestCase):
         soup = BeautifulSoup(content.text)
         [style] = soup.find_all('link', {'rel':'stylesheet'})
         self.assertThat(style['href'], Equals('/static/default.css'))
+
+    def test_home_rendering_with_script_name(self):
+        """Render the home page and test the elements."""
+        factory = self.make_factory()
+        view = self.get_view(factory, '/Home', base_url='/p/test')
+        content = view.render(Skin('default'))
+        soup = BeautifulSoup(content.text)
+        [style] = soup.find_all('link', {'rel':'stylesheet'})
+        self.assertThat(style['href'], Equals('/p/test/static/default.css'))
