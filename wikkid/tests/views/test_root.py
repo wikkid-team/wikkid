@@ -14,8 +14,8 @@ from wikkid.tests.factory import ViewTestCase
 class TestRootViews(ViewTestCase):
     """Test the views on the root object."""
 
-    def test_last_modified_by(self):
-        """Test that the last committer is displayed properly"""
+    def test_root_redirects(self):
+        """Going to / redirects to the Home page."""
         factory = self.make_factory()
         view = self.get_view(factory, '/')
         error = self.assertRaises(
@@ -23,3 +23,13 @@ class TestRootViews(ViewTestCase):
             view.render,
             None)
         self.assertEqual('/Home', error.headers['Location'])
+
+    def test_root_redirects_with_script_name(self):
+        """Redirection works and respects the script name"""
+        factory = self.make_factory()
+        view = self.get_view(factory, '/', base_url='/p/test')
+        error = self.assertRaises(
+            HTTPSeeOther,
+            view.render,
+            None)
+        self.assertEqual('/p/test/Home', error.headers['Location'])
