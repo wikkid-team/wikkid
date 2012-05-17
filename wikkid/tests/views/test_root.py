@@ -6,8 +6,11 @@
 
 """Test views for the root object."""
 
+from bs4 import BeautifulSoup
+from testtools.matchers import Equals
 from webob.exc import HTTPSeeOther
 
+from wikkid.skin.loader import Skin
 from wikkid.tests.factory import ViewTestCase
 
 
@@ -33,3 +36,12 @@ class TestRootViews(ViewTestCase):
             view.render,
             None)
         self.assertEqual('/p/test/Home', error.headers['Location'])
+
+    def test_home_rendering(self):
+        """Render the home page and test the elements."""
+        factory = self.make_factory()
+        view = self.get_view(factory, '/Home')
+        content = view.render(Skin('default'))
+        soup = BeautifulSoup(content.text)
+        [style] = soup.find_all('link', {'rel':'stylesheet'})
+        self.assertThat(style['href'], Equals('/static/default.css'))

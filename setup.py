@@ -31,7 +31,7 @@ setup(
         'zope.interface',
         ],
     test_requires=[
-        'beautifulsoup',
+        'bs4',
         'bzrlib.tests',
         'testtools',
         ],
