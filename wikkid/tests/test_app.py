@@ -45,3 +45,14 @@ class TestApp(TestCase):
         filestore = FileStore()
         app = WikkidApp(filestore)
         app(environ, start_response)
+
+    def test_getting_static_style_css_works(self):
+
+        environ = environ_from_url("/static/default.css")
+
+        def start_response(status, headers):
+            self.assertEqual("200 OK", status)
+
+        filestore = FileStore()
+        app = WikkidApp(filestore)
+        app(environ, start_response)
