@@ -46,6 +46,7 @@ class WikiPage(BaseView):
         """
         preferred = self.context.preferred_path
         if self.context.path != preferred:
-            raise HTTPTemporaryRedirect(location=preferred)
+            location = self.canonical_url(self.context)
+            raise HTTPTemporaryRedirect(location=location)
         else:
             return super(WikiPage, self)._render(skin)

@@ -7,7 +7,6 @@
 """View base class for editing text pages."""
 
 from wikkid.view.base import BaseView
-from wikkid.view.urls import canonical_url
 from wikkid.view.utils import expand_wiki_name
 
 
@@ -24,9 +23,9 @@ class BaseEditView(BaseView):
     @property
     def save_url(self):
         """The link for the cancel button."""
-        return canonical_url(self.context, self.request, 'save')
+        return self.canonical_url(self.context, 'save')
 
     @property
     def cancel_url(self):
         """The link for the cancel button."""
-        return self.context.preferred_path
+        return self.canonical_url(self.context)

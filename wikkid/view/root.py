@@ -22,7 +22,5 @@ class RootPage(BaseView):
     def _render(self, skin):
         """Redirect to Home (or the default page)."""
         default_resource = self.context.default_resource
-        preferred = default_resource.preferred_path
-        if self.request.script_name:
-            preferred = self.request.script_name + preferred
-        raise HTTPSeeOther(location=preferred)
+        location = self.canonical_url(default_resource)
+        raise HTTPSeeOther(location=location)
