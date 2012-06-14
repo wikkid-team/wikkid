@@ -94,18 +94,8 @@ class TestApp(TestCase):
         self.assertUrlIsView("/test/", RootPage, "/test/")
 
     def test_get_view(self):
-        environ = environ_from_url("/Home")
-        filestore = FileStore()
-        context = ExecutionContext()
-        app = WikkidApp(filestore, execution_context=context)
-        view = app.get_view(environ)
-        self.assertThat(view, IsInstance(MissingPage))
+        self.assertUrlIsView("/Home", MissingPage)
 
     def test_get_home_view(self):
-        environ = environ_from_url("/Home")
-        filestore = FileStore([
-                ('Home.txt', 'Welcome Home.')])
-        context = ExecutionContext()
-        app = WikkidApp(filestore, execution_context=context)
-        view = app.get_view(environ)
-        self.assertThat(view, IsInstance(WikiPage))
+        content = [('Home.txt', 'Welcome Home.')]
+        self.assertUrlIsView("/Home", WikiPage, store_content=content)
