@@ -15,6 +15,7 @@ from wikkid.app import WikkidApp
 from wikkid.context import ExecutionContext
 from wikkid.filestore.volatile import FileStore
 from wikkid.view.missing import MissingPage
+from wikkid.view.root import RootPage
 from wikkid.view.wiki import WikiPage
 from wikkid.tests import TestCase
 
@@ -76,6 +77,21 @@ class TestApp(TestCase):
         context = ExecutionContext(script_name="/test")
         app = WikkidApp(filestore, execution_context=context)
         app(environ, self.assert_not_found)
+
+    def assertUrlIsView(self, url, view_type,
+                        script_name=None, store_content=None):
+        environ = environ_from_url(url)
+        filestore = FileStore(store_content)
+        context = ExecutionContext(script_name=script_name)
+        app = WikkidApp(filestore, execution_context=context)
+        view = app.get_view(environ)
+        self.assertThat(view, IsInstance(view_type))
+
+    def test_home_redirect_url_matches_script_name(self):
+        self.assertUrlIsView("/test", RootPage, "/test")
+        self.assertUrlIsView("/test", RootPage, "/test/")
+        self.assertUrlIsView("/test/", RootPage, "/test")
+        self.assertUrlIsView("/test/", RootPage, "/test/")
 
     def test_get_view(self):
         environ = environ_from_url("/Home")
