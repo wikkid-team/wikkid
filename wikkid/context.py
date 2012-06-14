@@ -40,4 +40,4 @@ class ExecutionContext(object):
         # doesn't finish with one.
         if script_name is None:
             script_name = ''
-        self.script_name = script_name
+        self.script_name = script_name.rstrip('/')

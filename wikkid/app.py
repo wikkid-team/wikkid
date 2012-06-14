@@ -64,7 +64,9 @@ class WikkidApp(object):
         request = Request(environ)
         path = urllib.unquote(request.path)
         script_name = self.execution_context.script_name
-        if not path.startswith(script_name + '/'):
+        # Firstly check to see if the path is the same as the script_name
+        if (path != script_name and
+            not path.startswith(script_name + '/')):
             raise HTTPNotFound()
 
         shifted_prefix = ''
@@ -74,6 +76,8 @@ class WikkidApp(object):
         # Now we are just interested in the path_info having ignored the
         # script name.
         path = urllib.unquote(request.path_info)
+        if path == '':
+            path = '/' # Explicitly be the root (we need the /)
         return request, path
 
     def _get_view(self, request, path):

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010 Wikkid Developers.
+# Copyright (C) 2010-2012 Wikkid Developers.
 #
 # This software is licensed under the GNU Affero General Public License
 # version 3 (see the file LICENSE).
@@ -15,6 +15,7 @@ from wikkid.app import WikkidApp
 from wikkid.context import ExecutionContext
 from wikkid.filestore.volatile import FileStore
 from wikkid.view.missing import MissingPage
+from wikkid.view.root import RootPage
 from wikkid.view.wiki import WikiPage
 from wikkid.tests import TestCase
 
@@ -77,19 +78,24 @@ class TestApp(TestCase):
         app = WikkidApp(filestore, execution_context=context)
         app(environ, self.assert_not_found)
 
-    def test_get_view(self):
-        environ = environ_from_url("/Home")
-        filestore = FileStore()
-        context = ExecutionContext()
+    def assertUrlIsView(self, url, view_type,
+                        script_name=None, store_content=None):
+        environ = environ_from_url(url)
+        filestore = FileStore(store_content)
+        context = ExecutionContext(script_name=script_name)
         app = WikkidApp(filestore, execution_context=context)
         view = app.get_view(environ)
-        self.assertThat(view, IsInstance(MissingPage))
+        self.assertThat(view, IsInstance(view_type))
+
+    def test_home_redirect_url_matches_script_name(self):
+        self.assertUrlIsView("/test", RootPage, "/test")
+        self.assertUrlIsView("/test", RootPage, "/test/")
+        self.assertUrlIsView("/test/", RootPage, "/test")
+        self.assertUrlIsView("/test/", RootPage, "/test/")
+
+    def test_get_view(self):
+        self.assertUrlIsView("/Home", MissingPage)
 
     def test_get_home_view(self):
-        environ = environ_from_url("/Home")
-        filestore = FileStore([
-                ('Home.txt', 'Welcome Home.')])
-        context = ExecutionContext()
-        app = WikkidApp(filestore, execution_context=context)
-        view = app.get_view(environ)
-        self.assertThat(view, IsInstance(WikiPage))
+        content = [('Home.txt', 'Welcome Home.')]
+        self.assertUrlIsView("/Home", WikiPage, store_content=content)
