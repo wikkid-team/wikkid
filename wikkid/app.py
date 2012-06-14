@@ -60,14 +60,12 @@ class WikkidApp(object):
         self.skin = Skin(skin_name)
         self.logger = logging.getLogger('wikkid')
 
-    def process_call(self, environ):
-        """The actual implementation of dealing with the call."""
-        # TODO: reject requests that aren't GET or POST
+    def preprocess_environ(self, environ):
         request = Request(environ)
         path = urllib.unquote(request.path)
         script_name = self.execution_context.script_name
         if not path.startswith(script_name + '/'):
-            return HTTPNotFound()
+            raise HTTPNotFound()
 
         shifted_prefix = ''
         while shifted_prefix != script_name:
@@ -76,6 +74,21 @@ class WikkidApp(object):
         # Now we are just interested in the path_info having ignored the
         # script name.
         path = urllib.unquote(request.path_info)
+        return request, path
+
+    def _get_view(self, request, path):
+        """Get the view for the path specified."""
+        resource_path, action = parse_url(path)
+        model = self.resource_factory.get_resource_at_path(resource_path)
+        return get_view(model, action, request, self.execution_context)
+
+    def process_call(self, environ):
+        """The actual implementation of dealing with the call."""
+        # TODO: reject requests that aren't GET or POST
+        try:
+            request, path = self.preprocess_environ(environ)
+        except HTTPException, e:
+            return e
 
         if path == '/favicon.ico':
             if self.skin.favicon is not None:
@@ -95,13 +108,16 @@ class WikkidApp(object):
             else:
                 return HTTPNotFound()
 
-        resource_path, action = parse_url(path)
-        model = self.resource_factory.get_resource_at_path(resource_path)
         try:
-            view = get_view(model, action, request, self.execution_context)
+            view = self._get_view(request, path)
             return view.render(self.skin)
         except HTTPException, e:
             return e
+
+    def get_view(self, environ):
+        """Allow an app user to get the wikkid view for a particular call."""
+        request, path = self.preprocess_environ(environ)
+        return self._get_view(request, path)
 
     def __call__(self, environ, start_response):
         """The WSGI bit."""
