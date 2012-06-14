@@ -258,18 +258,22 @@ class File(BaseFile):
 
     def _get_filetype(self):
         """Work out the filetype based on the mimetype if possible."""
-        is_directory = ('directory' == self.tree.kind(self.file_id))
-        if is_directory:
-            return FileType.DIRECTORY
-        else:
-            if self._mimetype is None:
-                binary = self._is_binary
+        try:
+            self.tree.lock_read()
+            is_directory = ('directory' == self.tree.kind(self.file_id))
+            if is_directory:
+                return FileType.DIRECTORY
             else:
-                binary = not self._mimetype.startswith('text/')
-            if binary:
-                return FileType.BINARY_FILE
-            else:
-                return FileType.TEXT_FILE
+                if self._mimetype is None:
+                    binary = self._is_binary
+                else:
+                    binary = not self._mimetype.startswith('text/')
+                if binary:
+                    return FileType.BINARY_FILE
+                else:
+                    return FileType.TEXT_FILE
+        finally:
+            self.tree.unlock()
 
     def get_content(self):
         if self.file_id is None:
