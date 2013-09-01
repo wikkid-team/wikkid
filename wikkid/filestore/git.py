@@ -21,7 +21,7 @@ import time
 
 from zope.interface import implements
 
-from wikkid.errors import FileExists
+from wikkid.errors import FileExists, UpdateConflicts
 from wikkid.interface.filestore import FileType, IFile, IFileStore
 
 
@@ -69,7 +69,7 @@ class FileStore(object):
     def update_file(self, path, content, user, parent_revision,
                     commit_message=None):
         """The `user` is updating the file at `path` with `content`."""
-        commit_id, root_id = self._get_root(parent_revision)
+        commit_id, root_id = self._get_root()
         if root_id is None:
             root_tree = Tree()
         else:
@@ -88,8 +88,12 @@ class FileStore(object):
             except KeyError:
                 tree = Tree()
             trees.append(tree)
-        if elements[-1] in tree and stat.S_ISDIR(tree[elements[-1]][0]):
-            raise FileExists("File %s exists and is a directory" % path)
+        if elements[-1] in tree:
+            (old_mode, old_sha) = tree[elements[-1]]
+            if stat.S_ISDIR(old_mode):
+                raise FileExists("File %s exists and is a directory" % path)
+            if old_sha != parent_revision:
+                raise UpdateConflicts("File conflict", old_sha)
         child = (stat.S_IFREG | 0644, Blob.from_string(content).id)
         for tree, name in zip(reversed(trees), reversed(elements)):
             tree[name] = child
@@ -194,7 +198,7 @@ class File(object):
 
     @property
     def last_modified_in_revision(self):
-        return self._get_last_modified_commit().id
+        return self.sha
 
     @property
     def last_modified_by(self):
