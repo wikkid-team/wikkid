@@ -70,9 +70,6 @@ class IFile(Interface):
 
     base_name = Attribute("The last part of the path.")
 
-    file_id = Attribute(
-        "The unique identifier for the file in the filestore.")
-
     file_type = Attribute("Soon to be a Choice with a lazr.enum.")
 
     mimetype = Attribute(

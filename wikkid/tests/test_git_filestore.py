@@ -27,30 +27,17 @@ class TestGitFileStore(TestCase, ProvidesMixin, TestFileStore):
 
     def make_filestore(self, contents=None):
         repo = MemoryRepo()
-        objects = {"": Tree()}
+        fs = FileStore(repo)
         if contents:
             for (path, contents) in contents:
-                path = path.strip("/")
-                (dirname, basename) = posixpath.split(path)
-                if contents is not None:
-                    o = Blob.from_string(contents)
-                    mode = stat.S_IFREG
-                else:
-                    o = Tree()
-                    mode = stat.S_IFDIR
-                objects[path] = o
-                objects[dirname].add(basename, mode | 0644, o.id)
-        c = Commit()
-        c.author = c.committer = "Somebody <test@example.com>"
-        c.author_time = c.commit_time = time.time()
-        c.author_timezone = c.commit_timezone = 0
-        c.message = 'Initial commit'
-        c.tree = objects[""].id
-        objects[None] = c
-        repo.object_store.add_object(c)
-        repo.object_store.add_objects(
-            [(o, p) for (p, o) in objects.iteritems()])
-        return FileStore(repo)
+                if contents is None:
+                    # Directory
+                    continue
+                fs.update_file(path, contents,
+                    user="Somebody <test@example.com>",
+                    parent_revision=None,
+                    commit_message="Added by make_filestore")
+        return fs
 
     def test_conflicts(self):
         filestore = self.make_filestore(
