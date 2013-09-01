@@ -22,7 +22,7 @@ from wikkid.tests import ProvidesMixin, TestCase
 from wikkid.tests.filestore import TestFileStore
 
 
-class TestBzrFileStore(TestCase, ProvidesMixin, TestFileStore):
+class TestGitFileStore(TestCase, ProvidesMixin, TestFileStore):
     """Tests for the git filestore and files."""
 
     def make_filestore(self, contents=None):
