@@ -18,8 +18,6 @@ import logging
 import optparse
 import sys
 
-from bzrlib.workingtree import WorkingTree
-
 from wikkid import version
 from wikkid.app import WikkidApp
 from wikkid.context import (
@@ -28,8 +26,6 @@ from wikkid.context import (
     DEFAULT_PORT,
     ExecutionContext,
     )
-from wikkid.filestore.bzr import FileStore
-from wikkid.user.bzr import LocalBazaarUserMiddleware
 
 
 def setup_logging():
@@ -48,6 +44,8 @@ def main(args):
     usage = "Usage: %prog [options] <wiki-branch>"
     parser = optparse.OptionParser(
         usage=usage, description="Run a Wikkid Wiki server.", version=version)
+    parser.add_option('--format', type='choice', default='bzr',
+        choices=['bzr', 'git'], help=("Default repository format to use."))
     parser.add_option(
         '--host', type='string', default=DEFAULT_HOST,
         help=('The interface to listen on. Defaults to %r' % DEFAULT_HOST))
@@ -78,12 +76,24 @@ def main(args):
     logger = logging.getLogger('wikkid')
     logger.setLevel(logging.INFO)
 
-    working_tree = WorkingTree.open(branch)
-    logger.info('Using: %s', working_tree)
-    filestore = FileStore(working_tree)
+    if options.format == 'bzr':
+        from bzrlib.workingtree import WorkingTree
+        from wikkid.filestore.bzr import FileStore
+        from wikkid.user.bzr import LocalBazaarUserMiddleware
+
+        working_tree = WorkingTree.open(branch)
+        logger.info('Using: %s', working_tree)
+        filestore = FileStore(working_tree)
+    elif options.format == 'git':
+        from wikkid.filestore.git import FileStore
+        from wikkid.user.git import LocalGitUserMiddleware
+        filestore = FileStore.from_path(branch)
 
     app = WikkidApp(filestore=filestore, execution_context=execution_context)
-    app = LocalBazaarUserMiddleware(app, working_tree.branch)
+    if options.format == 'bzr':
+        app = LocalBazaarUserMiddleware(app, working_tree.branch)
+    elif options.format == 'git':
+        app = LocalGitUserMiddleware(app, filestore.repo)
     from wsgiref.simple_server import make_server
     httpd = make_server(options.host, options.port, app)
     logger.info('Serving on http://%s:%s', options.host, options.port)

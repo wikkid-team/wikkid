@@ -96,7 +96,7 @@ class FileStore(object):
             if old_sha != parent_revision and parent_revision is not None:
                 raise UpdateConflicts("File conflict %s != %s" % (old_sha,
                     parent_revision), old_sha)
-        blob = Blob.from_string(content)
+        blob = Blob.from_string(content.encode("utf-8"))
         child = (stat.S_IFREG | 0644, blob.id)
         self.store.add_object(blob)
         assert len(trees) == len(elements)
@@ -105,18 +105,10 @@ class FileStore(object):
             tree[name] = child
             self.store.add_object(tree)
             child = (stat.S_IFDIR, tree.id)
-        c = Commit()
-        c.tree = tree.id
-        c.author = user
-        c.committer = "Wikkid <wikkid@host>"
-        c.author_time = time.time()
-        c.commit_time = time.time()
-        c.author_timezone = c.commit_timezone = 0
         if commit_message is None:
             commit_message = ""
-        c.message = commit_message
-        self.store.add_object(c)
-        self.repo.refs[self.ref] = c.id
+        self.repo.do_commit(ref=self.ref, message=commit_message, author=user,
+            tree=tree.id)
 
     def list_directory(self, directory_path):
         """Return a list of File objects for in the directory path.
