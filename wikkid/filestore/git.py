@@ -76,33 +76,37 @@ class FileStore(object):
             root_tree = self.store[root_id]
         # Find all tree objects involved
         tree = root_tree
-        trees = []
-        elements = posixpath.split(path.strip("/"))
+        trees = [root_tree]
+        elements = path.strip("/").split("/")
         for el in elements[:-1]:
             try:
                 (mode, sha) = tree[el]
                 if not stat.S_ISDIR(mode):
                     raise FileExists(
                         "File %s exists and is not a directory" % el)
-                tree = self.store[sha]
             except KeyError:
                 tree = Tree()
+            else:
+                tree = self.store[sha]
             trees.append(tree)
         if elements[-1] in tree:
             (old_mode, old_sha) = tree[elements[-1]]
             if stat.S_ISDIR(old_mode):
                 raise FileExists("File %s exists and is a directory" % path)
-            if old_sha != parent_revision:
-                raise UpdateConflicts("File conflict", old_sha)
-        child = (stat.S_IFREG | 0644, Blob.from_string(content).id)
+            if old_sha != parent_revision and parent_revision is not None:
+                raise UpdateConflicts("File conflict %s != %s" % (old_sha,
+                    parent_revision), old_sha)
+        blob = Blob.from_string(content)
+        child = (stat.S_IFREG | 0644, blob.id)
+        self.store.add_object(blob)
+        assert len(trees) == len(elements)
         for tree, name in zip(reversed(trees), reversed(elements)):
+            assert name != ""
             tree[name] = child
             self.store.add_object(tree)
             child = (stat.S_IFDIR, tree.id)
-        root_tree[name] = child
-        self.store.add_object(root_tree)
         c = Commit()
-        c.tree = root_tree.id
+        c.tree = tree.id
         c.author = user
         c.committer = "Wikkid <wikkid@host>"
         c.author_time = time.time()
