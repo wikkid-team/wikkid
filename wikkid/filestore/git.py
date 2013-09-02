@@ -11,13 +11,12 @@
 import datetime
 import mimetypes
 
-from dulwich.objects import Blob, Tree, Commit, ZERO_SHA
+from dulwich.objects import Blob, Tree, ZERO_SHA
 from dulwich.object_store import tree_lookup_path
 from dulwich.repo import Repo
 from dulwich.walk import Walker
 import posixpath
 import stat
-import time
 
 from zope.interface import implements
 
