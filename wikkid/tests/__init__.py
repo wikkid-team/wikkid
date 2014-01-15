@@ -36,6 +36,7 @@ def test_suite():
         ]
     names = [
         'app',
+        'context',
         'model_factory',
         'volatile_filestore',
         'bzr_filestore',

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2010 Wikkid Developers.
+# Copyright (C) 2010-2012 Wikkid Developers.
 #
 # This software is licensed under the GNU Affero General Public License
 # version 3 (see the file LICENSE).
@@ -13,9 +13,13 @@ DEFAULT_PORT = 8080
 
 
 class ExecutionContext(object):
-    """Store run-time execution context data."""
+    """Store run-time execution context data.
 
-    def __init__(self, host=None, port=None, default_format=None):
+    This is the Encapsulate Context pattern.
+    """
+
+    def __init__(self, host=None, port=None, default_format=None,
+                 script_name=None):
         """Create an execution context for the application.
 
         :param host: The hostname that content is being served from.
@@ -32,3 +36,8 @@ class ExecutionContext(object):
         self.host = host
         self.port = port
         self.default_format = default_format
+        # TODO: make sure the script_name if set starts with a slash and
+        # doesn't finish with one.
+        if script_name is None:
+            script_name = ''
+        self.script_name = script_name.rstrip('/')

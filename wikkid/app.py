@@ -11,6 +11,7 @@ import logging
 import mimetypes
 import os.path
 import urllib
+from wsgiref.util import shift_path_info
 
 from bzrlib import urlutils
 from webob import Request, Response
@@ -59,35 +60,70 @@ class WikkidApp(object):
         self.skin = Skin(skin_name)
         self.logger = logging.getLogger('wikkid')
 
-    def __call__(self, environ, start_response):
-        """The WSGI bit."""
+    def preprocess_environ(self, environ):
         request = Request(environ)
-
-        # TODO: reject requests that aren't GET or POST
         path = urllib.unquote(request.path)
+        script_name = self.execution_context.script_name
+        # Firstly check to see if the path is the same as the script_name
+        if (path != script_name and
+            not path.startswith(script_name + '/')):
+            raise HTTPNotFound()
+
+        shifted_prefix = ''
+        while shifted_prefix != script_name:
+            shifted = shift_path_info(environ)
+            shifted_prefix = '{0}/{1}'.format(shifted_prefix, shifted)
+        # Now we are just interested in the path_info having ignored the
+        # script name.
+        path = urllib.unquote(request.path_info)
+        if path == '':
+            path = '/' # Explicitly be the root (we need the /)
+        return request, path
+
+    def _get_view(self, request, path):
+        """Get the view for the path specified."""
+        resource_path, action = parse_url(path)
+        model = self.resource_factory.get_resource_at_path(resource_path)
+        return get_view(model, action, request, self.execution_context)
+
+    def process_call(self, environ):
+        """The actual implementation of dealing with the call."""
+        # TODO: reject requests that aren't GET or POST
+        try:
+            request, path = self.preprocess_environ(environ)
+        except HTTPException, e:
+            return e
+
         if path == '/favicon.ico':
             if self.skin.favicon is not None:
-                response = serve_file(self.skin.favicon)
+                return serve_file(self.skin.favicon)
             else:
-                response = HTTPNotFound()
-        elif path.startswith('/static/'):
+                return HTTPNotFound()
+
+        if path.startswith('/static/'):
             if self.skin.static_dir is not None:
                 static_dir = self.skin.static_dir.rstrip(os.sep) + os.sep
                 static_file = os.path.abspath(
                     urlutils.joinpath(static_dir, path[8:]))
                 if static_file.startswith(static_dir):
-                    response = serve_file(static_file)
+                    return serve_file(static_file)
                 else:
-                    response = HTTPNotFound()
+                    return HTTPNotFound()
             else:
-                response = HTTPNotFound()
-        else:
-            resource_path, action = parse_url(path)
-            model = self.resource_factory.get_resource_at_path(resource_path)
-            try:
-                view = get_view(model, action, request, self.execution_context)
-                response = view.render(self.skin)
-            except HTTPException, e:
-                response = e
+                return HTTPNotFound()
 
+        try:
+            view = self._get_view(request, path)
+            return view.render(self.skin)
+        except HTTPException, e:
+            return e
+
+    def get_view(self, environ):
+        """Allow an app user to get the wikkid view for a particular call."""
+        request, path = self.preprocess_environ(environ)
+        return self._get_view(request, path)
+
+    def __call__(self, environ, start_response):
+        """The WSGI bit."""
+        response = self.process_call(environ)
         return response(environ, start_response)

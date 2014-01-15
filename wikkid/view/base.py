@@ -29,8 +29,8 @@ class BaseViewMetaClass(type):
 class Breadcrumb(object):
     """Breadcrumbs exist to give the user quick links up the path chain."""
 
-    def __init__(self, context, view=None, title=None):
-        self.path = canonical_url(context, view)
+    def __init__(self, context, request, view=None, title=None):
+        self.path = canonical_url(context, request, view)
         if title is None:
             self.title = title_for_filename(context.base_name)
         else:
@@ -54,14 +54,14 @@ class BaseView(object):
         self.logger = logging.getLogger('wikkid')
 
     def _create_breadcrumbs(self):
-        crumbs = [Breadcrumb(self.context)]
+        crumbs = [Breadcrumb(self.context, self.request)]
         current = self.context.parent
         while not IRootResource.providedBy(current):
-            crumbs.append(Breadcrumb(current))
+            crumbs.append(Breadcrumb(current, self.request))
             current = current.parent
         # And add in the default page if the context isn't the default.
         if not IDefaultPage.providedBy(self.context):
-            crumbs.append(Breadcrumb(current.default_resource))
+            crumbs.append(Breadcrumb(current.default_resource, self.request))
         return reversed(crumbs)
 
     def initialize(self):
@@ -89,6 +89,9 @@ class BaseView(object):
     def before_render(self):
         """A hook to do things before rendering."""
 
+    def canonical_url(self, context, view=None):
+        return canonical_url(context, self.request, view)
+
     def template_args(self):
         """Needs to be implemented in the derived classes.
 
@@ -99,7 +102,7 @@ class BaseView(object):
             'user': self.user,
             'context': self.context,
             'request': self.request,
-            'canonical_url': canonical_url,
+            'canonical_url': self.canonical_url,
             }
 
     def _render(self, skin):
@@ -139,12 +142,13 @@ class DirectoryBreadcrumbView(BaseView):
         view = None
         while not IRootResource.providedBy(current):
             crumbs.append(Breadcrumb(
-                    current, view, title=current.base_name))
+                    current, self.request, view, title=current.base_name))
             current = current.parent
             # Add listings to subsequent urls.
             view = 'listing'
         # Add in the root dir.
-        crumbs.append(Breadcrumb(current, 'listing', title='wiki root'))
+        crumbs.append(Breadcrumb(current, self.request, 'listing',
+                                 title='wiki root'))
         # And add in the default page.
-        crumbs.append(Breadcrumb(current.default_resource))
+        crumbs.append(Breadcrumb(current.default_resource, self.request))
         return reversed(crumbs)

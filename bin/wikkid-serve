@@ -56,12 +56,16 @@ def main(args):
         '--default-format', type='string', default=DEFAULT_FORMAT,
         help=("Specify the default wiki format to use. Defaults to %r"
               % DEFAULT_FORMAT))
+    parser.add_option(
+        '--script-name',
+        help=('The SCRIPT_NAME for the environment.  This is the prefix for the URLs'))
     options, args = parser.parse_args(sys.argv[1:])
 
     execution_context = ExecutionContext(
         host=options.host,
         port=options.port,
-        default_format=options.default_format)
+        default_format=options.default_format,
+        script_name=options.script_name)
 
     if len(args) == 0:
         print "No branch location specified.\n"

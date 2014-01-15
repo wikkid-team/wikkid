@@ -26,7 +26,7 @@ class FactoryTestCase(TestCase):
 class ViewTestCase(FactoryTestCase):
     """A factory test case that can create views."""
 
-    def get_view(self, factory, path, name=None):
+    def get_view(self, factory, path, name=None, base_url=None):
         info = factory.get_resource_at_path(path)
-        request = Request.blank(path)
+        request = Request.blank(path, base_url=base_url)
         return get_view(info, name, request)
