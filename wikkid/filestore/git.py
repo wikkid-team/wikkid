@@ -76,7 +76,7 @@ class FileStore(object):
         # Find all tree objects involved
         tree = root_tree
         trees = [root_tree]
-        elements = path.strip("/").split("/")
+        elements = path.strip(posixpath.sep).split(posixpath.sep)
         for el in elements[:-1]:
             try:
                 (mode, sha) = tree[el]
@@ -119,7 +119,7 @@ class FileStore(object):
         if directory_path is None:
             directory_path = ''
         else:
-            directory_path = directory_path.strip("/")
+            directory_path = directory_path.strip(posixpath.sep)
         commit_id, root_id = self._get_root()
         if directory_path == '':
             sha = root_id
