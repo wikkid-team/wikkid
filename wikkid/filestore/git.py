@@ -80,12 +80,12 @@ class FileStore(object):
         for el in elements[:-1]:
             try:
                 (mode, sha) = tree[el]
-                if not stat.S_ISDIR(mode):
-                    raise FileExists(
-                        "File %s exists and is not a directory" % el)
             except KeyError:
                 tree = Tree()
             else:
+                if not stat.S_ISDIR(mode):
+                    raise FileExists(
+                        "File %s exists and is not a directory" % el)
                 tree = self.store[sha]
             trees.append(tree)
         if elements[-1] in tree:
