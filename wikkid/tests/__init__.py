@@ -41,6 +41,7 @@ def test_suite():
         'volatile_filestore',
         'bzr_filestore',
         'bzr_user',
+        'git_filestore',
         'view_dispatcher',
         'model',
         ]

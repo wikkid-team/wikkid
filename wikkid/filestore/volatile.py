@@ -113,7 +113,8 @@ class File(BaseFile):
     implements(IFile)
 
     def __init__(self, path, content, file_id, user):
-        BaseFile.__init__(self, path, file_id)
+        BaseFile.__init__(self, path)
+        self.file_id = file_id
         self.content = content
         self.last_modified_in_revision = None
         self.last_modified_by = user

@@ -243,7 +243,8 @@ class File(BaseFile):
     implements(IFile)
 
     def __init__(self, filestore, path, file_id):
-        BaseFile.__init__(self, path, file_id)
+        BaseFile.__init__(self, path)
+        self.file_id = file_id
         self.filestore = filestore
         # This isn't entirely necessary.
         self.tree = self.filestore.tree

@@ -42,6 +42,7 @@ class TestFileStore(object):
         filestore = self.make_filestore(
             [('README', 'Content'),
              ('lib/', None),
+             ('lib/foo', 'dummy data'),
              ('image.jpg', 'pretend image'),
              ('binary-file', 'a\0binary\0file'),
              ('simple.txt', 'A text file'),
@@ -57,6 +58,7 @@ class TestFileStore(object):
         filestore = self.make_filestore(
             [('README', 'Content'),
              ('lib/', None),
+             ('lib/data', 'dummy data'),
              ('image.jpg', 'pretend image'),
              ('binary-file', 'a\0binary\0file'),
              ('simple.txt', 'A text file'),

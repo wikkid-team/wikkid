@@ -53,7 +53,7 @@ def register_view(view_class):
         # Don't register.
         return
     key = (interface, view_name)
-    assert key not in _VIEW_REGISTRY, "key already registered: %r" % key
+    assert key not in _VIEW_REGISTRY, "key already registered: %r" % (key,)
     _VIEW_REGISTRY[key] = view_class
     if default_view:
         _VIEW_REGISTRY[(interface, None)] = view_class

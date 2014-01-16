@@ -24,6 +24,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'docutils',
+        'dulwich',
         'jinja2',
         'pygments',
         'twisted',

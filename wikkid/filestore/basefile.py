@@ -16,9 +16,8 @@ from wikkid.interface.filestore import FileType
 class BaseFile(object):
     """Provide common fields and methods and properties for files."""
 
-    def __init__(self, path, file_id):
+    def __init__(self, path):
         self.path = path
-        self.file_id = file_id
         self.base_name = urlutils.basename(path)
         self._mimetype = mimetypes.guess_type(self.base_name)[0]
 
