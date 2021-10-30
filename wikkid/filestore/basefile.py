@@ -8,7 +8,7 @@
 
 import mimetypes
 
-import bzrlib.urlutils as urlutils
+import breezy.urlutils as urlutils
 
 from wikkid.interface.filestore import FileType
 

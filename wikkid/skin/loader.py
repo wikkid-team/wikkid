@@ -15,7 +15,7 @@ own skin as a command line argument.
 import logging
 import os.path
 
-import bzrlib.urlutils as urlutils
+import breezy.urlutils as urlutils
 from jinja2 import Environment, PackageLoader
 
 

@@ -8,7 +8,7 @@
 
 import logging
 
-from bzrlib.urlutils import basename, dirname, joinpath
+from breezy.urlutils import basename, dirname, joinpath
 from zope.interface import directlyProvides
 
 from wikkid.interface.filestore import FileType

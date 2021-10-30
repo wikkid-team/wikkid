@@ -6,7 +6,7 @@
 
 """Tests for the wikkid bzr user."""
 
-from bzrlib.tests import TestCaseWithTransport
+from breezy.tests import TestCaseWithTransport
 from webob import Request, Response
 
 from wikkid.interface.user import IUser

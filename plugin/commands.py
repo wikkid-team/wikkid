@@ -1,10 +1,10 @@
 import logging
 import sys
 
-from bzrlib.commands import Command, register_command
-from bzrlib.option import Option
+from breezy.commands import Command, register_command
+from breezy.option import Option
 
-from bzrlib.workingtree import WorkingTree
+from breezy.workingtree import WorkingTree
 
 from wikkid.app import WikkidApp
 from wikkid.filestore.bzr import FileStore

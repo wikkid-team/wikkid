@@ -13,7 +13,7 @@ filestore, albiet one that doesn't remember anything persistently.
 from datetime import datetime
 from itertools import count
 
-from bzrlib.urlutils import dirname
+from breezy.urlutils import dirname
 from zope.interface import implements
 
 from wikkid.errors import FileExists

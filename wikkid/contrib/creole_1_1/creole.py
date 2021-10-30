@@ -146,7 +146,7 @@ class Rules:
             import unicodedata
             up_case = u''.join(unichr(i) for i in xrange(sys.maxunicode)
                                if unicodedata.category(unichr(i))=='Lu')
-            self.wiki = ur'''(?P<wiki>[%s]\w+[%s]\w+)''' % (up_case, up_case)
+            self.wiki = r'''(?P<wiki>[%s]\w+[%s]\w+)''' % (up_case, up_case)
             inline_elements.insert(3, self.wiki)
         self.inline_re = c('|'.join(inline_elements), re.X | re.U)
 

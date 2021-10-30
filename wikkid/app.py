@@ -13,7 +13,7 @@ import os.path
 import urllib
 from wsgiref.util import shift_path_info
 
-from bzrlib import urlutils
+from breezy import urlutils
 from webob import Request, Response
 from webob.exc import HTTPException, HTTPNotFound
 
@@ -91,7 +91,7 @@ class WikkidApp(object):
         # TODO: reject requests that aren't GET or POST
         try:
             request, path = self.preprocess_environ(environ)
-        except HTTPException, e:
+        except HTTPException as e:
             return e
 
         if path == '/favicon.ico':
@@ -115,7 +115,7 @@ class WikkidApp(object):
         try:
             view = self._get_view(request, path)
             return view.render(self.skin)
-        except HTTPException, e:
+        except HTTPException as e:
             return e
 
     def get_view(self, environ):

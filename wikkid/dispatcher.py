@@ -13,7 +13,7 @@ which registers the view with the dispatcher.
 
 import os
 
-from bzrlib.urlutils import dirname, joinpath
+from breezy.urlutils import dirname, joinpath
 
 from zope.interface import providedBy
 

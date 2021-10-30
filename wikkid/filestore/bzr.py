@@ -11,14 +11,14 @@ import logging
 
 from zope.interface import implements
 
-from bzrlib.errors import BinaryFile, MalformedTransform
-from bzrlib.generate_ids import gen_file_id
-from bzrlib.merge3 import Merge3
-from bzrlib.osutils import splitpath, split_lines
-from bzrlib.revision import NULL_REVISION
-from bzrlib.textfile import check_text_lines
-from bzrlib.transform import FinalPaths, TransformPreview
-from bzrlib.urlutils import basename, dirname, joinpath
+from breezy.errors import BinaryFile, MalformedTransform
+from breezy.generate_ids import gen_file_id
+from breezy.merge3 import Merge3
+from breezy.osutils import splitpath, split_lines
+from breezy.revision import NULL_REVISION
+from breezy.textfile import check_text_lines
+from breezy.transform import FinalPaths, TransformPreview
+from breezy.urlutils import basename, dirname, joinpath
 
 from wikkid.errors import FileExists, UpdateConflicts
 from wikkid.filestore.basefile import BaseFile

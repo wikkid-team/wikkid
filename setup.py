@@ -17,7 +17,7 @@ setup(
     scripts=['bin/wikkid-serve'],
     data_files=[('share/man/man1', ['wikkid-serve.1']),],
     packages=find_packages(),
-    package_dir={'bzrlib.plugins.wikkid':'plugin'},
+    package_dir={'breezy.plugins.wikkid':'plugin'},
     package_data={'wikkid/skin':['default/*.html',
                                  'default/favicon.ico',
                                  'default/static/*']},
@@ -33,7 +33,7 @@ setup(
         ],
     test_requires=[
         'bs4',
-        'bzrlib.tests',
+        'breezy.tests',
         'testtools',
         ],
     test_suite='wikkid.tests',

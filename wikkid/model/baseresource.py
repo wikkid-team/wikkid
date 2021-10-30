@@ -6,7 +6,7 @@
 
 """The base resource class."""
 
-import bzrlib.urlutils as urlutils
+import breezy.urlutils as urlutils
 
 from wikkid.interface.resource import IRootResource
 

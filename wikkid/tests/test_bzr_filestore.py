@@ -8,7 +8,7 @@
 
 from textwrap import dedent
 
-from bzrlib.tests import TestCaseWithTransport
+from breezy.tests import TestCaseWithTransport
 
 from wikkid.errors import UpdateConflicts
 from wikkid.filestore.bzr import (

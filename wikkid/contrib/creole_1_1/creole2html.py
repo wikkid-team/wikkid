@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-ur"""
+r"""
 WikiCreole to HTML converter
 This program is an example of how the creole.py WikiCreole parser
 can be used.
