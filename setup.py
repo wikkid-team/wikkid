@@ -23,6 +23,7 @@ setup(
                                  'default/static/*']},
     include_package_data=True,
     install_requires=[
+        'breezy',
         'docutils',
         'dulwich',
         'jinja2',
