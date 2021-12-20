@@ -16,16 +16,16 @@ class FileIterable(object):
         self.filename = filename
         self.start = start
         self.stop = stop
-        
+
     def __iter__(self):
         return FileIterator(self.filename, self.start, self.stop)
-        
+
     def app_iter_range(self, start, stop):
         return self.__class__(self.filename, start, stop)
 
 class FileIterator(object):
     """Iterate over a file.
-    
+
     FileIterable provides a simple file iterator, optionally allowing the
     user to specify start and end ranges for the file.
     """
@@ -39,11 +39,11 @@ class FileIterator(object):
             self.length = stop - start
         else:
             self.length = None
-            
+
     def __iter__(self):
         return self
-        
-    def next(self):
+
+    def __next__(self):
         if self.length is not None and self.length <= 0:
             raise StopIteration
         chunk = self.fileobj.read(self.chunk_size)

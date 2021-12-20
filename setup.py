@@ -1,7 +1,4 @@
-#!/usr/bin/env python
-
-from distribute_setup import use_setuptools
-use_setuptools()
+#!/usr/bin/env python3
 
 from setuptools import setup, find_packages
 from wikkid import version

@@ -37,13 +37,11 @@ class Breadcrumb(object):
             self.title = title
 
 
-class BaseView(object):
+class BaseView(object, metaclass=BaseViewMetaClass):
     """The base view class.
 
     This is an abstract base class.
     """
-
-    __metaclass__ = BaseViewMetaClass
 
     def __init__(self, context, request, execution_context):
         self.execution_context = execution_context

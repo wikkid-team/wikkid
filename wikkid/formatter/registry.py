@@ -50,7 +50,7 @@ def get_formatter(name):
     return formatter_registry[name]
 
 
-FORMAT_MATCHER = re.compile('^#\s+(\w+).*$')
+FORMAT_MATCHER = re.compile(b'^#\s+(\w+).*$')
 
 
 def get_wiki_formatter(content, default_formatter):
@@ -70,11 +70,11 @@ def get_wiki_formatter(content, default_formatter):
     is returned.  If the default_formatter doesn't exist, a key error
     is raised.
     """
-    end_of_line = content.find('\n')
+    end_of_line = content.find(b'\n')
     match = FORMAT_MATCHER.match(content[:end_of_line])
     if match is not None:
         try:
-            name = match.group(1).lower()
+            name = match.group(1).lower().decode('utf-8', 'replace')
             formatter = formatter_registry[name]
             return content[end_of_line + 1:], formatter
         except KeyError:

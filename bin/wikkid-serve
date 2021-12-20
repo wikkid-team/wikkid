@@ -84,6 +84,8 @@ def main(args):
         from breezy.workingtree import WorkingTree
         from wikkid.filestore.bzr import FileStore
         from wikkid.user.bzr import LocalBazaarUserMiddleware
+        import breezy.bzr
+        import breezy.git
 
         working_tree = WorkingTree.open(branch)
         logger.info('Using: %s', working_tree)

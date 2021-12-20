@@ -92,11 +92,10 @@ class FileStore(object):
 
     def get_file(self, path):
         """Return an object representing the file at specified path."""
-        file_id = self.tree.path2id(path)
-        if file_id is None:
+        if not self.tree.is_versioned(path):
             return None
         else:
-            return File(self, path, file_id)
+            return File(self, path)
 
     def update_file(self, path, content, author, parent_revision,
                     commit_message=None):
@@ -109,20 +108,16 @@ class FileStore(object):
         if parent_revision is None:
             parent_revision = NULL_REVISION
         # Firstly we want to lock the tree for writing.
-        self.tree.lock_write()
-        try:
+        with self.tree.lock_write():
             # Look to see if the path is there.  If it is then we are doing an
             # update.  If it isn't we are doing an add.
-            file_id = self.tree.path2id(path)
-            if file_id is None:
-                self._add_file(path, content, author, commit_message)
-            else:
+            if self.tree.is_versioned(path):
                 # What if a parent_revision hasn't been set?
                 self._update_file(
-                    file_id, path, content, author, parent_revision,
+                    path, content, author, parent_revision,
                     commit_message)
-        finally:
-            self.tree.unlock()
+            else:
+                self._add_file(path, content, author, commit_message)
 
     def _ensure_directory_or_nonexistant(self, dir_path):
         """Ensure the dir_path defines a directory or doesn't exist.
@@ -165,9 +160,9 @@ class FileStore(object):
     def _get_final_text(self, content, f, parent_revision):
         current_rev = f.last_modified_in_revision
         wt = self.tree
-        current_lines = wt.get_file_lines(f.file_id)
+        current_lines = wt.get_file_lines(f.path)
         basis = self.branch.repository.revision_tree(parent_revision)
-        basis_lines = basis.get_file_lines(f.file_id)
+        basis_lines = basis.get_file_lines(f.path)
         # need to break content into lines.
         ending = get_line_ending(current_lines)
         # If the content doesn't end with a new line, add one.
@@ -188,23 +183,20 @@ class FileStore(object):
             raise UpdateConflicts(''.join(result), current_rev)
         return result
 
-    def _update_file(self, file_id, path, content, author, parent_revision,
+    def _update_file(self, path, content, author, parent_revision,
                      commit_message):
         """Update an existing file with the content.
 
         This method merges the changes in based on the parent revision.
         """
-        f = File(self, path, file_id)
+        f = File(self, path)
         wt = self.tree
-        wt.lock_write()
-        try:
+        with wt.lock_write():
             result = self._get_final_text(content, f, parent_revision)
             wt.bzrdir.root_transport.put_bytes(path, ''.join(result))
             wt.commit(
                 message=commit_message, authors=[author],
                 specific_files=[path])
-        finally:
-            wt.unlock()
 
     def list_directory(self, directory_path):
         """Return a list of File objects for in the directory path.
@@ -220,7 +212,7 @@ class FileStore(object):
         listing = []
         wt = self.tree
         with wt.lock_read():
-            for fp, fc, fkind, fid, entry in wt.list_files(
+            for fp, fc, fkind, entry in wt.list_files(
                 from_dir=directory_path, recursive=False):
                 if fc != 'V':
                     # If the file isn't versioned, skip it.
@@ -229,7 +221,7 @@ class FileStore(object):
                     file_path = fp
                 else:
                     file_path = joinpath(directory_path, fp)
-                listing.append(File(self, file_path, fid))
+                listing.append(File(self, file_path))
             return listing
 
 
@@ -237,22 +229,18 @@ class FileStore(object):
 class File(BaseFile):
     """Represents a file in the Bazaar branch."""
 
-    def __init__(self, filestore, path, file_id):
+    def __init__(self, filestore, path):
         BaseFile.__init__(self, path)
-        self.file_id = file_id
         self.filestore = filestore
         # This isn't entirely necessary.
         self.tree = self.filestore.tree
         self.file_type = self._get_filetype()
-        bt = self.filestore.basis_tree()
-        with bt.lock_read():
-            inv_file = bt.inventory[self.file_id]
-            self.last_modified_in_revision = inv_file.revision
+        self._last_modified_in_revision = None
 
     def _get_filetype(self):
         """Work out the filetype based on the mimetype if possible."""
         with self.tree.lock_read():
-            is_directory = ('directory' == self.tree.kind(self.file_id))
+            is_directory = ('directory' == self.tree.kind(self.path))
             if is_directory:
                 return FileType.DIRECTORY
             else:
@@ -266,14 +254,19 @@ class File(BaseFile):
                     return FileType.TEXT_FILE
 
     def get_content(self):
-        if self.file_id is None:
-            return None
         with self.tree.lock_read():
             # basis_tree is a revision tree, queries the repositry.
             # to get the stuff off the filesystem use the working tree
             # which needs to start with that.  WorkingTree.open('.').
             # branch = tree.branch.
-            return self.tree.get_file_text(self.file_id)
+            return self.tree.get_file_text(self.path)
+
+
+    @property
+    def last_modified_in_revision(self):
+        if self._last_modified_in_revision is None:
+            self._last_modified_in_revision = self.tree.get_file_revision(self.path)
+        return self._last_modified_in_revision
 
     @property
     def last_modified_by(self):
@@ -294,7 +287,7 @@ class File(BaseFile):
         """True if the file is binary."""
         try:
             with self.tree.lock_read():
-                lines = self.tree.get_file_lines(self.file_id)
+                lines = self.tree.get_file_lines(self.path)
                 check_text_lines(lines)
             return False
         except BinaryFile:
@@ -303,7 +296,7 @@ class File(BaseFile):
     @property
     def is_directory(self):
         """Is this file a directory?"""
-        return 'directory' == self.tree.kind(self.file_id)
+        return 'directory' == self.tree.kind(self.path)
 
     def update(self, content, user):
         raise NotImplementedError()
@@ -323,9 +316,8 @@ class BranchFileStore(FileStore):
                     commit_message=None):
         commit_message = get_commit_message(commit_message)
         with self.branch.lock_write():
-            file_id = self.tree.path2id(path)
-            if file_id is not None:
-                f = File(self, path, file_id)
+            if self.tree.is_versioned(path):
+                f = File(self, path)
                 content = self._get_final_text(content, f, parent_revision)
             else:
                 content = normalize_content(content)
