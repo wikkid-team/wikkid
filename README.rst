@@ -30,7 +30,7 @@ To run from source, type something like:
 Or, using docker:
 
   $ docker run -p 8080:8080 -v /path/to/some/repo:/data \
-    ghcr.io/breezy-team/wikkid
+    ghcr.io/wikkid-team/wikkid
   $ sensible-browser http://localhost:8080/
 
 Now what?

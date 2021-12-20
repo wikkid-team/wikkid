@@ -19,5 +19,5 @@ clean:
 .PHONY: check clean
 
 docker:
-	docker build -t ghcr.io/breezy-team/wikkid .
-	docker push ghcr.io/breezy-team/wikkid
+	docker build -t ghcr.io/wikkid-team/wikkid .
+	docker push ghcr.io/wikkid-team/wikkid
