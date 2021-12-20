@@ -68,7 +68,7 @@ class SaveNewTextContent(BaseEditView):
         else:
             try:
                 self.context.put_bytes(
-                    content, self.user.committer_id, rev_id, description)
+                    content.encode('utf-8'), self.user.committer_id, rev_id, description)
 
                 location = self.canonical_url(self.context)
                 raise HTTPSeeOther(location=location)
