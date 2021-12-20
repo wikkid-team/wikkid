@@ -50,14 +50,15 @@ def get_formatter(name):
     return formatter_registry[name]
 
 
-FORMAT_MATCHER = re.compile(rb'^#\s+(\w+).*$')
+FORMAT_MATCHER = re.compile(r'^#\s+(\w+).*$')
 
 
-def get_wiki_formatter(content, default_formatter):
+def get_wiki_formatter(content: str, default_formatter: str) -> str:
     """Choose a wiki formatter based on the first line of content.
 
-    :param content: The content of the file.
-    :param default_formatter: The name of the default formatter.
+    Args:
+      content: The content of the file.
+      default_formatter: The name of the default formatter.
 
     The first line of the content may specify a formatter using the form:
     # formatter-name
@@ -70,11 +71,11 @@ def get_wiki_formatter(content, default_formatter):
     is returned.  If the default_formatter doesn't exist, a key error
     is raised.
     """
-    end_of_line = content.find(b'\n')
+    end_of_line = content.find('\n')
     match = FORMAT_MATCHER.match(content[:end_of_line])
     if match is not None:
         try:
-            name = match.group(1).lower().decode('utf-8', 'replace')
+            name = match.group(1).lower()
             formatter = formatter_registry[name]
             return content[end_of_line + 1:], formatter
         except KeyError:
