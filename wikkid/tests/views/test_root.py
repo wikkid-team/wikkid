@@ -42,7 +42,7 @@ class TestRootViews(ViewTestCase):
         factory = self.make_factory()
         view = self.get_view(factory, '/Home')
         content = view.render(Skin('default'))
-        soup = BeautifulSoup(content.text)
+        soup = BeautifulSoup(content.text, parser='lxml')
         [style] = soup.find_all('link', {'rel':'stylesheet'})
         self.assertThat(style['href'], Equals('/static/default.css'))
 
@@ -51,6 +51,6 @@ class TestRootViews(ViewTestCase):
         factory = self.make_factory()
         view = self.get_view(factory, '/Home', base_url='/p/test')
         content = view.render(Skin('default'))
-        soup = BeautifulSoup(content.text)
+        soup = BeautifulSoup(content.text, parser='lxml')
         [style] = soup.find_all('link', {'rel':'stylesheet'})
         self.assertThat(style['href'], Equals('/p/test/static/default.css'))

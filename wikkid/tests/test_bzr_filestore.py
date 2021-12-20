@@ -10,7 +10,7 @@ from textwrap import dedent
 
 from breezy.tests import TestCaseWithTransport
 
-from wikkid.errors import UpdateConflicts
+from wikkid.filestore import UpdateConflicts
 from wikkid.filestore.bzr import (
     BranchFileStore,
     FileStore,

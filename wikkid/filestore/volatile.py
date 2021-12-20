@@ -16,7 +16,7 @@ from itertools import count
 from breezy.urlutils import dirname
 from zope.interface import implementer
 
-from wikkid.errors import FileExists
+from wikkid.filestore import FileExists
 from wikkid.filestore.basefile import BaseFile
 from wikkid.interface.filestore import FileType, IFile, IFileStore
 

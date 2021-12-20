@@ -8,7 +8,7 @@
 
 from zope.interface import Interface, implementer
 
-from wikkid.dispatcher import get_view, register_view
+from wikkid.dispatcher import get_view, register_view, unregister_view
 from wikkid.tests import TestCase
 from wikkid.view.base import BaseView
 
@@ -50,6 +50,7 @@ class TestGetView(TestCase):
             def initialize(self):
                 self.initialized = True
         register_view(AView)
+        self.addCleanup(unregister_view, AView)
         obj = HasInterface()
         view = get_view(obj, 'name', None)
         self.assertIsInstance(view, AView)
@@ -73,6 +74,7 @@ class TestGetView(TestCase):
             def initialize(self):
                 self.initialized = True
         register_view(AView)
+        self.addCleanup(unregister_view, AView)
         obj = HasInterface()
         view = get_view(obj, None, None)
         self.assertIsInstance(view, AView)
@@ -86,6 +88,7 @@ class TestViewRegistration(TestCase):
         """Create a view class, and make sure it is registered."""
         class IHasInterface(Interface):
             pass
+        self.addCleanup(unregister_view, AView)
         @implementer(IHasInterface)
         class HasInterface(object):
             pass

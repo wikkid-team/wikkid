@@ -18,9 +18,10 @@ from breezy.osutils import splitpath, split_lines
 from breezy.revision import NULL_REVISION
 from breezy.textfile import check_text_lines
 from breezy.transform import FinalPaths, MalformedTransform
+from breezy.revisiontree import RevisionTree
 from breezy.urlutils import basename, dirname, joinpath
 
-from wikkid.errors import FileExists, UpdateConflicts
+from wikkid.filestore import FileExists, UpdateConflicts
 from wikkid.filestore.basefile import BaseFile
 from wikkid.interface.filestore import FileType, IFile, IFileStore
 
@@ -193,7 +194,7 @@ class FileStore(object):
         wt = self.tree
         with wt.lock_write():
             result = self._get_final_text(content, f, parent_revision)
-            wt.controldir.root_transport.put_bytes(path, ''.join(result))
+            wt.controldir.root_transport.put_bytes(path, b''.join(result))
             wt.commit(
                 message=commit_message, authors=[author],
                 specific_files=[path])
@@ -265,7 +266,10 @@ class File(BaseFile):
     @property
     def last_modified_in_revision(self):
         if self._last_modified_in_revision is None:
-            self._last_modified_in_revision = self.tree.get_file_revision(self.path)
+            try:
+                self._last_modified_in_revision = self.tree.get_file_revision(self.path)
+            except AttributeError:
+                self._last_modified_in_revision = self.tree.basis_tree().get_file_revision(self.path)
         return self._last_modified_in_revision
 
     @property
@@ -330,7 +334,7 @@ class BranchFileStore(FileStore):
                     name = splitpath(path)[-1]
                     tt.version_file(gen_file_id(name), trans_id)
                     create_parents(tt, path, trans_id)
-                tt.create_file(content, trans_id)
+                tt.create_file([content], trans_id)
                 try:
                     tt.commit(self.branch, commit_message, authors=[author])
                 except MalformedTransform as e:

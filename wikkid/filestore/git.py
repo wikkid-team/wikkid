@@ -20,7 +20,7 @@ import stat
 
 from zope.interface import implementer
 
-from wikkid.errors import FileExists, UpdateConflicts
+from wikkid.filestore import FileExists, UpdateConflicts
 from wikkid.interface.filestore import FileType, IFile, IFileStore
 
 
@@ -64,11 +64,11 @@ class FileStore(object):
                 root_id, path.encode(self._encoding))
         except KeyError:
             return None
-        return File(self.store, mode, sha, path, commit_id)
+        return File(self.store, mode, sha, path, commit_id, encoding=self._encoding)
 
-    def update_file(self, path, content, user, parent_revision,
+    def update_file(self, path, content, author, parent_revision,
                     commit_message=None):
-        """The `user` is updating the file at `path` with `content`."""
+        """The `author` is updating the file at `path` with `content`."""
         commit_id, root_id = self._get_root()
         if root_id is None:
             root_tree = Tree()
@@ -109,9 +109,9 @@ class FileStore(object):
             child = (stat.S_IFDIR, tree.id)
         if commit_message is None:
             commit_message = ""
-        if user is not None:
-            user = user.encode(self._encoding)
-        self.repo.do_commit(ref=self.ref, message=commit_message.encode(self._encoding), author=user,
+        if author is not None:
+            author = author.encode(self._encoding)
+        self.repo.do_commit(ref=self.ref, message=commit_message.encode(self._encoding), author=author,
             tree=tree.id)
 
     def list_directory(self, directory_path):
@@ -133,7 +133,8 @@ class FileStore(object):
             if root_id is None:
                 return None
             try:
-                (mode, sha) = tree_lookup_path(self.store.__getitem__,
+                (mode, sha) = tree_lookup_path(
+                    self.store.__getitem__,
                     root_id, directory_path.encode(self._encoding))
             except KeyError:
                 return None
@@ -141,7 +142,8 @@ class FileStore(object):
             ret = []
             for (name, mode, sha) in self.store[sha].items():
                 ret.append(
-                    File(self.store, mode, sha, posixpath.join(directory_path, name), commit_id))
+                    File(self.store, mode, sha, posixpath.join(directory_path, name.decode(self._encoding)), commit_id,
+                         encoding=self._encoding))
             return ret
         else:
             return None
@@ -151,8 +153,9 @@ class FileStore(object):
 class File(object):
     """A Git file object."""
 
-    def __init__(self, store, mode, sha, path, commit_sha):
+    def __init__(self, store, mode, sha, path, commit_sha, encoding):
         self.store = store
+        self.encoding = encoding
         self.mode = mode
         self.sha = sha
         self.path = path
@@ -192,7 +195,7 @@ class File(object):
 
     def _get_last_modified_commit(self):
         walker = Walker(self.store, include=[self.commit_sha],
-                paths=[self.path])
+                paths=[self.path.encode(self.encoding)])
         return next(iter(walker)).commit
 
     @property
@@ -201,7 +204,7 @@ class File(object):
 
     @property
     def last_modified_by(self):
-        return self._get_last_modified_commit().author
+        return self._get_last_modified_commit().author.decode(self.encoding)
 
     @property
     def last_modified_date(self):

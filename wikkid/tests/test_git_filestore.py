@@ -10,7 +10,7 @@ from dulwich.repo import MemoryRepo
 
 from textwrap import dedent
 
-from wikkid.errors import UpdateConflicts
+from wikkid.filestore import UpdateConflicts
 from wikkid.filestore.git import (
     FileStore,
     )
@@ -30,7 +30,7 @@ class TestGitFileStore(TestCase, ProvidesMixin, TestFileStore):
                     # Directory
                     continue
                 fs.update_file(path, contents,
-                    user="Somebody <test@example.com>",
+                    author="Somebody <test@example.com>",
                     parent_revision=None,
                     commit_message="Added by make_filestore")
         return fs

@@ -8,7 +8,7 @@
 
 from datetime import datetime
 
-from wikkid.errors import FileExists
+from wikkid.filestore import FileExists
 from wikkid.interface.filestore import FileType, IFile, IFileStore
 
 

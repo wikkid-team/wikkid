@@ -10,7 +10,7 @@ import logging
 
 from webob.exc import HTTPSeeOther
 
-from wikkid.errors import UpdateConflicts
+from wikkid.filestore import UpdateConflicts
 from wikkid.formatter.registry import get_wiki_formatter
 from wikkid.interface.resource import ITextFile
 from wikkid.view.base import BaseView
