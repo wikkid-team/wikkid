@@ -2,19 +2,20 @@
 Wikkid Wiki Home
 ================
 
-Wikkid is a wiki that uses Bazaar as a way to store the content.
+Wikkid is a wiki that uses Git or Bazaar as a way to store the content.
 
 Principles of Wikkid
 --------------------
 
-* Will run using any Bazaar_ branch, not just one it has created
-* Provides a Bazaar plugin to simplify the serving of a branch
+* Will run using any Git_ or Bazaar_ branch, not just one it has created
+* Provides a Breezy plugin to simplify the serving of a branch
 * When run locally Wikkid will use the current users configured identity
 * Can be used as a public facing wiki with multiple users
 * Can be used as a library in other Python_ applications
 
-.. _Bazaar: http://bazaar.canonical.com
-.. _Python: http://python.org
+.. _Bazaar: https://bazaar.canonical.com
+.. _Git: https://git-scm.com/
+.. _Python: https://python.org
 
 Now what?
 ---------
