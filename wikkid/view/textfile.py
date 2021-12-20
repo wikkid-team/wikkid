@@ -54,7 +54,8 @@ class SaveNewTextContent(BaseEditView):
         params = self.request.params
         content = params['content']
         description = params['description']
-        rev_id = params['rev-id'].encode('utf-8') if 'rev-id' in params else None
+        rev_id = (
+            params['rev-id'].encode('utf-8') if 'rev-id' in params else None)
         preview = params.get('preview', None)
         if preview is not None:
             self.rev_id = rev_id

@@ -334,7 +334,8 @@ class BranchFileStore(FileStore):
                     tt.delete_contents(trans_id)
                 else:
                     name = splitpath(path)[-1]
-                    tt.version_file(trans_id=trans_id, file_id=gen_file_id(basename(path)))
+                    tt.version_file(
+                        trans_id=trans_id, file_id=gen_file_id(name))
                     create_parents(tt, path, trans_id)
                 tt.create_file([content], trans_id)
                 try:
