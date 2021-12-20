@@ -1,8 +1,0 @@
-breezy
-docutils
-dulwich
-jinja2
-pygments
-twisted
-webob
-zope.interface
