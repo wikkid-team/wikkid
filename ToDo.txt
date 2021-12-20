@@ -27,6 +27,8 @@ A location for general notes
   the lexer it finds, and if none found, then plain <pre> (or treat as wiki
   page, yet to decide).
 
+* Allow specific extensions for certain formatters (.rst, .md, .mdwn, etc)
+
 
 Standalone requirements
 -----------------------
@@ -42,6 +44,12 @@ Standalone requirements
 * Generate a nonce for new users, and validate email addresses
   (hmm... requires incoming email processing, not that easy for standalone
   deployments, and not needed for launchpad integration)
+
+
+Running behind a reverse proxy
+------------------------------
+
+Support getting credentials from elsewhere, and updating author accordingly.
 
 
 Launchpad integration
