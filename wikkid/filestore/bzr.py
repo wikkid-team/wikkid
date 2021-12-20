@@ -11,6 +11,7 @@ import logging
 
 from zope.interface import implementer
 
+from breezy.bzr.generate_ids import gen_file_id
 from breezy.errors import BinaryFile
 from breezy.merge3 import Merge3
 from breezy.osutils import splitpath, split_lines
@@ -73,7 +74,7 @@ def create_parents(tt, path, trans_id):
             break
         tt.adjust_path(tail, trans_id, prev_trans_id)
         tt.create_directory(trans_id)
-        tt.version_file(trans_id)
+        tt.version_file(trans_id=trans_id, file_id=gen_file_id(basename(path)))
         prev_trans_id = trans_id
 
 
@@ -333,7 +334,7 @@ class BranchFileStore(FileStore):
                     tt.delete_contents(trans_id)
                 else:
                     name = splitpath(path)[-1]
-                    tt.version_file(trans_id)
+                    tt.version_file(trans_id=trans_id, file_id=gen_file_id(basename(path)))
                     create_parents(tt, path, trans_id)
                 tt.create_file([content], trans_id)
                 try:

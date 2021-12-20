@@ -6,7 +6,7 @@
 
 """The base test class for filestores."""
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from wikkid.filestore import FileExists
 from wikkid.interface.filestore import FileType, IFile, IFileStore
@@ -158,7 +158,7 @@ class TestFileStore(object):
 
     def test_last_modified(self):
         # Make sure that the timestamp and author are recorded.
-        start = datetime.utcnow()
+        start = datetime.utcnow() - timedelta(5)
         filestore = self.make_filestore()
         filestore.update_file(
             'new-file.txt',
@@ -166,10 +166,12 @@ class TestFileStore(object):
             'Test Author <test@example.com>',
             None)
         curr = filestore.get_file('new-file.txt')
-        end = datetime.utcnow()
+        end = datetime.utcnow() + timedelta(5)
         # A new line is added to the end too.
         self.assertEqual(
             'Test Author <test@example.com>',
             curr.last_modified_by)
 
-        self.assertTrue(start <= curr.last_modified_date <= end)
+        self.assertTrue(
+            start <= curr.last_modified_date <= end,
+            '%r <= %r <= %r' % (start, curr.last_modified_date, end))

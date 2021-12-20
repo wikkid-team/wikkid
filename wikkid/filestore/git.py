@@ -216,4 +216,4 @@ class File(object):
     @property
     def last_modified_date(self):
         c = self._get_last_modified_commit()
-        return datetime.datetime.utcfromtimestamp(c.author_time)
+        return datetime.datetime.utcfromtimestamp(c.commit_time)
