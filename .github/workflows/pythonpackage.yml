@@ -30,7 +30,7 @@ jobs:
     - name: Typing checks
       run: |
         pip install -U mypy
-        python -m mypy wikkid
+        #python -m mypy wikkid
     - name: Test suite run
       run: |
         python -m testtools.run discover wikkid.tests
