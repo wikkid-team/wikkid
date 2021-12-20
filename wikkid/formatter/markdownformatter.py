@@ -21,4 +21,4 @@ class MarkdownFormatter(object):
         """Format the text.
         """
         md = markdown.Markdown(safe_mode='replace')
-        return md.convert(text)
+        return md.convert(text.decode('utf-8', 'replace'))
