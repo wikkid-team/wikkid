@@ -4,4 +4,4 @@ RUN apt update && apt install --no-install-recommends -y python3 python3-pip pyt
 ADD . /opt/wikkid
 ENV PYTHONPATH=/opt/wikkid
 EXPOSE 8080/tcp
-ENTRYPOINT ["/usr/bin/python3", "/opt/wikkid/wikkid-serve", "/data"]
+ENTRYPOINT ["/usr/bin/python3", "/opt/wikkid/bin/wikkid-serve", "/data"]
