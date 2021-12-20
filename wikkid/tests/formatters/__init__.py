@@ -14,14 +14,11 @@ def test_suite():
     names = [
         'registry',
         'rest',
-        'creole',
         'markdown',
         'textile',
         ]
     module_names = ['wikkid.tests.formatters.test_' + name for name in names]
     loader = unittest.TestLoader()
     suite = loader.loadTestsFromNames(module_names)
-
-    suite.addTest(doctest.DocTestSuite('wikkid.contrib.creole_1_1.creole2html'))
 
     return suite
