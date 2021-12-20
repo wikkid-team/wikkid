@@ -29,6 +29,8 @@ A location for general notes
 
 * Allow specific extensions for certain formatters (.rst, .md, .mdwn, etc)
 
+* Support a readonly mode
+
 
 Standalone requirements
 -----------------------
