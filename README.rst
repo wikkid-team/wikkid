@@ -17,6 +17,22 @@ Principles of Wikkid
 .. _Git: https://git-scm.com/
 .. _Python: https://python.org
 
+Quickstart
+----------
+
+To run from source, type something like:
+
+  $ python3 setup.py develop  # install dependencies
+  $ git init /tmp/wiki
+  $ ./bin/wikkid-serve /tmp/wiki
+  $ sensible-browser http://localhost:8080/
+
+Or, using docker:
+
+  $ docker run -p 8080:8080 -v /path/to/some/repo:/data \
+    ghcr.io/breezy-team/wikkid
+  $ sensible-browser http://localhost:8080/
+
 Now what?
 ---------
 
