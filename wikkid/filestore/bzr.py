@@ -220,8 +220,7 @@ class FileStore(object):
                 return None
         listing = []
         wt = self.tree
-        wt.lock_read()
-        try:
+        with wt.lock_read():
             for fp, fc, fkind, fid, entry in wt.list_files(
                 from_dir=directory_path, recursive=False):
                 if fc != 'V':
@@ -233,8 +232,6 @@ class FileStore(object):
                     file_path = joinpath(directory_path, fp)
                 listing.append(File(self, file_path, fid))
             return listing
-        finally:
-            wt.unlock()
 
 
 class File(BaseFile):
@@ -250,17 +247,13 @@ class File(BaseFile):
         self.tree = self.filestore.tree
         self.file_type = self._get_filetype()
         bt = self.filestore.basis_tree()
-        bt.lock_read()
-        try:
+        with bt.lock_read():
             inv_file = bt.inventory[self.file_id]
             self.last_modified_in_revision = inv_file.revision
-        finally:
-            bt.unlock()
 
     def _get_filetype(self):
         """Work out the filetype based on the mimetype if possible."""
-        try:
-            self.tree.lock_read()
+        with self.tree.lock_read():
             is_directory = ('directory' == self.tree.kind(self.file_id))
             if is_directory:
                 return FileType.DIRECTORY
@@ -273,21 +266,16 @@ class File(BaseFile):
                     return FileType.BINARY_FILE
                 else:
                     return FileType.TEXT_FILE
-        finally:
-            self.tree.unlock()
 
     def get_content(self):
         if self.file_id is None:
             return None
-        self.tree.lock_read()
-        try:
+        with self.tree.lock_read():
             # basis_tree is a revision tree, queries the repositry.
             # to get the stuff off the filesystem use the working tree
             # which needs to start with that.  WorkingTree.open('.').
             # branch = tree.branch.
             return self.tree.get_file_text(self.file_id)
-        finally:
-            self.tree.unlock()
 
     @property
     def last_modified_by(self):
@@ -307,12 +295,9 @@ class File(BaseFile):
     def _is_binary(self):
         """True if the file is binary."""
         try:
-            self.tree.lock_read()
-            try:
+            with self.tree.lock_read():
                 lines = self.tree.get_file_lines(self.file_id)
                 check_text_lines(lines)
-            finally:
-                self.tree.unlock()
             return False
         except BinaryFile:
             return True
@@ -339,8 +324,7 @@ class BranchFileStore(FileStore):
     def update_file(self, path, content, author, parent_revision,
                     commit_message=None):
         commit_message = get_commit_message(commit_message)
-        self.branch.lock_write()
-        try:
+        with self.branch.lock_write():
             file_id = self.tree.path2id(path)
             if file_id is not None:
                 f = File(self, path, file_id)
@@ -359,7 +343,7 @@ class BranchFileStore(FileStore):
                 tt.create_file(content, trans_id)
                 try:
                     tt.commit(self.branch, commit_message, authors=[author])
-                except MalformedTransform, e:
+                except MalformedTransform as e:
                     for conflict in e.conflicts:
                         if conflict[0] == 'non-directory parent':
                             path = FinalPaths(tt).get_path(trans_id)
@@ -369,5 +353,3 @@ class BranchFileStore(FileStore):
                     raise
 
             self.tree = self.branch.basis_tree()
-        finally:
-            self.branch.unlock()
