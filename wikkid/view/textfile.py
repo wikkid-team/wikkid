@@ -72,7 +72,7 @@ class SaveNewTextContent(BaseEditView):
 
                 location = self.canonical_url(self.context)
                 raise HTTPSeeOther(location=location)
-            except UpdateConflicts, e:
+            except UpdateConflicts as e:
                 # Show the edit page again.
                 logger = logging.getLogger('wikkid')
                 logger.info('Conflicts detected: \n%r\n', e.content)
