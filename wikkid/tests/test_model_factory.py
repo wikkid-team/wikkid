@@ -38,7 +38,7 @@ class TestFactoryGetResourceAtPath(FactoryTestCase):
         # If the root file is selected, and there is a home page, this is
         # returned.
         factory = self.make_factory([
-                ('Home.txt', 'the home page'),
+                ('Home.txt', b'the home page'),
                 ])
         info = factory.get_resource_at_path('/')
         self.assertProvides(info, IRootResource)
@@ -63,7 +63,7 @@ class TestFactoryGetResourceAtPath(FactoryTestCase):
         # If a file is requested that exists but has no suffix, it is returned
         # unaltered, and is interpreted as a wiki page.
         factory = self.make_factory([
-                ('README', 'A readme file'),
+                ('README', b'A readme file'),
                 ])
         info = factory.get_resource_at_path('/README')
         self.assertProvides(info, IWikiTextFile)
@@ -87,7 +87,7 @@ class TestFactoryGetResourceAtPath(FactoryTestCase):
         # If a file is reqeusted that has a suffix that isn't text,
         # a source text file object is returned,
         factory = self.make_factory([
-                ('sample.cpp', 'A c++ file'),
+                ('sample.cpp', b'A c++ file'),
                 ])
         info = factory.get_resource_at_path('/sample.cpp')
         self.assertProvides(info, ISourceTextFile)
@@ -99,7 +99,7 @@ class TestFactoryGetResourceAtPath(FactoryTestCase):
     def test_get_resource_at_path_binary_file(self):
         # If a file exists and is binary, a binary file is returned.
         factory = self.make_factory([
-                ('sample.png', 'A picture'),
+                ('sample.png', b'A picture'),
                 ])
         info = factory.get_resource_at_path('/sample.png')
         self.assertProvides(info, IBinaryFile)
@@ -126,7 +126,7 @@ class TestFactoryGetResourceAtPath(FactoryTestCase):
         # resource.
         factory = self.make_factory([
                 ('SomeDir/', None),
-                ('SomeDir.txt', 'Some content'),
+                ('SomeDir.txt', b'Some content'),
                 ])
         info = factory.get_resource_at_path('/SomeDir')
         self.assertProvides(info, IWikiTextFile)
@@ -139,7 +139,7 @@ class TestFactoryGetResourceAtPath(FactoryTestCase):
         # A directory with a matching text file has a text resource and a dir
         # resource.
         factory = self.make_factory([
-                ('SomeDir.txt', 'Some content'),
+                ('SomeDir.txt', b'Some content'),
                 ])
         info = factory.get_resource_at_path('/SomeDir')
         self.assertProvides(info, IWikiTextFile)
@@ -161,7 +161,7 @@ class TestFactoryGetResourceAtPath(FactoryTestCase):
     def test_get_resource_at_path_subdirs_existing_file(self):
         # The path info reflects the request path.
         factory = self.make_factory([
-                ('a/b/c/d.txt', 'a text file'),
+                ('a/b/c/d.txt', b'a text file'),
                 ])
         info = factory.get_resource_at_path('/a/b/c/d')
         self.assertProvides(info, IWikiTextFile)
@@ -173,8 +173,8 @@ class TestFactoryGetResourceAtPath(FactoryTestCase):
     def test_get_resource_at_path_subdirs_existing_file_and_dir(self):
         # The path info reflects the request path.
         factory = self.make_factory([
-                ('a/b/c/d.txt', 'a text file'),
-                ('a/b/c/d/e.txt', 'another text file'),
+                ('a/b/c/d.txt', b'a text file'),
+                ('a/b/c/d/e.txt', b'another text file'),
                 ])
         info = factory.get_resource_at_path('/a/b/c/d')
         self.assertProvides(info, IWikiTextFile)

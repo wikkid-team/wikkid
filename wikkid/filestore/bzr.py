@@ -25,19 +25,19 @@ from wikkid.filestore.basefile import BaseFile
 from wikkid.interface.filestore import FileType, IFile, IFileStore
 
 
-def normalize_line_endings(content, ending='\n'):
+def normalize_line_endings(content, ending=b'\n'):
     return ending.join(content.splitlines())
 
 
 def get_line_ending(lines):
     """Work out the line ending used in lines."""
     if len(lines) == 0:
-        return '\n'
+        return b'\n'
     first = lines[0]
-    if first.endswith('\r\n'):
-        return '\r\n'
+    if first.endswith(b'\r\n'):
+        return b'\r\n'
     # Default to \n if there are no line endings.
-    return '\n'
+    return b'\n'
 
 
 def get_commit_message(commit_message):
@@ -51,8 +51,8 @@ def normalize_content(content):
     content = normalize_line_endings(content)
     # Make sure the content ends with a new-line.  This makes
     # end of file conflicts nicer.
-    if not content.endswith('\n'):
-        content += '\n'
+    if not content.endswith(b'\n'):
+        content += b'\n'
     return content
 
 
@@ -144,7 +144,7 @@ class FileStore(object):
         Then commit this new file with the specified commit_message.
         """
         content = normalize_content(content)
-        t = self.tree.bzrdir.root_transport
+        t = self.tree.controldir.root_transport
         # Get a transport for the path we want.
         self._ensure_directory_or_nonexistant(dirname(path))
         t = t.clone(dirname(path))
@@ -178,9 +178,9 @@ class FileStore(object):
             new_lines[-1] += ending
         merge = Merge3(basis_lines, new_lines, current_lines)
         result = list(merge.merge_lines()) # or merge_regions or whatever
-        conflicted = ('>>>>>>>' + ending) in result
+        conflicted = (b'>>>>>>>' + ending) in result
         if conflicted:
-            raise UpdateConflicts(''.join(result), current_rev)
+            raise UpdateConflicts(b''.join(result), current_rev)
         return result
 
     def _update_file(self, path, content, author, parent_revision,
@@ -193,7 +193,7 @@ class FileStore(object):
         wt = self.tree
         with wt.lock_write():
             result = self._get_final_text(content, f, parent_revision)
-            wt.bzrdir.root_transport.put_bytes(path, ''.join(result))
+            wt.controldir.root_transport.put_bytes(path, ''.join(result))
             wt.commit(
                 message=commit_message, authors=[author],
                 specific_files=[path])

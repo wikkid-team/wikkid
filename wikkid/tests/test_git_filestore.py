@@ -39,13 +39,13 @@ class TestGitFileStore(TestCase, ProvidesMixin, TestFileStore):
         # Empty files do not have line endings, but they can be saved
         # nonetheless.
         filestore = self.make_filestore(
-            [('test.txt', 'several\nlines\nof\ncontent')])
+            [('test.txt', b'several\nlines\nof\ncontent')])
         f = filestore.get_file('test.txt')
         base_rev = f.last_modified_in_revision
         filestore.update_file(
-            'test.txt', '', 'Test Author <test@example.com>', base_rev)
+            'test.txt', b'', 'Test Author <test@example.com>', base_rev)
         curr = filestore.get_file('test.txt')
-        self.assertEqual('', curr.get_content())
+        self.assertEqual(b'', curr.get_content())
 
     def test_listing_directory_empty(self):
         filestore = self.make_filestore(

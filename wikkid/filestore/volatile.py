@@ -57,13 +57,13 @@ class FileStore(object):
             return
         # Check to make sure the parent is in there too.
         self._ensure_dir(dirname(path), user)
-        new_dir = File(path, None, self._integer.next(), user)
+        new_dir = File(path, None, next(self._integer), user)
         self.file_id_map[new_dir.file_id] = new_dir
         self.path_map[new_dir.path] = new_dir
 
     def _add_file(self, path, content, user):
         self._ensure_dir(dirname(path), user)
-        new_file = File(path, content, self._integer.next(), user)
+        new_file = File(path, content, next(self._integer), user)
         self.file_id_map[new_file.file_id] = new_file
         self.path_map[new_file.path] = new_file
 
@@ -99,7 +99,7 @@ class FileStore(object):
             if directory is None or not directory._is_directory:
                 return None
         listing = []
-        for path, value in self.path_map.iteritems():
+        for path, value in self.path_map.items():
             path_dir = dirname(path)
             if path_dir == directory_path:
                 listing.append(value)
@@ -142,4 +142,4 @@ class File(BaseFile):
 
     @property
     def _is_binary(self):
-        return '\0' in self.content
+        return b'\0' in self.content

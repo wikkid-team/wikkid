@@ -28,6 +28,8 @@ from wikkid.interface.filestore import FileType, IFile, IFileStore
 class FileStore(object):
     """A filestore that just uses an internal map to store data."""
 
+    _encoding = 'utf-8'
+
     @classmethod
     def from_path(cls, path):
         return cls(Repo(path))
@@ -59,7 +61,7 @@ class FileStore(object):
             return None
         try:
             (mode, sha) = tree_lookup_path(self.store.__getitem__,
-                root_id, path.encode('utf-8'))
+                root_id, path.encode(self._encoding))
         except KeyError:
             return None
         return File(self.store, mode, sha, path, commit_id)
@@ -94,18 +96,22 @@ class FileStore(object):
             if old_sha != parent_revision and parent_revision is not None:
                 raise UpdateConflicts("File conflict %s != %s" % (old_sha,
                     parent_revision), old_sha)
-        blob = Blob.from_string(content.encode("utf-8"))
+        if not isinstance(content, bytes):
+            raise TypeError(content)
+        blob = Blob.from_string(content)
         child = (stat.S_IFREG | 0o644, blob.id)
         self.store.add_object(blob)
         assert len(trees) == len(elements)
         for tree, name in zip(reversed(trees), reversed(elements)):
             assert name != ""
-            tree[name] = child
+            tree[name.encode(self._encoding)] = child
             self.store.add_object(tree)
             child = (stat.S_IFDIR, tree.id)
         if commit_message is None:
             commit_message = ""
-        self.repo.do_commit(ref=self.ref, message=commit_message, author=user,
+        if user is not None:
+            user = user.encode(self._encoding)
+        self.repo.do_commit(ref=self.ref, message=commit_message.encode(self._encoding), author=user,
             tree=tree.id)
 
     def list_directory(self, directory_path):
@@ -128,12 +134,12 @@ class FileStore(object):
                 return None
             try:
                 (mode, sha) = tree_lookup_path(self.store.__getitem__,
-                    root_id, directory_path)
+                    root_id, directory_path.encode(self._encoding))
             except KeyError:
                 return None
         if mode is not None and stat.S_ISDIR(mode):
             ret = []
-            for (name, mode, sha) in self.store[sha].iteritems():
+            for (name, mode, sha) in self.store[sha].items():
                 ret.append(
                     File(self.store, mode, sha, posixpath.join(directory_path, name), commit_id))
             return ret
@@ -182,12 +188,12 @@ class File(object):
 
     @property
     def _is_binary(self):
-        return '\0' in self.get_content()
+        return b'\0' in self.get_content()
 
     def _get_last_modified_commit(self):
         walker = Walker(self.store, include=[self.commit_sha],
                 paths=[self.path])
-        return iter(walker).next().commit
+        return next(iter(walker)).commit
 
     @property
     def last_modified_in_revision(self):
