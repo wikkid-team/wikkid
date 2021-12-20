@@ -82,7 +82,7 @@ class FileStore(object):
         elements = path.strip(posixpath.sep).split(posixpath.sep)
         for el in elements[:-1]:
             try:
-                (mode, sha) = tree[el]
+                (mode, sha) = tree[el.encode(self._encoding)]
             except KeyError:
                 tree = Tree()
             else:
@@ -116,7 +116,7 @@ class FileStore(object):
             author = author.encode(self._encoding)
         self.repo.do_commit(
             ref=self.ref, message=commit_message.encode(self._encoding),
-            author=author, tree=tree.id)
+            author=author, tree=child[1])
 
     def list_directory(self, directory_path):
         """Return a list of File objects for in the directory path.

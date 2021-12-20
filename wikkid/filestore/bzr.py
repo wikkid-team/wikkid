@@ -177,10 +177,10 @@ class FileStore(object):
         if len(new_lines) > 0 and not new_lines[-1].endswith(ending):
             new_lines[-1] += ending
         merge = Merge3(basis_lines, new_lines, current_lines)
-        result = list(merge.merge_lines())  # or merge_regions or whatever
+        result = b''.join(merge.merge_lines())  # or merge_regions or whatever
         conflicted = (b'>>>>>>>' + ending) in result
         if conflicted:
-            raise UpdateConflicts(b''.join(result), current_rev)
+            raise UpdateConflicts(result, current_rev)
         return result
 
     def _update_file(self, path, content, author, parent_revision,
@@ -193,7 +193,7 @@ class FileStore(object):
         wt = self.tree
         with wt.lock_write():
             result = self._get_final_text(content, f, parent_revision)
-            wt.controldir.root_transport.put_bytes(path, b''.join(result))
+            wt.controldir.root_transport.put_bytes(path, result)
             wt.commit(
                 message=commit_message, authors=[author],
                 specific_files=[path])
@@ -326,7 +326,8 @@ class BranchFileStore(FileStore):
                 content = self._get_final_text(content, f, parent_revision)
             else:
                 content = normalize_content(content)
-
+            if not isinstance(content, bytes):
+                raise TypeError(content)
             with self.tree.preview_transform() as tt:
                 trans_id = tt.trans_id_tree_path(path)
                 if tt.tree_kind(trans_id) is not None:
