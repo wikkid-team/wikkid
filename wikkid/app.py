@@ -10,7 +10,7 @@
 import logging
 import mimetypes
 import os.path
-import urllib
+import urllib.parse
 from wsgiref.util import shift_path_info
 
 from breezy import urlutils
@@ -62,7 +62,7 @@ class WikkidApp(object):
 
     def preprocess_environ(self, environ):
         request = Request(environ)
-        path = urllib.unquote(request.path)
+        path = urllib.parse.unquote(request.path)
         script_name = self.execution_context.script_name
         # Firstly check to see if the path is the same as the script_name
         if (path != script_name and
@@ -75,7 +75,7 @@ class WikkidApp(object):
             shifted_prefix = '{0}/{1}'.format(shifted_prefix, shifted)
         # Now we are just interested in the path_info having ignored the
         # script name.
-        path = urllib.unquote(request.path_info)
+        path = urllib.parse.unquote(request.path_info)
         if path == '':
             path = '/' # Explicitly be the root (we need the /)
         return request, path

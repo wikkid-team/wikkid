@@ -6,7 +6,7 @@
 
 """Tests for the view dispatcher."""
 
-from zope.interface import Interface, implements
+from zope.interface import Interface, implementer
 
 from wikkid.dispatcher import get_view, register_view
 from wikkid.tests import TestCase
@@ -28,8 +28,9 @@ class TestGetView(TestCase):
         registered, we get no view."""
         class IHasInterface(Interface):
             pass
+        @implementer(IHasInterface)
         class HasInterface(object):
-            implements(IHasInterface)
+            pass
         obj = HasInterface()
         self.assertIs(None, get_view(obj, None, None))
 
@@ -38,8 +39,9 @@ class TestGetView(TestCase):
         make sure that the view is returned when asked for."""
         class IHasInterface(Interface):
             pass
+        @implementer(IHasInterface)
         class HasInterface(object):
-            implements(IHasInterface)
+            pass
         class AView(object):
             for_interface = IHasInterface
             name = 'name'
@@ -59,8 +61,9 @@ class TestGetView(TestCase):
         the default view is returned."""
         class IHasInterface(Interface):
             pass
+        @implementer(IHasInterface)
         class HasInterface(object):
-            implements(IHasInterface)
+            pass
         class AView(object):
             for_interface = IHasInterface
             name = 'name'
@@ -83,8 +86,9 @@ class TestViewRegistration(TestCase):
         """Create a view class, and make sure it is registered."""
         class IHasInterface(Interface):
             pass
+        @implementer(IHasInterface)
         class HasInterface(object):
-            implements(IHasInterface)
+            pass
         class AView(BaseView):
             for_interface = IHasInterface
             name = 'name'

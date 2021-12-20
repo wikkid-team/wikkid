@@ -10,7 +10,7 @@ A directory resource is one where the path specifies a directory in the
 filestore.
 """
 
-from zope.interface import implements
+from zope.interface import implementer
 
 from wikkid.model.missing import MissingResource
 from wikkid.interface.filestore import FileType
@@ -47,13 +47,12 @@ class DirectoryMethods(object):
         return listing
 
 
+@implementer(IDirectoryResource)
 class DirectoryResource(MissingResource, DirectoryMethods):
     """A directory in the filestore.
 
     By definition, a directory is also a missing wiki page.
     """
-
-    implements(IDirectoryResource)
 
     def __repr__(self):
         return "<DirectoryResource '%s'>" % self.path

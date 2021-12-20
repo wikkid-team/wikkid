@@ -10,17 +10,16 @@ A text file that contains text that will be formatted into HTML using one of
 the formatters.
 """
 
-from zope.interface import directlyProvides, implements
+from zope.interface import directlyProvides, implementer
 
 from wikkid.model.directory import DirectoryMethods
 from wikkid.model.textfile import TextFile
 from wikkid.interface.resource import IDirectoryResource, IWikiTextFile
 
 
+@implementer(IWikiTextFile)
 class WikiTextFile(TextFile, DirectoryMethods):
     """A text file that represents a wiki page."""
-
-    implements(IWikiTextFile)
 
     def __init__(self, server, path, write_filename,
                  file_resource, dir_resource):

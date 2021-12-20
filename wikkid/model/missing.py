@@ -13,16 +13,15 @@ on things that aren't there, like a page asking if you want to make a wiki
 page there.
 """
 
-from zope.interface import implements
+from zope.interface import implementer
 
 from wikkid.model.file import UpdatableResource
 from wikkid.interface.resource import IMissingResource
 
 
+@implementer(IMissingResource)
 class MissingResource(UpdatableResource):
     """Information about a resource."""
-
-    implements(IMissingResource)
 
     def __repr__(self):
         return "<MissingResource '%s'>" % self.path

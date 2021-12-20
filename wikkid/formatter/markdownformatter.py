@@ -9,15 +9,14 @@
 
 import cgi
 import markdown
-from zope.interface import implements
+from zope.interface import implementer
 
 from wikkid.interface.formatter import ITextFormatter
 
 
+@implementer(ITextFormatter)
 class MarkdownFormatter(object):
     """Format source files as HTML using markdown."""
-
-    implements(ITextFormatter)
 
     def format(self, filename, text):
         """Format the text.

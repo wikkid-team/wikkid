@@ -18,22 +18,21 @@ from dulwich.walk import Walker
 import posixpath
 import stat
 
-from zope.interface import implements
+from zope.interface import implementer
 
 from wikkid.errors import FileExists, UpdateConflicts
 from wikkid.interface.filestore import FileType, IFile, IFileStore
 
 
+@implementer(IFileStore)
 class FileStore(object):
     """A filestore that just uses an internal map to store data."""
-
-    implements(IFileStore)
 
     @classmethod
     def from_path(cls, path):
         return cls(Repo(path))
 
-    def __init__(self, repo, ref='HEAD'):
+    def __init__(self, repo, ref=b'HEAD'):
         """Repo is a dulwich repository."""
         self.repo = repo
         self.ref = ref
@@ -60,7 +59,7 @@ class FileStore(object):
             return None
         try:
             (mode, sha) = tree_lookup_path(self.store.__getitem__,
-                root_id, path)
+                root_id, path.encode('utf-8'))
         except KeyError:
             return None
         return File(self.store, mode, sha, path, commit_id)
@@ -96,7 +95,7 @@ class FileStore(object):
                 raise UpdateConflicts("File conflict %s != %s" % (old_sha,
                     parent_revision), old_sha)
         blob = Blob.from_string(content.encode("utf-8"))
-        child = (stat.S_IFREG | 0644, blob.id)
+        child = (stat.S_IFREG | 0o644, blob.id)
         self.store.add_object(blob)
         assert len(trees) == len(elements)
         for tree, name in zip(reversed(trees), reversed(elements)):
@@ -142,10 +141,9 @@ class FileStore(object):
             return None
 
 
+@implementer(IFile)
 class File(object):
     """A Git file object."""
-
-    implements(IFile)
 
     def __init__(self, store, mode, sha, path, commit_sha):
         self.store = store

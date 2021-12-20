@@ -12,15 +12,14 @@ from pygments import highlight
 from pygments.lexers import guess_lexer_for_filename
 from pygments.formatters import HtmlFormatter
 from pygments.util import ClassNotFound
-from zope.interface import implements
+from zope.interface import implementer
 
 from wikkid.interface.formatter import ITextFormatter
 
 
+@implementer(ITextFormatter)
 class PygmentsFormatter(object):
     """Format source files as HTML using pygments."""
-
-    implements(ITextFormatter)
 
     def format(self, filename, text):
         """Format the text.

@@ -14,17 +14,16 @@ from datetime import datetime
 from itertools import count
 
 from breezy.urlutils import dirname
-from zope.interface import implements
+from zope.interface import implementer
 
 from wikkid.errors import FileExists
 from wikkid.filestore.basefile import BaseFile
 from wikkid.interface.filestore import FileType, IFile, IFileStore
 
 
+@implementer(IFileStore)
 class FileStore(object):
     """A filestore that just uses an internal map to store data."""
-
-    implements(IFileStore)
 
     def __init__(self, files=None):
         """Files is a list of tuples.
@@ -107,10 +106,9 @@ class FileStore(object):
         return listing
 
 
+@implementer(IFile)
 class File(BaseFile):
     """A volatile file object."""
-
-    implements(IFile)
 
     def __init__(self, path, content, file_id, user):
         BaseFile.__init__(self, path)

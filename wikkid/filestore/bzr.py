@@ -9,15 +9,15 @@
 from datetime import datetime
 import logging
 
-from zope.interface import implements
+from zope.interface import implementer
 
-from breezy.errors import BinaryFile, MalformedTransform
+from breezy.errors import BinaryFile
 from breezy.generate_ids import gen_file_id
 from breezy.merge3 import Merge3
 from breezy.osutils import splitpath, split_lines
 from breezy.revision import NULL_REVISION
 from breezy.textfile import check_text_lines
-from breezy.transform import FinalPaths, TransformPreview
+from breezy.transform import FinalPaths, MalformedTransform
 from breezy.urlutils import basename, dirname, joinpath
 
 from wikkid.errors import FileExists, UpdateConflicts
@@ -78,10 +78,9 @@ def create_parents(tt, path, trans_id):
         prev_trans_id = trans_id
 
 
+@implementer(IFileStore)
 class FileStore(object):
     """Wraps a Bazaar branch to be a filestore."""
-
-    implements(IFileStore)
 
     def __init__(self, tree):
         self.tree = tree
@@ -234,10 +233,9 @@ class FileStore(object):
             return listing
 
 
+@implementer(IFile)
 class File(BaseFile):
     """Represents a file in the Bazaar branch."""
-
-    implements(IFile)
 
     def __init__(self, filestore, path, file_id):
         BaseFile.__init__(self, path)
@@ -332,7 +330,7 @@ class BranchFileStore(FileStore):
             else:
                 content = normalize_content(content)
 
-            with TransformPreview(self.tree) as tt:
+            with self.tree.preview_transform() as tt:
                 trans_id = tt.trans_id_tree_path(path)
                 if tt.tree_kind(trans_id) is not None:
                     tt.delete_contents(trans_id)

@@ -9,15 +9,14 @@
 
 
 from textile import textile
-from zope.interface import implements
+from zope.interface import implementer
 
 from wikkid.interface.formatter import ITextFormatter
 
 
+@implementer(ITextFormatter)
 class TextileFormatter(object):
     """Format source files as HTML using textile."""
-
-    implements(ITextFormatter)
 
     def format(self, filename, text):
         """Format the text.

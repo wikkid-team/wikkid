@@ -6,7 +6,7 @@
 
 """The wikkid tests and test only code."""
 
-from zope.interface import implements
+from zope.interface import implementer
 
 from wikkid.interface.user import IUser
 
@@ -15,10 +15,9 @@ class TestUserFactory(object):
     """Right now, user factories don't do anything."""
 
 
+@implementer(IUser)
 class TestUser(object):
     """A test user that implements the interface."""
-
-    implements(IUser)
 
     def __init__(self, email, display_name):
         self.email = email
