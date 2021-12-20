@@ -26,6 +26,6 @@ Now what?
 * Look through the `To Do`_ list and fix something
 
 .. _`developer's mailing list`: https://launchpad.net/~wikkid-dev
-.. _hacking: /Hacking
+.. _hacking: Hacking.txt
 .. _source: /+listing
-.. _`To Do`: /ToDo
+.. _`To Do`: ToDo.txt
