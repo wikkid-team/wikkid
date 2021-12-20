@@ -9,7 +9,6 @@
 
 import re
 
-from wikkid.formatter.creoleformatter import CreoleFormatter
 from wikkid.formatter.pygmentsformatter import PygmentsFormatter
 from wikkid.formatter.restformatter import RestructuredTextFormatter
 
@@ -31,7 +30,6 @@ class FormatterRegistry(object):
 
     def __init__(self):
         self.formatters = {
-            'creole': CreoleFormatter(),
             'pygments': PygmentsFormatter(),
             'rest': RestructuredTextFormatter(),
             }
@@ -65,7 +63,7 @@ def get_wiki_formatter(content, default_formatter):
     # formatter-name
 
     For example:
-    # creole
+    # pygments
 
     The first line must start with a # and the first word must specify
     a formatter name.  If niether of those match, the default_formatter
