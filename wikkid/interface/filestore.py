@@ -54,11 +54,12 @@ class IFileStore(Interface):
 
 class FileType(object):
     """Package lazr.enum and use an Enumerated Type."""
-    MISSING = 1 # The file at the address does not exist.
-    WIKI_PAGE = 2 # The resource is a wiki page.
-    DIRECTORY = 3 # The resource is a directory.
-    TEXT_FILE = 4 # A text file that isn't a wiki page.
-    BINARY_FILE = 5 # A (most likely) binary file.
+
+    MISSING = 1  # The file at the address does not exist.
+    WIKI_PAGE = 2  # The resource is a wiki page.
+    DIRECTORY = 3  # The resource is a directory.
+    TEXT_FILE = 4  # A text file that isn't a wiki page.
+    BINARY_FILE = 5  # A (most likely) binary file.
 
 
 class IFile(Interface):

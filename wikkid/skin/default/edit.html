@@ -10,7 +10,7 @@
   <input type="text" id="description" name="description"
     value="{{ view.description }}" />
   {% if view.rev_id %}
-  <input type="hidden" name="rev-id" value="{{ view.rev_id }}"/>
+  <input type="hidden" name="rev-id" value="{{ view.rev_id.decode('utf-8') }}"/>
   {% endif %}
   <div class="save-cancel">
   <input type="Submit" name="save" value="Save" />

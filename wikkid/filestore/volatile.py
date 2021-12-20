@@ -13,18 +13,17 @@ filestore, albiet one that doesn't remember anything persistently.
 from datetime import datetime
 from itertools import count
 
-from bzrlib.urlutils import dirname
-from zope.interface import implements
+from breezy.urlutils import dirname
+from zope.interface import implementer
 
-from wikkid.errors import FileExists
+from wikkid.filestore import FileExists
 from wikkid.filestore.basefile import BaseFile
 from wikkid.interface.filestore import FileType, IFile, IFileStore
 
 
+@implementer(IFileStore)
 class FileStore(object):
     """A filestore that just uses an internal map to store data."""
-
-    implements(IFileStore)
 
     def __init__(self, files=None):
         """Files is a list of tuples.
@@ -58,13 +57,13 @@ class FileStore(object):
             return
         # Check to make sure the parent is in there too.
         self._ensure_dir(dirname(path), user)
-        new_dir = File(path, None, self._integer.next(), user)
+        new_dir = File(path, None, next(self._integer), user)
         self.file_id_map[new_dir.file_id] = new_dir
         self.path_map[new_dir.path] = new_dir
 
     def _add_file(self, path, content, user):
         self._ensure_dir(dirname(path), user)
-        new_file = File(path, content, self._integer.next(), user)
+        new_file = File(path, content, next(self._integer), user)
         self.file_id_map[new_file.file_id] = new_file
         self.path_map[new_file.path] = new_file
 
@@ -100,17 +99,16 @@ class FileStore(object):
             if directory is None or not directory._is_directory:
                 return None
         listing = []
-        for path, value in self.path_map.iteritems():
+        for path, value in self.path_map.items():
             path_dir = dirname(path)
             if path_dir == directory_path:
                 listing.append(value)
         return listing
 
 
+@implementer(IFile)
 class File(BaseFile):
     """A volatile file object."""
-
-    implements(IFile)
 
     def __init__(self, path, content, file_id, user):
         BaseFile.__init__(self, path)
@@ -144,4 +142,4 @@ class File(BaseFile):
 
     @property
     def _is_binary(self):
-        return '\0' in self.content
+        return b'\0' in self.content

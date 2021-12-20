@@ -55,7 +55,8 @@ class DirectoryListingPage(DirectoryBreadcrumbView):
             items.append(
                 ListingItem(parent, self.request, 'listing', 'up', name='..'))
         for item in sorted(directories, key=sort_key):
-            items.append(ListingItem(item, self.request, 'listing', 'directory'))
+            items.append(
+                ListingItem(item, self.request, 'listing', 'directory'))
         for item in sorted(files, key=sort_key):
             items.append(ListingItem(item, self.request, None, 'file'))
         self.items = items

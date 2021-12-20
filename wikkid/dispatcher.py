@@ -13,7 +13,7 @@ which registers the view with the dispatcher.
 
 import os
 
-from bzrlib.urlutils import dirname, joinpath
+from breezy.urlutils import dirname, joinpath
 
 from zope.interface import providedBy
 
@@ -59,6 +59,24 @@ def register_view(view_class):
         _VIEW_REGISTRY[(interface, None)] = view_class
 
 
+def unregister_view(view_class):
+    """Unregister the view."""
+    interface = getattr(view_class, 'for_interface', None)
+    view_name = getattr(view_class, 'name', None)
+    default_view = getattr(view_class, 'is_default', False)
+
+    if view_name is None or interface is None:
+        # Don't register.
+        return
+    key = (interface, view_name)
+    assert _VIEW_REGISTRY[key] is view_class, \
+        "key registered with different class: %r: %r != %r" % (
+            key, _VIEW_REGISTRY[key], view_class)
+    del _VIEW_REGISTRY[key]
+    if default_view:
+        del _VIEW_REGISTRY[(interface, None)]
+
+
 # We know that the controller (whatever that is going to end up being) will
 # load this module to get the 'get_view' function.  None of the other view
 # modules should be explicitly loaded anywhere else (possible exceptions may
@@ -76,5 +94,6 @@ def load_view_modules():
         if filename.endswith('.py') and not filename.startswith('__')]
     for filename in py_files:
         __import__('wikkid.view.%s' % filename[:-3])
+
 
 load_view_modules()

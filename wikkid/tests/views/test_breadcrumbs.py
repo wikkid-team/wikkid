@@ -113,7 +113,8 @@ class TestBreadcrumbs(ViewTestCase):
         # Names are not wiki expanded.
         factory = self.make_factory([
                 ('SomePage/SubPage/Nested.txt', 'some text')])
-        view = self.get_view(factory, '/SomePage/SubPage', 'listing', '/p/wiki')
+        view = self.get_view(
+            factory, '/SomePage/SubPage', 'listing', '/p/wiki')
         self.assertBreadcrumbs(
             view,
             [('Home', '/p/wiki/Home'),

@@ -10,10 +10,10 @@
 import logging
 import mimetypes
 import os.path
-import urllib
+import urllib.parse
 from wsgiref.util import shift_path_info
 
-from bzrlib import urlutils
+from breezy import urlutils
 from webob import Request, Response
 from webob.exc import HTTPException, HTTPNotFound
 
@@ -36,8 +36,8 @@ def serve_file(filename):
         res.last_modified = os.path.getmtime(filename)
         # Todo: is this the best value for the etag?
         # perhaps md5 would be a better alternative
-        res.etag = '%s-%s-%s' % (os.path.getmtime(filename),
-            os.path.getsize(filename),
+        res.etag = '%s-%s-%s' % (
+            os.path.getmtime(filename), os.path.getsize(filename),
             hash(filename))
         return res
 
@@ -62,11 +62,10 @@ class WikkidApp(object):
 
     def preprocess_environ(self, environ):
         request = Request(environ)
-        path = urllib.unquote(request.path)
+        path = urllib.parse.unquote(request.path)
         script_name = self.execution_context.script_name
         # Firstly check to see if the path is the same as the script_name
-        if (path != script_name and
-            not path.startswith(script_name + '/')):
+        if path != script_name and not path.startswith(script_name + '/'):
             raise HTTPNotFound()
 
         shifted_prefix = ''
@@ -75,9 +74,9 @@ class WikkidApp(object):
             shifted_prefix = '{0}/{1}'.format(shifted_prefix, shifted)
         # Now we are just interested in the path_info having ignored the
         # script name.
-        path = urllib.unquote(request.path_info)
+        path = urllib.parse.unquote(request.path_info)
         if path == '':
-            path = '/' # Explicitly be the root (we need the /)
+            path = '/'  # Explicitly be the root (we need the /)
         return request, path
 
     def _get_view(self, request, path):
@@ -91,7 +90,7 @@ class WikkidApp(object):
         # TODO: reject requests that aren't GET or POST
         try:
             request, path = self.preprocess_environ(environ)
-        except HTTPException, e:
+        except HTTPException as e:
             return e
 
         if path == '/favicon.ico':
@@ -115,7 +114,7 @@ class WikkidApp(object):
         try:
             view = self._get_view(request, path)
             return view.render(self.skin)
-        except HTTPException, e:
+        except HTTPException as e:
             return e
 
     def get_view(self, environ):

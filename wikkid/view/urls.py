@@ -9,7 +9,7 @@
 import re
 
 
-VIEW_MATCHER = re.compile('^(.*)/\+(\w+)$')
+VIEW_MATCHER = re.compile(r'^(.*)/\+(\w+)$')
 
 
 def parse_url(path):

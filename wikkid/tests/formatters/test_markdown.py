@@ -8,7 +8,7 @@
 
 from textwrap import dedent
 
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
 # The markdown formatter is optional.  If the MarkdownFormatter is not
 # available, the tests are skipped.

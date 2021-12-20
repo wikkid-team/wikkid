@@ -6,28 +6,26 @@
 
 """The model class for file resources."""
 
-from zope.interface import implements
+from zope.interface import implementer
 
 from wikkid.model.baseresource import BaseResource
 from wikkid.interface.resource import IFileResource, IUpdatableResource
 from wikkid.user.bzr import create_bzr_user_from_author_string
 
 
+@implementer(IUpdatableResource)
 class UpdatableResource(BaseResource):
     """Reflects either a file either missing or actual."""
 
-    implements(IUpdatableResource)
-
-    def put_bytes(self, bytes, committer, rev_id, commit_msg):
+    def put_bytes(self, content: bytes, committer, rev_id, commit_msg):
         """Update the file resource."""
         self.factory.filestore.update_file(
-            self.write_filename, bytes, committer, rev_id, commit_msg)
+            self.write_filename, content, committer, rev_id, commit_msg)
 
 
+@implementer(IFileResource)
 class FileResource(UpdatableResource):
     """Anything that relates to all files."""
-
-    implements(IFileResource)
 
     @property
     def mimetype(self):

@@ -8,9 +8,9 @@
 
 from textwrap import dedent
 
-from bzrlib.tests import TestCaseWithTransport
+from breezy.tests import TestCaseWithTransport
 
-from wikkid.errors import UpdateConflicts
+from wikkid.filestore import UpdateConflicts
 from wikkid.filestore.bzr import (
     BranchFileStore,
     FileStore,
@@ -32,13 +32,13 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin, TestFileStore):
 
     def test_conflicts(self):
         filestore = self.make_filestore(
-            [('test.txt', 'one line of content\n')])
+            [('test.txt', b'one line of content\n')])
         f = filestore.get_file('test.txt')
         base_rev = f.last_modified_in_revision
         # First update succeeds.
         filestore.update_file(
             'test.txt',
-            'different line\n',
+            b'different line\n',
             'Test Author <test@example.com>',
             base_rev)
         # Second update with same base revision should raise an exception.
@@ -46,7 +46,7 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin, TestFileStore):
             UpdateConflicts,
             filestore.update_file,
             'test.txt',
-            'also change the first line\n',
+            b'also change the first line\n',
             'Test Author <test@example.com>',
             base_rev)
         curr = filestore.get_file('test.txt')
@@ -59,17 +59,17 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin, TestFileStore):
             =======
             different line
             >>>>>>>
-            """), conflicts.content)
+            """).encode(), conflicts.content)
 
     def test_conflicts_dos_line_endings(self):
         filestore = self.make_filestore(
-            [('test.txt', 'one line of content\r\n')])
+            [('test.txt', b'one line of content\r\n')])
         f = filestore.get_file('test.txt')
         base_rev = f.last_modified_in_revision
         # First update succeeds.
         filestore.update_file(
             'test.txt',
-            'different line\r\n',
+            b'different line\r\n',
             'Test Author <test@example.com>',
             base_rev)
         # Second update with same base revision should raise an exception.
@@ -77,7 +77,7 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin, TestFileStore):
             UpdateConflicts,
             filestore.update_file,
             'test.txt',
-            'also change the first line\r\n',
+            b'also change the first line\r\n',
             'Test Author <test@example.com>',
             base_rev)
         curr = filestore.get_file('test.txt')
@@ -85,11 +85,11 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin, TestFileStore):
             curr.last_modified_in_revision,
             conflicts.basis_rev)
         self.assertEqual(
-            "<<<<<<<\r\n"
-            "also change the first line\r\n"
-            "=======\r\n"
-            "different line\r\n"
-            ">>>>>>>\r\n",
+            b"<<<<<<<\r\n"
+            b"also change the first line\r\n"
+            b"=======\r\n"
+            b"different line\r\n"
+            b">>>>>>>\r\n",
             conflicts.content)
 
     def test_line_endings_unix(self):
@@ -97,19 +97,19 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin, TestFileStore):
         # dos endings, the post param is converted before the merge is
         # attempted.
         filestore = self.make_filestore(
-            [('test.txt', 'several\nlines\nof\ncontent')])
+            [('test.txt', b'several\nlines\nof\ncontent')])
         f = filestore.get_file('test.txt')
         base_rev = f.last_modified_in_revision
         # Updating the text with dos endings doesn't convert the file.
         filestore.update_file(
             'test.txt',
-            'several\r\nslightly different lines\r\nof\r\ncontent',
+            b'several\r\nslightly different lines\r\nof\r\ncontent',
             'Test Author <test@example.com>',
             base_rev)
         curr = filestore.get_file('test.txt')
         # New line added too.
         self.assertEqual(
-            'several\nslightly different lines\nof\ncontent\n',
+            b'several\nslightly different lines\nof\ncontent\n',
             curr.get_content())
 
     def test_line_endings_new_file(self):
@@ -117,26 +117,26 @@ class TestBzrFileStore(TestCaseWithTransport, ProvidesMixin, TestFileStore):
         filestore = self.make_filestore()
         filestore.update_file(
             'new-file.txt',
-            'some\r\ndos\r\nline\r\nendings',
+            b'some\r\ndos\r\nline\r\nendings',
             'Test Author <test@example.com>',
             None)
         curr = filestore.get_file('new-file.txt')
         # A new line is added to the end too.
         self.assertEqual(
-            'some\ndos\nline\nendings\n',
+            b'some\ndos\nline\nendings\n',
             curr.get_content())
 
     def test_empty(self):
         # Empty files do not have line endings, but they can be saved
         # nonetheless.
         filestore = self.make_filestore(
-            [('test.txt', 'several\nlines\nof\ncontent')])
+            [('test.txt', b'several\nlines\nof\ncontent')])
         f = filestore.get_file('test.txt')
         base_rev = f.last_modified_in_revision
         filestore.update_file(
-            'test.txt', '', 'Test Author <test@example.com>', base_rev)
+            'test.txt', b'', 'Test Author <test@example.com>', base_rev)
         curr = filestore.get_file('test.txt')
-        self.assertEqual('', curr.get_content())
+        self.assertEqual(b'', curr.get_content())
 
 
 class TestBranchFileStore(TestBzrFileStore):

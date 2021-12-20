@@ -13,12 +13,13 @@ the not too distant future the server will support a wiki root where it is not
 the root path.
 """
 
-from zope.interface import implements
+from zope.interface import implementer
 
 from wikkid.model.directory import DirectoryResource
 from wikkid.interface.resource import IRootResource
 
 
+@implementer(IRootResource)
 class RootResource(DirectoryResource):
     """The root of the wiki.
 
@@ -26,8 +27,6 @@ class RootResource(DirectoryResource):
     resource is also a directory resource where the directory is the root of
     the filesystem.
     """
-
-    implements(IRootResource)
 
     def get_dir_name(self):
         return None

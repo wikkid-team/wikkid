@@ -8,7 +8,7 @@
 
 from textwrap import dedent
 
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
 # The textile formatter is optional.  If the MarkdownFormatter is not
 # available, the tests are skipped.
@@ -52,7 +52,6 @@ class TestTextileFormatter(TestCase):
         self.assertEqual('Heading 4', soup.h4.string)
         self.assertEqual('Heading 5', soup.h5.string)
         self.assertEqual('Heading 6', soup.h6.string)
-
 
     def test_inline_link(self):
         # A paragraph containing a wiki word.

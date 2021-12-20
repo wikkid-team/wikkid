@@ -36,8 +36,16 @@ class WikiPage(BaseView):
     @property
     def content(self):
         bytes = self.context.get_bytes()
+        try:
+            text = bytes.decode('utf-8')
+        except UnicodeDecodeError:
+            try:
+                text = bytes.decode('latin-1')
+            except UnicodeDecodeError:
+                text = bytes.decode('ascii', 'replace')
+
         default_format = self.execution_context.default_format
-        return format_content(bytes, self.context.base_name, default_format)
+        return format_content(text, self.context.base_name, default_format)
 
     def _render(self, skin):
         """If the page is not being viewed with the preferred path, redirect.

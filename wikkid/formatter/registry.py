@@ -9,7 +9,6 @@
 
 import re
 
-from wikkid.formatter.creoleformatter import CreoleFormatter
 from wikkid.formatter.pygmentsformatter import PygmentsFormatter
 from wikkid.formatter.restformatter import RestructuredTextFormatter
 
@@ -31,7 +30,6 @@ class FormatterRegistry(object):
 
     def __init__(self):
         self.formatters = {
-            'creole': CreoleFormatter(),
             'pygments': PygmentsFormatter(),
             'rest': RestructuredTextFormatter(),
             }
@@ -52,20 +50,21 @@ def get_formatter(name):
     return formatter_registry[name]
 
 
-FORMAT_MATCHER = re.compile('^#\s+(\w+).*$')
+FORMAT_MATCHER = re.compile(r'^#\s+(\w+).*$')
 
 
-def get_wiki_formatter(content, default_formatter):
+def get_wiki_formatter(content: str, default_formatter: str) -> str:
     """Choose a wiki formatter based on the first line of content.
 
-    :param content: The content of the file.
-    :param default_formatter: The name of the default formatter.
+    Args:
+      content: The content of the file.
+      default_formatter: The name of the default formatter.
 
     The first line of the content may specify a formatter using the form:
     # formatter-name
 
     For example:
-    # creole
+    # pygments
 
     The first line must start with a # and the first word must specify
     a formatter name.  If niether of those match, the default_formatter

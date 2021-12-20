@@ -29,15 +29,6 @@ class TestGetWikiFormtter(TestCase):
         self.assertEqual(
             'RestructuredTextFormatter', formatter.__class__.__name__)
 
-    def test_specify_creole(self):
-        content, formatter = get_wiki_formatter(
-            dedent("""\
-                # creole
-                some content
-                """), 'rest')
-        self.assertEqual('some content\n', content)
-        self.assertEqual('CreoleFormatter', formatter.__class__.__name__)
-
     def test_specify_missing(self):
         content, formatter = get_wiki_formatter(
             dedent("""\
@@ -51,26 +42,26 @@ class TestGetWikiFormtter(TestCase):
     def test_specify_extra_whitespace(self):
         content, formatter = get_wiki_formatter(
             dedent("""\
-                #\t\tcreole
+                #\t\tpygments
                 some content
                 """), 'rest')
         self.assertEqual('some content\n', content)
-        self.assertEqual('CreoleFormatter', formatter.__class__.__name__)
+        self.assertEqual('PygmentsFormatter', formatter.__class__.__name__)
 
     def test_specify_extra_params(self):
         content, formatter = get_wiki_formatter(
             dedent("""\
-                # creole extra params
+                # pygments extra params
                 some content
                 """), 'rest')
         self.assertEqual('some content\n', content)
-        self.assertEqual('CreoleFormatter', formatter.__class__.__name__)
+        self.assertEqual('PygmentsFormatter', formatter.__class__.__name__)
 
-    def test_specify_creole_case_insensitive(self):
+    def test_specify_pygments_case_insensitive(self):
         content, formatter = get_wiki_formatter(
             dedent("""\
-                # CREOLE
+                # pygments
                 some content
                 """), 'rest')
         self.assertEqual('some content\n', content)
-        self.assertEqual('CreoleFormatter', formatter.__class__.__name__)
+        self.assertEqual('PygmentsFormatter', formatter.__class__.__name__)

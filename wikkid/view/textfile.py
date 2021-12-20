@@ -10,10 +10,8 @@ import logging
 
 from webob.exc import HTTPSeeOther
 
-from wikkid.errors import UpdateConflicts
-from wikkid.formatter.registry import get_wiki_formatter
+from wikkid.filestore import UpdateConflicts
 from wikkid.interface.resource import ITextFile
-from wikkid.view.base import BaseView
 from wikkid.view.edit import BaseEditView
 from wikkid.view.wiki import format_content
 
@@ -56,7 +54,8 @@ class SaveNewTextContent(BaseEditView):
         params = self.request.params
         content = params['content']
         description = params['description']
-        rev_id = params.get('rev-id', None)
+        rev_id = (
+            params['rev-id'].encode('utf-8') if 'rev-id' in params else None)
         preview = params.get('preview', None)
         if preview is not None:
             self.rev_id = rev_id
@@ -68,11 +67,12 @@ class SaveNewTextContent(BaseEditView):
         else:
             try:
                 self.context.put_bytes(
-                    content, self.user.committer_id, rev_id, description)
+                    content.encode('utf-8'), self.user.committer_id, rev_id,
+                    description)
 
                 location = self.canonical_url(self.context)
                 raise HTTPSeeOther(location=location)
-            except UpdateConflicts, e:
+            except UpdateConflicts as e:
                 # Show the edit page again.
                 logger = logging.getLogger('wikkid')
                 logger.info('Conflicts detected: \n%r\n', e.content)

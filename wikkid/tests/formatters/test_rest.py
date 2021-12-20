@@ -7,7 +7,7 @@
 """Tests for the wikkid.formatter.rest module."""
 
 from textwrap import dedent
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
 from wikkid.formatter.restformatter import RestructuredTextFormatter
 from wikkid.tests import TestCase

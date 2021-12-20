@@ -7,15 +7,14 @@
 """A text to html formatter using reStuctured Text."""
 
 from docutils.core import publish_parts
-from zope.interface import implements
+from zope.interface import implementer
 
 from wikkid.interface.formatter import ITextFormatter
 
 
+@implementer(ITextFormatter)
 class RestructuredTextFormatter(object):
     """Format text as HTML using restructured text."""
-
-    implements(ITextFormatter)
 
     def format(self, filename, text):
         """Format the text.
