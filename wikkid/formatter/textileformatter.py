@@ -22,4 +22,3 @@ class TextileFormatter(object):
         """Format the text.
         """
         return textile(text)
-

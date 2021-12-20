@@ -1,4 +1,4 @@
-  #
+#
 # Copyright (C) 2010 Wikkid Developers.
 #
 # This software is licensed under the GNU Affero General Public License
@@ -23,13 +23,16 @@ class FileIterable(object):
     def app_iter_range(self, start, stop):
         return self.__class__(self.filename, start, stop)
 
+
 class FileIterator(object):
     """Iterate over a file.
 
     FileIterable provides a simple file iterator, optionally allowing the
     user to specify start and end ranges for the file.
     """
+
     chunk_size = 4096
+
     def __init__(self, filename, start, stop):
         self.filename = filename
         self.fileobj = open(self.filename, 'rb')
@@ -55,4 +58,3 @@ class FileIterator(object):
                 # Chop off the extra:
                 chunk = chunk[:self.length]
         return chunk
-

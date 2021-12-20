@@ -50,8 +50,7 @@ class ResourceFactory(object):
                 return BinaryResource(
                     self, path, file_path, file_resource, None)
             # This is known to be not entirely right.
-            if (filename.endswith('.txt') or
-                '.' not in file_resource.base_name):
+            if filename.endswith('.txt') or '.' not in file_resource.base_name:
                 return WikiTextFile(
                     self, path, file_path, file_resource,
                     dir_resource)

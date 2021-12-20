@@ -7,7 +7,6 @@
 
 """A text to html formatter using markdown."""
 
-import cgi
 import markdown
 from zope.interface import implementer
 
@@ -23,4 +22,3 @@ class MarkdownFormatter(object):
         """
         md = markdown.Markdown(safe_mode='replace')
         return md.convert(text)
-

@@ -37,7 +37,7 @@ class Skin(object):
             'edit_page': self.env.get_template('edit.html'),
             'view_directory': self.env.get_template('directory_listing.html'),
             'missing': self.env.get_template('missing-page.html'),
-            'missing-dir' : self.env.get_template('missing-directory.html')
+            'missing-dir': self.env.get_template('missing-directory.html')
             }
         module_location = urlutils.dirname(__file__)
         self.dir_name = urlutils.joinpath(module_location, skin_name)

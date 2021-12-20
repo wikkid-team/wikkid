@@ -69,8 +69,9 @@ def unregister_view(view_class):
         # Don't register.
         return
     key = (interface, view_name)
-    assert _VIEW_REGISTRY[key] is view_class, "key registered with different class: %r: %r != %r" % (
-        key, _VIEW_REGISTRY[key], view_class)
+    assert _VIEW_REGISTRY[key] is view_class, \
+        "key registered with different class: %r: %r != %r" % (
+            key, _VIEW_REGISTRY[key], view_class)
     del _VIEW_REGISTRY[key]
     if default_view:
         del _VIEW_REGISTRY[(interface, None)]
@@ -93,5 +94,6 @@ def load_view_modules():
         if filename.endswith('.py') and not filename.startswith('__')]
     for filename in py_files:
         __import__('wikkid.view.%s' % filename[:-3])
+
 
 load_view_modules()

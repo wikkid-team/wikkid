@@ -60,11 +60,13 @@ class FileStore(object):
         if root_id is None:
             return None
         try:
-            (mode, sha) = tree_lookup_path(self.store.__getitem__,
+            (mode, sha) = tree_lookup_path(
+                self.store.__getitem__,
                 root_id, path.encode(self._encoding))
         except KeyError:
             return None
-        return File(self.store, mode, sha, path, commit_id, encoding=self._encoding)
+        return File(
+            self.store, mode, sha, path, commit_id, encoding=self._encoding)
 
     def update_file(self, path, content, author, parent_revision,
                     commit_message=None):
@@ -94,8 +96,9 @@ class FileStore(object):
             if stat.S_ISDIR(old_mode):
                 raise FileExists("File %s exists and is a directory" % path)
             if old_sha != parent_revision and parent_revision is not None:
-                raise UpdateConflicts("File conflict %s != %s" % (old_sha,
-                    parent_revision), old_sha)
+                raise UpdateConflicts(
+                    "File conflict %s != %s" % (
+                        old_sha, parent_revision), old_sha)
         if not isinstance(content, bytes):
             raise TypeError(content)
         blob = Blob.from_string(content)
@@ -111,8 +114,9 @@ class FileStore(object):
             commit_message = ""
         if author is not None:
             author = author.encode(self._encoding)
-        self.repo.do_commit(ref=self.ref, message=commit_message.encode(self._encoding), author=author,
-            tree=tree.id)
+        self.repo.do_commit(
+            ref=self.ref, message=commit_message.encode(self._encoding),
+            author=author, tree=tree.id)
 
     def list_directory(self, directory_path):
         """Return a list of File objects for in the directory path.
@@ -142,8 +146,10 @@ class FileStore(object):
             ret = []
             for (name, mode, sha) in self.store[sha].items():
                 ret.append(
-                    File(self.store, mode, sha, posixpath.join(directory_path, name.decode(self._encoding)), commit_id,
-                         encoding=self._encoding))
+                    File(self.store, mode, sha,
+                         posixpath.join(
+                             directory_path, name.decode(self._encoding)),
+                         commit_id, encoding=self._encoding))
             return ret
         else:
             return None
@@ -194,8 +200,9 @@ class File(object):
         return b'\0' in self.get_content()
 
     def _get_last_modified_commit(self):
-        walker = Walker(self.store, include=[self.commit_sha],
-                paths=[self.path.encode(self.encoding)])
+        walker = Walker(
+            self.store, include=[self.commit_sha],
+            paths=[self.path.encode(self.encoding)])
         return next(iter(walker)).commit
 
     @property

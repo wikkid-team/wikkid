@@ -11,9 +11,7 @@ import logging
 from webob.exc import HTTPSeeOther
 
 from wikkid.filestore import UpdateConflicts
-from wikkid.formatter.registry import get_wiki_formatter
 from wikkid.interface.resource import ITextFile
-from wikkid.view.base import BaseView
 from wikkid.view.edit import BaseEditView
 from wikkid.view.wiki import format_content
 
@@ -68,7 +66,8 @@ class SaveNewTextContent(BaseEditView):
         else:
             try:
                 self.context.put_bytes(
-                    content.encode('utf-8'), self.user.committer_id, rev_id, description)
+                    content.encode('utf-8'), self.user.committer_id, rev_id,
+                    description)
 
                 location = self.canonical_url(self.context)
                 raise HTTPSeeOther(location=location)

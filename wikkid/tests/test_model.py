@@ -142,4 +142,3 @@ class TestDirectoryResource(FactoryTestCase):
         user = new_page.last_modified_by
         self.assertEqual('Test User', user.display_name)
         self.assertEqual('test@example.com', user.email)
-

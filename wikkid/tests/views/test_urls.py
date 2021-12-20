@@ -121,5 +121,3 @@ class TestParseUrl(TestCase):
         path, view = parse_url('/some/path/+view')
         self.assertEqual('/some/path', path)
         self.assertEqual('view', view)
-
-

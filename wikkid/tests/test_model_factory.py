@@ -19,6 +19,7 @@ from wikkid.tests.factory import FactoryTestCase
 # TODO: make a testing filestore that can produce either a volatile filestore
 # or a bzr filestore.
 
+
 class TestFactoryGetResourceAtPath(FactoryTestCase):
     """Test the get_resource_at_path method of the Factory class."""
 

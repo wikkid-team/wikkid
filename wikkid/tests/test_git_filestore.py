@@ -8,9 +8,6 @@
 
 from dulwich.repo import MemoryRepo
 
-from textwrap import dedent
-
-from wikkid.filestore import UpdateConflicts
 from wikkid.filestore.git import (
     FileStore,
     )
@@ -29,7 +26,8 @@ class TestGitFileStore(TestCase, ProvidesMixin, TestFileStore):
                 if contents is None:
                     # Directory
                     continue
-                fs.update_file(path, contents,
+                fs.update_file(
+                    path, contents,
                     author="Somebody <test@example.com>",
                     parent_revision=None,
                     commit_message="Added by make_filestore")
@@ -49,7 +47,6 @@ class TestGitFileStore(TestCase, ProvidesMixin, TestFileStore):
 
     def test_listing_directory_empty(self):
         filestore = self.make_filestore(
-            [('empty/', None),
-            ])
+            [('empty/', None)])
         listing = filestore.list_directory('empty')
         self.assertIs(None, listing)

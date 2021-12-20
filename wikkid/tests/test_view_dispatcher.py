@@ -28,6 +28,7 @@ class TestGetView(TestCase):
         registered, we get no view."""
         class IHasInterface(Interface):
             pass
+
         @implementer(IHasInterface)
         class HasInterface(object):
             pass
@@ -39,14 +40,18 @@ class TestGetView(TestCase):
         make sure that the view is returned when asked for."""
         class IHasInterface(Interface):
             pass
+
         @implementer(IHasInterface)
         class HasInterface(object):
             pass
+
         class AView(object):
             for_interface = IHasInterface
             name = 'name'
+
             def __init__(self, *args):
                 pass
+
             def initialize(self):
                 self.initialized = True
         register_view(AView)
@@ -62,15 +67,19 @@ class TestGetView(TestCase):
         the default view is returned."""
         class IHasInterface(Interface):
             pass
+
         @implementer(IHasInterface)
         class HasInterface(object):
             pass
+
         class AView(object):
             for_interface = IHasInterface
             name = 'name'
             is_default = True
+
             def __init__(self, *args):
                 pass
+
             def initialize(self):
                 self.initialized = True
         register_view(AView)
@@ -88,13 +97,15 @@ class TestViewRegistration(TestCase):
         """Create a view class, and make sure it is registered."""
         class IHasInterface(Interface):
             pass
-        self.addCleanup(unregister_view, AView)
+
         @implementer(IHasInterface)
         class HasInterface(object):
             pass
+
         class AView(BaseView):
             for_interface = IHasInterface
             name = 'name'
         obj = HasInterface()
         view = get_view(obj, 'name', None)
         self.assertIsInstance(view, AView)
+        self.addCleanup(unregister_view, AView)

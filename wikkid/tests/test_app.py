@@ -64,7 +64,7 @@ class TestApp(TestCase):
         app = WikkidApp(filestore, execution_context=context)
         app(environ, self.assert_ok)
 
-    def test_getting_static_style_css_works_with_script_name_multiple_segments(self):
+    def test_getting_static_css_works_script_name_multiple_segments(self):
         environ = environ_from_url("/p/project-name/wiki/static/default.css")
         filestore = FileStore()
         context = ExecutionContext(script_name="/p/project-name/wiki")

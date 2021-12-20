@@ -53,7 +53,6 @@ class TestTextileFormatter(TestCase):
         self.assertEqual('Heading 5', soup.h5.string)
         self.assertEqual('Heading 6', soup.h6.string)
 
-
     def test_inline_link(self):
         # A paragraph containing a wiki word.
         text = 'A link to the "FrontPage":http://127.0.0.1 helps.'

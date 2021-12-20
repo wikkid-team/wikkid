@@ -6,7 +6,6 @@
 
 """The wikkid tests for the wikkid.formatter package."""
 
-import doctest
 import unittest
 
 

@@ -69,4 +69,3 @@ class User(BaseUser):
         self.email = email
         self.display_name = display_name
         self.committer_id = committer_id
-

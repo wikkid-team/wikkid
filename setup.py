@@ -7,17 +7,21 @@ from wikkid import version
 setup(
     name='Wikkid',
     version=version,
-    description="A wiki that is backed by Bazaar that allows local branching of the wiki for later merging. Also doesn't have any page locks and uses Bazaar's three way merging.",
+    description="VCS-backed wiki",
+    long_description="""\
+A wiki that is backed by Gitr or Bazaar that allows local branching of the wiki
+for later merging. Also doesn't have any page locks and uses three way merging.
+""",
     author='Wikkid Developers',
     author_email='wikkid-dev@lists.launchpad.net',
     url='https://launchpad.net/wikkid',
     scripts=['bin/wikkid-serve'],
-    data_files=[('share/man/man1', ['wikkid-serve.1']),],
+    data_files=[('share/man/man1', ['wikkid-serve.1']), ],
     packages=find_packages(),
-    package_dir={'breezy.plugins.wikkid':'plugin'},
-    package_data={'wikkid/skin':['default/*.html',
-                                 'default/favicon.ico',
-                                 'default/static/*']},
+    package_dir={'breezy.plugins.wikkid': 'plugin'},
+    package_data={'wikkid/skin': ['default/*.html',
+                                  'default/favicon.ico',
+                                  'default/static/*']},
     include_package_data=True,
     install_requires=[
         'breezy',

@@ -17,6 +17,7 @@ class BaseUser(object):
     @property
     def gravatar(self):
         url = "http://www.gravatar.com/avatar/"
-        url += hashlib.md5(self.email.lower().encode('utf-8', 'replace')).hexdigest()
+        data = self.email.lower().encode('utf-8', 'replace')
+        url += hashlib.md5(data).hexdigest()
         url += "?s=50&d=identicon"
         return url

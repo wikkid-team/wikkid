@@ -18,7 +18,6 @@ from breezy.osutils import splitpath, split_lines
 from breezy.revision import NULL_REVISION
 from breezy.textfile import check_text_lines
 from breezy.transform import FinalPaths, MalformedTransform
-from breezy.revisiontree import RevisionTree
 from breezy.urlutils import basename, dirname, joinpath
 
 from wikkid.filestore import FileExists, UpdateConflicts
@@ -178,7 +177,7 @@ class FileStore(object):
         if len(new_lines) > 0 and not new_lines[-1].endswith(ending):
             new_lines[-1] += ending
         merge = Merge3(basis_lines, new_lines, current_lines)
-        result = list(merge.merge_lines()) # or merge_regions or whatever
+        result = list(merge.merge_lines())  # or merge_regions or whatever
         conflicted = (b'>>>>>>>' + ending) in result
         if conflicted:
             raise UpdateConflicts(b''.join(result), current_rev)
@@ -214,7 +213,7 @@ class FileStore(object):
         wt = self.tree
         with wt.lock_read():
             for fp, fc, fkind, entry in wt.list_files(
-                from_dir=directory_path, recursive=False):
+                    from_dir=directory_path, recursive=False):
                 if fc != 'V':
                     # If the file isn't versioned, skip it.
                     continue
@@ -262,14 +261,16 @@ class File(BaseFile):
             # branch = tree.branch.
             return self.tree.get_file_text(self.path)
 
-
     @property
     def last_modified_in_revision(self):
         if self._last_modified_in_revision is None:
             try:
-                self._last_modified_in_revision = self.tree.get_file_revision(self.path)
+                self._last_modified_in_revision = self.tree.get_file_revision(
+                    self.path)
             except AttributeError:
-                self._last_modified_in_revision = self.tree.basis_tree().get_file_revision(self.path)
+                bt = self.tree.basis_tree()
+                self._last_modified_in_revision = bt.get_file_revision(
+                    self.path)
         return self._last_modified_in_revision
 
     @property

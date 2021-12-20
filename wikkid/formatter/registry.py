@@ -50,7 +50,7 @@ def get_formatter(name):
     return formatter_registry[name]
 
 
-FORMAT_MATCHER = re.compile(b'^#\s+(\w+).*$')
+FORMAT_MATCHER = re.compile(rb'^#\s+(\w+).*$')
 
 
 def get_wiki_formatter(content, default_formatter):
