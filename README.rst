@@ -20,18 +20,18 @@ Principles of Wikkid
 Quickstart
 ----------
 
-To run from source, type something like:
+To run from source, type something like::
 
-  $ python3 setup.py develop  # install dependencies
-  $ git init /tmp/wiki
-  $ ./bin/wikkid-serve /tmp/wiki
-  $ sensible-browser http://localhost:8080/
+    $ python3 setup.py develop  # install dependencies
+    $ git init /tmp/wiki
+    $ ./bin/wikkid-serve /tmp/wiki
+    $ sensible-browser http://localhost:8080/
 
-Or, using docker:
+Or, using docker::
 
-  $ docker run -p 8080:8080 -v /path/to/some/repo:/data \
-    ghcr.io/wikkid-team/wikkid
-  $ sensible-browser http://localhost:8080/
+    $ docker run -p 8080:8080 -v /path/to/some/repo:/data \
+      ghcr.io/wikkid-team/wikkid
+    $ sensible-browser http://localhost:8080/
 
 Now what?
 ---------
