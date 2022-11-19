@@ -8,7 +8,7 @@ all: check
 
 
 check:
-	python -m testtools.run wikkid.tests.test_suite
+	python3 -m testtools.run wikkid.tests.test_suite
 
 
 clean:
