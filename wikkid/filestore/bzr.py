@@ -10,10 +10,10 @@ from datetime import datetime
 import logging
 
 from zope.interface import implementer
+from merge3 import Merge3
 
 from breezy.bzr.generate_ids import gen_file_id
 from breezy.errors import BinaryFile
-from breezy.merge3 import Merge3
 from breezy.osutils import splitpath, split_lines
 from breezy.revision import NULL_REVISION
 from breezy.textfile import check_text_lines
