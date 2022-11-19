@@ -42,7 +42,7 @@ class TestMarkdownFormatter(TestCase):
             Simple sentence.
             """)
         result = self.formatter.format('filename', text)
-        soup = BeautifulSoup(result)
+        soup = BeautifulSoup(result, features="lxml")
         self.assertEqual('Heading 1', soup.h1.string)
         self.assertEqual('Heading 2', soup.h2.string)
         # We don't care about whitespace on <p> tags, and markdown inserts
@@ -63,7 +63,7 @@ class TestMarkdownFormatter(TestCase):
 
             ###### Heading 6""")
         result = self.formatter.format('filename', text)
-        soup = BeautifulSoup(result)
+        soup = BeautifulSoup(result, features="lxml")
         self.assertEqual('Heading 1', soup.h1.string)
         self.assertEqual('Heading 2', soup.h2.string)
         self.assertEqual('Heading 3', soup.h3.string)
@@ -75,7 +75,7 @@ class TestMarkdownFormatter(TestCase):
         # A paragraph containing a wiki word.
         text = "A link to the [FrontPage](http://127.0.0.1) helps."
         result = self.formatter.format('filename', text)
-        soup = BeautifulSoup(result)
+        soup = BeautifulSoup(result, features="lxml")
         self.assertEqual('http://127.0.0.1', soup.a['href'])
 
     def test_reference_link(self):
@@ -86,7 +86,7 @@ class TestMarkdownFormatter(TestCase):
             [id]: http://127.0.0.1
             """)
         result = self.formatter.format('filename', text)
-        soup = BeautifulSoup(result)
+        soup = BeautifulSoup(result, features="lxml")
         self.assertEqual('http://127.0.0.1', soup.a['href'])
 
     def test_emphasis(self):
@@ -94,7 +94,7 @@ class TestMarkdownFormatter(TestCase):
                  'We can have _emphasis_ and __strong__ as well!')
         for text in texts:
             result = self.formatter.format('filename', text)
-            soup = BeautifulSoup(result)
+            soup = BeautifulSoup(result, features="lxml")
             self.assertEqual('emphasis', soup.em.string)
             self.assertEqual('strong', soup.strong.string)
 
@@ -104,7 +104,7 @@ class TestMarkdownFormatter(TestCase):
             > that spans multiple lines.
             """)
         result = self.formatter.format('filename', text)
-        soup = BeautifulSoup(result)
+        soup = BeautifulSoup(result, features="lxml")
         self.assertTrue(soup.blockquote is not None)
 
     def test_lists(self):
@@ -122,7 +122,7 @@ class TestMarkdownFormatter(TestCase):
              7. OL 3
              """)
         result = self.formatter.format('filename', text)
-        soup = BeautifulSoup(result)
+        soup = BeautifulSoup(result, features="lxml")
 
         self.assertIsNot(None, soup.ul)
         ulNodes = soup.ul.findAll('li')
@@ -145,7 +145,7 @@ class TestMarkdownFormatter(TestCase):
             More Normal text.
             """)
         result = self.formatter.format('filename', text)
-        soup = BeautifulSoup(result)
+        soup = BeautifulSoup(result, features="lxml")
         self.assertEqual(
             soup.pre.code.string.strip(), 'Some Code inside pre tags')
 
@@ -158,18 +158,18 @@ class TestMarkdownFormatter(TestCase):
                  '------------------')
         for text in texts:
             result = self.formatter.format('filename', text)
-            soup = BeautifulSoup(result)
+            soup = BeautifulSoup(result, features="lxml")
             self.assertIsNot(None, soup.hr)
 
     def test_code(self):
         text = 'use the `printf()` function'
         result = self.formatter.format('filename', text)
-        soup = BeautifulSoup(result)
+        soup = BeautifulSoup(result, features="lxml")
         self.assertEqual('printf()', soup.code.string)
 
     def test_unicode(self):
         # Test the unicode support of the markdown formatter.
         text = u'\N{SNOWMAN}'
         result = self.formatter.format('format', text)
-        soup = BeautifulSoup(result)
+        soup = BeautifulSoup(result, features="lxml")
         self.assertEqual(soup.p.string.strip(), text)
