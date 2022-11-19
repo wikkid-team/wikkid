@@ -21,7 +21,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        sudo apt install --no-install-recommends -y python3 python3-pip python3-configobj python3-docutils python3-dulwich python3-jinja2 python3-patiencediff python3-pygments python3-twisted python3-webob python3-zope.interface cython3 python3-dev build-essential python3-testtools python3-bs4
+        sudo apt install --no-install-recommends -y python3 python3-pip python3-configobj python3-docutils python3-dulwich python3-jinja2 python3-patiencediff python3-pygments python3-twisted python3-webob python3-zope.interface cython3 python3-dev build-essential python3-testtools python3-bs4 python3-merge3 python3-setuptools-rust
         pip install -U pip flake8 flake8 testtools bs4
         python setup.py develop
     - name: Style checks
