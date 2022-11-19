@@ -22,7 +22,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         sudo apt install --no-install-recommends -y rustc
-        pip install -U pip flake8 testtools git+https://github.com/breezy-team/breezy bs4
+        pip install -U pip flake8 testtools git+https://github.com/breezy-team/breezy bs4 lxml
         python setup.py develop
     - name: Style checks
       run: |
