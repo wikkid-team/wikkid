@@ -22,7 +22,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         sudo apt install --no-install-recommends -y rustc
-        pip install -U pip flake8 testtools
+        pip install -U pip flake8 testtools setuptools-rust
         python setup.py develop
     - name: Style checks
       run: |
