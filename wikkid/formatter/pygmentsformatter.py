@@ -6,7 +6,7 @@
 
 """A text to html formatter using pygments."""
 
-import cgi
+import html
 
 from pygments import highlight
 from pygments.lexers import guess_lexer_for_filename
@@ -31,4 +31,4 @@ class PygmentsFormatter(object):
             lexer = guess_lexer_for_filename(filename, text)
             return highlight(text, lexer, HtmlFormatter())
         except ClassNotFound:
-            return "<pre>{0}</pre>".format(cgi.escape(text))
+            return "<pre>{0}</pre>".format(html.escape(text))
