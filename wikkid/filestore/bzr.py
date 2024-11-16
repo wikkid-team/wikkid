@@ -255,7 +255,7 @@ class File(BaseFile):
 
     def get_content(self):
         with self.tree.lock_read():
-            # basis_tree is a revision tree, queries the repositry.
+            # basis_tree is a revision tree, queries the repository.
             # to get the stuff off the filesystem use the working tree
             # which needs to start with that.  WorkingTree.open('.').
             # branch = tree.branch.

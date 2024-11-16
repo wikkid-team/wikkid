@@ -106,7 +106,7 @@ class BaseView(object, metaclass=BaseViewMetaClass):
     def _render(self, skin):
         """Get the template and render with the args.
 
-        If a template isn't going to be used or provide the conent,
+        If a template isn't going to be used or provide the content,
         this is the method to override.
         """
         template = skin.get_template(self.template)

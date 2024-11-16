@@ -6,6 +6,6 @@
 
 """Text to HTML formatters.
 
-The initial implemention is ReST, but I'm hopeful that there will soon be
+The initial implementation is ReST, but I'm hopeful that there will soon be
 pygments, and other wiki text formatters.
 """

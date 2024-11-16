@@ -4,7 +4,7 @@ Installing Wikkid Wiki
 Hopefully we'll get this packaged for at least Ubuntu and Debian, and some
 setup tools for those that like it like that.
 
-Dependancies
+Dependencies
 ------------
 
  * dulwich - for the Git filestore
@@ -13,7 +13,7 @@ Dependancies
  * python-docutils - for the ReST formatter
  * python-jinja2 - for the templating
  * python-markdown - for the markdown formatter
- * python-pygments - for the syntax hilighting
+ * python-pygments - for the syntax highlighting
  * python-testtools - for running the test suite (optional)
  * python-textile - for the textile formatter.
  * python-webob - for the WSGI application bits

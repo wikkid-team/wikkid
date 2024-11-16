@@ -67,7 +67,7 @@ Launchpad integration
 Ideas not yet fully formed
 --------------------------
 
-* Lazy loading of formatters (to reduce install dependancies)
+* Lazy loading of formatters (to reduce install dependencies)
 
 * Customize default rendering engine
 

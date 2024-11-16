@@ -26,7 +26,7 @@ class IUser(Interface):
      - launchpad identity
      - session identity
     """
-    email = Attribute("The user's email adderss.")
+    email = Attribute("The user's email address.")
     display_name = Attribute(
         "The name that is shown through the user interface.")
     committer_id = Attribute("The user's name and email address.")
