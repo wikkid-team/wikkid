@@ -1,0 +1,7 @@
+tag-name = "v$VERSION"
+release-timeout = 5
+
+[[update_version]]
+path = "wikkid/__init__.py"
+match = '^version = "(.*)"$'
+new-line = 'version = "$VERSION"'
