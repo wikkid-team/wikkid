@@ -4,7 +4,7 @@
 # This software is licensed under the GNU Affero General Public License
 # version 3 (see the file LICENSE).
 
-"""A text to html formatter using reStuctured Text."""
+"""A text to html formatter using restructured Text."""
 
 from docutils.core import publish_parts
 from zope.interface import implementer

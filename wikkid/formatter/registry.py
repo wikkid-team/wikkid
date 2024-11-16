@@ -67,7 +67,7 @@ def get_wiki_formatter(content: str, default_formatter: str) -> str:
     # pygments
 
     The first line must start with a # and the first word must specify
-    a formatter name.  If niether of those match, the default_formatter
+    a formatter name.  If neither of those match, the default_formatter
     is returned.  If the default_formatter doesn't exist, a key error
     is raised.
     """

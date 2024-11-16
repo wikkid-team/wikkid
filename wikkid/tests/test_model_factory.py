@@ -85,7 +85,7 @@ class TestFactoryGetResourceAtPath(FactoryTestCase):
         self.assertIs(None, info.dir_resource)
 
     def test_get_resource_at_path_not_text(self):
-        # If a file is reqeusted that has a suffix that isn't text,
+        # If a file is requested that has a suffix that isn't text,
         # a source text file object is returned,
         factory = self.make_factory([
                 ('sample.cpp', b'A c++ file'),

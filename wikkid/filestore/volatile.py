@@ -7,7 +7,7 @@
 """A volatile filestore.
 
 Used primarily for test purposes, this class should be a fully functional
-filestore, albiet one that doesn't remember anything persistently.
+filestore, albeit one that doesn't remember anything persistently.
 """
 
 from datetime import datetime
