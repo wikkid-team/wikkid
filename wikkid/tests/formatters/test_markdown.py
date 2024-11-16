@@ -105,7 +105,7 @@ class TestMarkdownFormatter(TestCase):
             """)
         result = self.formatter.format('filename', text)
         soup = BeautifulSoup(result, features="lxml")
-        self.assertTrue(soup.blockquote is not None)
+        self.assertIsNotNone(soup.blockquote)
 
     def test_lists(self):
         text = dedent("""\
