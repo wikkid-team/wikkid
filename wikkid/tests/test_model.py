@@ -106,7 +106,7 @@ class TestBaseParent(FactoryTestCase):
         missing = factory.get_resource_at_path('/SomeDir/NoPage')
         parent = missing.parent
         expected = factory.get_resource_at_path('/SomeDir')
-        self.assertEquals(expected.preferred_path, parent.preferred_path)
+        self.assertEqual(expected.preferred_path, parent.preferred_path)
 
 
 class TestDirectoryResource(FactoryTestCase):
