@@ -1,3 +1,55 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=61.2"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "Wikkid"
+description = "VCS-backed wiki"
+authors = [{name = "Wikkid Developers", email = "wikkid-dev@lists.launchpad.net"}]
+dependencies = [
+    "breezy",
+    "docutils",
+    "dulwich",
+    "jinja2",
+    "merge3",
+    "pygments",
+    "twisted",
+    "webob",
+    "zope.interface",
+]
+dynamic = ["version"]
+readme = "README.rst"
+
+[project.urls]
+Homepage = "https://launchpad.net/wikkid"
+Repository = "https://github.com/wikkid-team/wikkid"
+
+[project.optional-dependencies]
+dev = [
+    "testtools",
+    "bs4",
+    "lxml",
+]
+testing = [
+    "testtools",
+    "bs4",
+    "lxml",
+]
+
+[tool.setuptools]
+script-files = ["bin/wikkid-serve"]
+package-dir = {"breezy.plugins.wikkid" = "plugin"}
+include-package-data = true
+
+[tool.setuptools.packages]
+find = {namespaces = false}
+
+[tool.setuptools.package-data]
+"wikkid.skin" = [
+    "default/*.html",
+    "default/favicon.ico",
+    "default/static/*",
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "wikkid.version"}
