@@ -3,3 +3,5 @@
 __pycache__
 .testrepository/
 Wikkid.egg-info/
+dist
+build
