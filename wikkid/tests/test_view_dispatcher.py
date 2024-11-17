@@ -18,7 +18,7 @@ class TestGetView(TestCase):
 
     def test_no_interfaces(self):
         """If the object supports no interfaces, there is no view."""
-        class NoInterfaces(object):
+        class NoInterfaces:
             pass
         obj = NoInterfaces()
         self.assertIs(None, get_view(obj, None, None))
@@ -30,7 +30,7 @@ class TestGetView(TestCase):
             pass
 
         @implementer(IHasInterface)
-        class HasInterface(object):
+        class HasInterface:
             pass
         obj = HasInterface()
         self.assertIs(None, get_view(obj, None, None))
@@ -42,10 +42,10 @@ class TestGetView(TestCase):
             pass
 
         @implementer(IHasInterface)
-        class HasInterface(object):
+        class HasInterface:
             pass
 
-        class AView(object):
+        class AView:
             for_interface = IHasInterface
             name = 'name'
 
@@ -69,10 +69,10 @@ class TestGetView(TestCase):
             pass
 
         @implementer(IHasInterface)
-        class HasInterface(object):
+        class HasInterface:
             pass
 
-        class AView(object):
+        class AView:
             for_interface = IHasInterface
             name = 'name'
             is_default = True
@@ -99,7 +99,7 @@ class TestViewRegistration(TestCase):
             pass
 
         @implementer(IHasInterface)
-        class HasInterface(object):
+        class HasInterface:
             pass
 
         class AView(BaseView):

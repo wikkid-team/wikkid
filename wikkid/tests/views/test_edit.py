@@ -14,7 +14,7 @@ class TestEdit(ViewTestCase):
     """Test the edit view."""
 
     def setUp(self):
-        super(TestEdit, self).setUp()
+        super().setUp()
         self.user = TestUser('test@example.com', 'Test User')
 
     def test_title_nested(self):

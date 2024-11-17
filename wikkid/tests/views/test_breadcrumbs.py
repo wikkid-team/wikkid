@@ -17,7 +17,7 @@ class TestBreadcrumbs(ViewTestCase):
     # redirect to Home.  TODO: add a test browser test for this.
 
     def setUp(self):
-        super(TestBreadcrumbs, self).setUp()
+        super().setUp()
         self.user = TestUser('test@example.com', 'Test User')
         self.request = TestRequest()
 
