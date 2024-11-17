@@ -17,7 +17,7 @@ from wikkid.user.bzr import LocalBazaarUserMiddleware
 class TestLocalUserMiddleware(TestCaseWithTransport, ProvidesMixin):
 
     def setUp(self):
-        super(TestLocalUserMiddleware, self).setUp()
+        super().setUp()
         self.user = None
 
     def app_func(self, environment, start_response):

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2010 Wikkid Developers.
 #
 # This software is licensed under the GNU Affero General Public License
@@ -121,7 +120,7 @@ class TestTextileFormatter(TestCase):
 
     def test_unicode(self):
         # Test the unicode support of the textile formatter.
-        text = u'\N{SNOWMAN}'
+        text = '\N{SNOWMAN}'
         result = self.formatter.format('format', text)
         soup = BeautifulSoup(result)
         self.assertEqual(soup.p.string.strip(), text)
