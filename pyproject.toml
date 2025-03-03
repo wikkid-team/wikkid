@@ -18,6 +18,7 @@ dependencies = [
 ]
 dynamic = ["version"]
 readme = "README.rst"
+requires-python = ">=3.10"
 
 [project.urls]
 Homepage = "https://launchpad.net/wikkid"
