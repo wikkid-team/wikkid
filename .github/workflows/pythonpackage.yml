@@ -30,6 +30,8 @@ jobs:
         #python -m mypy wikkid
     - name: Ruff format
       run: ruff format --check .
+    - name: Ruff lint
+      run: ruff check .
     - name: Test suite run
       run: |
         python -m testtools.run discover wikkid.tests
