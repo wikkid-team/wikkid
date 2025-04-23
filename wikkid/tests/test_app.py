@@ -21,7 +21,6 @@ from wikkid.tests import TestCase
 
 
 class TestApp(TestCase):
-
     def assert_not_found(self, status, headers):
         self.assertEqual("404 Not Found", status)
 
@@ -50,14 +49,12 @@ class TestApp(TestCase):
         app(environ, self.assert_not_found)
 
     def test_getting_static_style_css_works(self):
-
         environ = environ_from_url("/static/default.css")
         filestore = FileStore()
         app = WikkidApp(filestore)
         app(environ, self.assert_ok)
 
     def test_getting_static_style_css_works_with_script_name(self):
-
         environ = environ_from_url("/test/static/default.css")
         filestore = FileStore()
         context = ExecutionContext(script_name="/test")
@@ -78,8 +75,7 @@ class TestApp(TestCase):
         app = WikkidApp(filestore, execution_context=context)
         app(environ, self.assert_not_found)
 
-    def assertUrlIsView(self, url, view_type,
-                        script_name=None, store_content=None):
+    def assertUrlIsView(self, url, view_type, script_name=None, store_content=None):
         environ = environ_from_url(url)
         filestore = FileStore(store_content)
         context = ExecutionContext(script_name=script_name)
@@ -97,5 +93,5 @@ class TestApp(TestCase):
         self.assertUrlIsView("/Home", MissingPage)
 
     def test_get_home_view(self):
-        content = [('Home.txt', 'Welcome Home.')]
+        content = [("Home.txt", "Welcome Home.")]
         self.assertUrlIsView("/Home", WikiPage, store_content=content)

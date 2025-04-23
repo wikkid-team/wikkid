@@ -32,12 +32,12 @@ class LocalGitUserMiddleware(object):
     def __init__(self, app, repo):
         self.app = app
         config = repo.get_config_stack()
-        email = config.get(("user", ), "email")
-        name = config.get(("user", ), "name")
+        email = config.get(("user",), "email")
+        name = config.get(("user",), "name")
         self.user = User(email, name, "%s <%s>" % (name, email))
 
     def __call__(self, environ, start_response):
-        environ['wikkid.user'] = self.user
+        environ["wikkid.user"] = self.user
         req = Request(environ)
         resp = req.get_response(self.app)
         return resp(environ, start_response)
@@ -51,10 +51,10 @@ class UserFactory(object):
         """Use the user config from the branch."""
         config = branch.get_config()
         self.user = create_git_user_from_author_string(config.username())
-        logger = logging.getLogger('wikkid')
+        logger = logging.getLogger("wikkid")
         logger.info(
-            'Using git identity: "%s", "%s"',
-            self.user.display_name, self.user.email)
+            'Using git identity: "%s", "%s"', self.user.display_name, self.user.email
+        )
 
     def create(self, request):
         """Create a User."""

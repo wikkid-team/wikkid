@@ -16,22 +16,21 @@ class IDefaultPage(Interface):
 class IResource(Interface):
     """The base resource interface."""
 
-    path = Attribute('The full path for the resource.')
+    path = Attribute("The full path for the resource.")
 
-    preferred_path = Attribute('The preferred path for the resource.')
+    preferred_path = Attribute("The preferred path for the resource.")
 
     write_filename = Attribute(
-        'The full path of the file to write to in the filestore. '
-        'This is either the filename as it directly corresponds to the '
-        'path, or a related wiki page location.')
+        "The full path of the file to write to in the filestore. "
+        "This is either the filename as it directly corresponds to the "
+        "path, or a related wiki page location."
+    )
 
     root_resource = Attribute(
-        'The root resource is the object that represents the root of the wiki.'
-        )
+        "The root resource is the object that represents the root of the wiki."
+    )
 
-    default_resource = Attribute(
-        'The default resource is the default wiki page.'
-        )
+    default_resource = Attribute("The default resource is the default wiki page.")
 
 
 class IUpdatableResource(IResource):
@@ -52,23 +51,25 @@ class IFileResource(IUpdatableResource):
     """A resource that relates to a file in the filestore."""
 
     # TODO: think of a better variable name.
-    file_resource = Attribute(
-        'An IFile representing the file in the filestore.')
+    file_resource = Attribute("An IFile representing the file in the filestore.")
 
-    mimetype = Attribute('The mimetype of the file.')
+    mimetype = Attribute("The mimetype of the file.")
 
     def get_bytes():
         """Returns the bytes of the binary file."""
 
     last_modified_in_revision = Attribute(
-        'The revision id where the file was last modified.')
+        "The revision id where the file was last modified."
+    )
 
     last_modified_by = Attribute(
-        'The author of the revision that last modified the file.')
+        "The author of the revision that last modified the file."
+    )
 
     last_modified_date = Attribute(
-        'The timestamp of the revision that last modified the file. '
-        'This is a naive datetime object in UTC.')
+        "The timestamp of the revision that last modified the file. "
+        "This is a naive datetime object in UTC."
+    )
 
 
 class IDirectoryResource(IResource):
@@ -81,8 +82,7 @@ class IDirectoryResource(IResource):
         """
 
     # TODO: think of a better variable name.
-    dir_resource = Attribute(
-        'An IFile representing the directory in the filestore.')
+    dir_resource = Attribute("An IFile representing the directory in the filestore.")
 
     def get_listing():
         """Returns a list of objects."""
@@ -91,8 +91,7 @@ class IDirectoryResource(IResource):
 class IRootResource(IDirectoryResource):
     """A special resource relating to the root object in the wiki."""
 
-    has_home_page = Attribute(
-        'True if there is a home wiki page defined.')
+    has_home_page = Attribute("True if there is a home wiki page defined.")
 
 
 class IBinaryFile(IFileResource):

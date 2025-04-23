@@ -13,15 +13,14 @@ from wikkid.tests import TestCase
 
 
 class TestContext(TestCase):
-
     def test_empty_script_name(self):
         context = ExecutionContext()
-        self.assertThat(context.script_name, Equals(''))
+        self.assertThat(context.script_name, Equals(""))
 
     def test_script_name(self):
-        context = ExecutionContext(script_name='/foo')
-        self.assertThat(context.script_name, Equals('/foo'))
+        context = ExecutionContext(script_name="/foo")
+        self.assertThat(context.script_name, Equals("/foo"))
 
     def test_script_name_strips_trailing_slash(self):
-        context = ExecutionContext(script_name='/foo/')
-        self.assertThat(context.script_name, Equals('/foo'))
+        context = ExecutionContext(script_name="/foo/")
+        self.assertThat(context.script_name, Equals("/foo"))

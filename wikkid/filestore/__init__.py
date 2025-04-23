@@ -17,6 +17,7 @@ class FileExists(Exception):
 
 class UpdateConflicts(Exception):
     """Conflicts were found during updating."""
+
     def __init__(self, content, basis_rev):
         Exception.__init__(self)
         self.content = content

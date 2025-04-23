@@ -12,6 +12,7 @@ This stops us reading the entire file into memory when we serve it.
 
 class FileIterable(object):
     """An iterable file-like object."""
+
     def __init__(self, filename, start=None, stop=None):
         self.filename = filename
         self.start = start
@@ -35,7 +36,7 @@ class FileIterator(object):
 
     def __init__(self, filename, start, stop):
         self.filename = filename
-        self.fileobj = open(self.filename, 'rb')
+        self.fileobj = open(self.filename, "rb")
         if start:
             self.fileobj.seek(start)
         if stop is not None:
@@ -56,5 +57,5 @@ class FileIterator(object):
             self.length -= len(chunk)
             if self.length < 0:
                 # Chop off the extra:
-                chunk = chunk[:self.length]
+                chunk = chunk[: self.length]
         return chunk

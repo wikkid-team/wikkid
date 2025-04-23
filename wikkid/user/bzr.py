@@ -35,7 +35,7 @@ class LocalBazaarUserMiddleware(object):
         self.user = create_bzr_user_from_author_string(config.username())
 
     def __call__(self, environ, start_response):
-        environ['wikkid.user'] = self.user
+        environ["wikkid.user"] = self.user
         req = Request(environ)
         resp = req.get_response(self.app)
         return resp(environ, start_response)
@@ -49,10 +49,10 @@ class UserFactory(object):
         """Use the user config from the branch."""
         config = branch.get_config()
         self.user = create_bzr_user_from_author_string(config.username())
-        logger = logging.getLogger('wikkid')
+        logger = logging.getLogger("wikkid")
         logger.info(
-            'Using bzr identity: "%s", "%s"',
-            self.user.display_name, self.user.email)
+            'Using bzr identity: "%s", "%s"', self.user.display_name, self.user.email
+        )
 
     def create(self, request):
         """Create a User."""

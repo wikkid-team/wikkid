@@ -24,7 +24,7 @@ from wikkid.model.wikitext import WikiTextFile
 class ResourceFactory(object):
     """Factory to create the model objects used by the views."""
 
-    DEFAULT_PATH = 'Home'
+    DEFAULT_PATH = "Home"
 
     def __init__(self, filestore):
         """Construct the factory.
@@ -34,43 +34,36 @@ class ResourceFactory(object):
         :param skin_name: The name of a skin to use.
         """
         self.filestore = filestore
-        self.logger = logging.getLogger('wikkid')
+        self.logger = logging.getLogger("wikkid")
 
     def get_resource(self, path, file_path, file_resource, dir_resource):
         """Return the correct type of resource based on the params."""
         filename = basename(file_path)
-        if path == '/':
-            return RootResource(
-                self, path, file_path, file_resource, None)
+        if path == "/":
+            return RootResource(self, path, file_path, file_resource, None)
         elif file_resource is not None:
             # We are pointing at a file.
             file_type = file_resource.file_type
             if file_type == FileType.BINARY_FILE:
                 # Binary resources have no associated directory.
-                return BinaryResource(
-                    self, path, file_path, file_resource, None)
+                return BinaryResource(self, path, file_path, file_resource, None)
             # This is known to be not entirely right.
-            if filename.endswith('.txt') or '.' not in file_resource.base_name:
-                return WikiTextFile(
-                    self, path, file_path, file_resource,
-                    dir_resource)
+            if filename.endswith(".txt") or "." not in file_resource.base_name:
+                return WikiTextFile(self, path, file_path, file_resource, dir_resource)
             else:
-                return SourceTextFile(
-                    self, path, file_path, file_resource, None)
+                return SourceTextFile(self, path, file_path, file_resource, None)
         elif dir_resource is not None:
-            return DirectoryResource(
-                self, path, file_path, None, dir_resource)
+            return DirectoryResource(self, path, file_path, None, dir_resource)
         else:
-            return MissingResource(
-                self, path, file_path, None, None)
+            return MissingResource(self, path, file_path, None, None)
 
     def get_default_resource(self):
         """Return the Home resource."""
-        return self.get_resource_at_path('/' + self.DEFAULT_PATH)
+        return self.get_resource_at_path("/" + self.DEFAULT_PATH)
 
     def get_root_resource(self):
         """Return the root resource."""
-        return self.get_resource_at_path('/')
+        return self.get_resource_at_path("/")
 
     def get_resource_at_path(self, path):
         """Get the resource from the filestore for the specified path.
@@ -79,10 +72,10 @@ class ResourceFactory(object):
         the filestore does not expect nor want a leading slash.  It is the
         responsibility of this method to remove the leading slash.
         """
-        assert path.startswith('/')
+        assert path.startswith("/")
         file_path = path[1:]
         is_default = False
-        if file_path == '' or file_path == self.DEFAULT_PATH:
+        if file_path == "" or file_path == self.DEFAULT_PATH:
             file_path = self.DEFAULT_PATH
             is_default = True
 
@@ -96,12 +89,11 @@ class ResourceFactory(object):
                 dir_resource = file_resource
                 file_resource = None
 
-        if '.' not in basename(file_path):
-            file_path += '.txt'
+        if "." not in basename(file_path):
+            file_path += ".txt"
             file_resource = self.filestore.get_file(file_path)
 
-        resource = self.get_resource(
-            path, file_path, file_resource, dir_resource)
+        resource = self.get_resource(path, file_path, file_resource, dir_resource)
         if is_default:
             directlyProvides(resource, IDefaultPage)
         return resource
@@ -116,12 +108,12 @@ class ResourceFactory(object):
         should be '/Home' providing Home is the default path..
         """
         filename = basename(path)
-        if filename.endswith('.txt'):
+        if filename.endswith(".txt"):
             filename = filename[:-4]
 
-        if path == '/':
-            return '/' + self.DEFAULT_PATH
-        elif '.' in filename:
+        if path == "/":
+            return "/" + self.DEFAULT_PATH
+        elif "." in filename:
             return path
         else:
             return joinpath(dirname(path), filename)

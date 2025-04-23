@@ -30,18 +30,18 @@ class EditTextFile(BaseEditView):
         # We want to pass unicode to the view.
         byte_string = self.context.get_bytes()
         try:
-            return byte_string.decode('utf-8')
+            return byte_string.decode("utf-8")
         except UnicodeDecodeError:
             try:
-                return byte_string.decode('latin-1')
+                return byte_string.decode("latin-1")
             except UnicodeDecodeError:
-                return byte_string.decode('ascii', 'replace')
+                return byte_string.decode("ascii", "replace")
 
 
 class SaveNewTextContent(BaseEditView):
     """Update the text of a file."""
 
-    name = 'save'
+    name = "save"
 
     def _render(self, skin):
         """Save the text file.
@@ -52,30 +52,30 @@ class SaveNewTextContent(BaseEditView):
         # TODO: barf on a GET
         # TODO: barf if there is no user.
         params = self.request.params
-        content = params['content']
-        description = params['description']
-        rev_id = (
-            params['rev-id'].encode('utf-8') if 'rev-id' in params else None)
-        preview = params.get('preview', None)
+        content = params["content"]
+        description = params["description"]
+        rev_id = params["rev-id"].encode("utf-8") if "rev-id" in params else None
+        preview = params.get("preview", None)
         if preview is not None:
             self.rev_id = rev_id
             self.description = description
             self.content = content
             default_format = self.execution_context.default_format
             self.preview_content = format_content(
-                content, self.context.base_name, default_format)
+                content, self.context.base_name, default_format
+            )
         else:
             try:
                 self.context.put_bytes(
-                    content.encode('utf-8'), self.user.committer_id, rev_id,
-                    description)
+                    content.encode("utf-8"), self.user.committer_id, rev_id, description
+                )
 
                 location = self.canonical_url(self.context)
                 raise HTTPSeeOther(location=location)
             except UpdateConflicts as e:
                 # Show the edit page again.
-                logger = logging.getLogger('wikkid')
-                logger.info('Conflicts detected: \n%r\n', e.content)
+                logger = logging.getLogger("wikkid")
+                logger.info("Conflicts detected: \n%r\n", e.content)
                 self.rev_id = e.basis_rev
                 self.content = e.content
                 self.message = "Conflicts detected during merge."
@@ -85,5 +85,4 @@ class SaveNewTextContent(BaseEditView):
 
 
 class UpdateTextFile(SaveNewTextContent):
-
     for_interface = ITextFile

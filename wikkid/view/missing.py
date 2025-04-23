@@ -29,25 +29,25 @@ class MissingPage(BaseMissingView):
     """A wiki page that does not exist."""
 
     for_interface = IMissingResource
-    name = 'view'
+    name = "view"
     is_default = True
-    template = 'missing'
+    template = "missing"
 
     @property
     def content(self):
-        '%s Not found' % self.path
+        "%s Not found" % self.path
 
 
 class MissingDirectory(BaseMissingView):
     """A wiki directory that does not exist."""
 
     for_interface = IMissingResource
-    name = 'listing'
-    template = 'missing-dir'
+    name = "listing"
+    template = "missing-dir"
 
     @property
     def content(self):
-        '%s Not found' % self.path
+        "%s Not found" % self.path
 
 
 class NewWikiPage(BaseEditView):
@@ -61,9 +61,8 @@ class NewWikiPage(BaseEditView):
 
     @property
     def content(self):
-        return ''
+        return ""
 
 
 class SaveNewTextFile(SaveNewTextContent):
-
     for_interface = IMissingResource

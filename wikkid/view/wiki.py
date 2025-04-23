@@ -15,7 +15,7 @@ from wikkid.view.base import BaseView
 
 
 def format_content(bytes, base_name, default_format):
-    """ Format the content with the right formatter.
+    """Format the content with the right formatter.
 
     Check the first line of the content to see if it specifies a
     formatter. The default is currently ReST, but we should have it
@@ -29,20 +29,20 @@ class WikiPage(BaseView):
     """A wiki page is a page that is going to be rendered for viewing."""
 
     for_interface = IWikiTextFile
-    name = 'view'
+    name = "view"
     is_default = True
-    template = 'view_page'
+    template = "view_page"
 
     @property
     def content(self):
         bytes = self.context.get_bytes()
         try:
-            text = bytes.decode('utf-8')
+            text = bytes.decode("utf-8")
         except UnicodeDecodeError:
             try:
-                text = bytes.decode('latin-1')
+                text = bytes.decode("latin-1")
             except UnicodeDecodeError:
-                text = bytes.decode('ascii', 'replace')
+                text = bytes.decode("ascii", "replace")
 
         default_format = self.execution_context.default_format
         return format_content(text, self.context.base_name, default_format)

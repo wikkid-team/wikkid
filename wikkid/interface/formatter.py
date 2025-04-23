@@ -6,7 +6,6 @@
 
 """Interface for the text formatters."""
 
-
 from zope.interface import Interface
 
 

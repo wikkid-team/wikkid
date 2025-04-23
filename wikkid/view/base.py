@@ -48,8 +48,8 @@ class BaseView(object, metaclass=BaseViewMetaClass):
         self.context = context
         self.request = request
         if request is not None:
-            self.user = request.environ.get('wikkid.user', None)
-        self.logger = logging.getLogger('wikkid')
+            self.user = request.environ.get("wikkid.user", None)
+        self.logger = logging.getLogger("wikkid")
 
     def _create_breadcrumbs(self):
         crumbs = [Breadcrumb(self.context, self.request)]
@@ -82,7 +82,7 @@ class BaseView(object, metaclass=BaseViewMetaClass):
         last_modified = self.context.last_modified_date
         if last_modified is None:
             return None
-        return last_modified.strftime('%Y-%m-%d %H:%M:%S')
+        return last_modified.strftime("%Y-%m-%d %H:%M:%S")
 
     def before_render(self):
         """A hook to do things before rendering."""
@@ -96,12 +96,12 @@ class BaseView(object, metaclass=BaseViewMetaClass):
         :returns: A dict of values.
         """
         return {
-            'view': self,
-            'user': self.user,
-            'context': self.context,
-            'request': self.request,
-            'canonical_url': self.canonical_url,
-            }
+            "view": self,
+            "user": self.user,
+            "context": self.context,
+            "request": self.request,
+            "canonical_url": self.canonical_url,
+        }
 
     def _render(self, skin):
         """Get the template and render with the args.
@@ -112,7 +112,7 @@ class BaseView(object, metaclass=BaseViewMetaClass):
         template = skin.get_template(self.template)
         content = template.render(**self.template_args())
         # Return the encoded content.
-        return self.make_response(content.encode('utf-8'))
+        return self.make_response(content.encode("utf-8"))
 
     def make_response(self, body):
         """Construct the response object for this request.
@@ -139,14 +139,14 @@ class DirectoryBreadcrumbView(BaseView):
         current = self.context
         view = None
         while not IRootResource.providedBy(current):
-            crumbs.append(Breadcrumb(
-                    current, self.request, view, title=current.base_name))
+            crumbs.append(
+                Breadcrumb(current, self.request, view, title=current.base_name)
+            )
             current = current.parent
             # Add listings to subsequent urls.
-            view = 'listing'
+            view = "listing"
         # Add in the root dir.
-        crumbs.append(Breadcrumb(current, self.request, 'listing',
-                                 title='wiki root'))
+        crumbs.append(Breadcrumb(current, self.request, "listing", title="wiki root"))
         # And add in the default page.
         crumbs.append(Breadcrumb(current.default_resource, self.request))
         return reversed(crumbs)

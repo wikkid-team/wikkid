@@ -20,7 +20,8 @@ class UpdatableResource(BaseResource):
     def put_bytes(self, content: bytes, committer, rev_id, commit_msg):
         """Update the file resource."""
         self.factory.filestore.update_file(
-            self.write_filename, content, committer, rev_id, commit_msg)
+            self.write_filename, content, committer, rev_id, commit_msg
+        )
 
 
 @implementer(IFileResource)
@@ -41,8 +42,7 @@ class FileResource(UpdatableResource):
 
     @property
     def last_modified_by(self):
-        return create_bzr_user_from_author_string(
-            self.file_resource.last_modified_by)
+        return create_bzr_user_from_author_string(self.file_resource.last_modified_by)
 
     def get_bytes(self):
         return self.file_resource.get_content()

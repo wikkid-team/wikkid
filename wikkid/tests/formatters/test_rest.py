@@ -28,7 +28,7 @@ class TestRestructuredTextFormatter(TestCase):
 
             Simple sentence.
             """)
-        result = self.formatter.format('filename', text)
+        result = self.formatter.format("filename", text)
         soup = BeautifulSoup(result, features="lxml")
-        self.assertEqual('Nice Heading', soup.h1.string)
-        self.assertEqual('Simple sentence.', soup.p.string)
+        self.assertEqual("Nice Heading", soup.h1.string)
+        self.assertEqual("Simple sentence.", soup.p.string)

@@ -36,9 +36,9 @@ class FileStore(object):
         self.path_map = {}
         if files is None:
             files = []
-        user = 'First User <first@example.com'
+        user = "First User <first@example.com"
         for path, content in files:
-            if path.endswith('/'):
+            if path.endswith("/"):
                 self._ensure_dir(path[:-1], user)
             else:
                 self._add_file(path, content, user)
@@ -52,8 +52,8 @@ class FileStore(object):
             # Check to make sure that it is a directory.
             if self.path_map[path].file_type != FileType.DIRECTORY:
                 raise FileExists(
-                    "Found a file at '%s' where a directory is needed"
-                    % path)
+                    "Found a file at '%s' where a directory is needed" % path
+                )
             return
         # Check to make sure the parent is in there too.
         self._ensure_dir(dirname(path), user)
@@ -74,8 +74,7 @@ class FileStore(object):
         else:
             return None
 
-    def update_file(self, path, content, user, parent_revision,
-                    commit_message=None):
+    def update_file(self, path, content, user, parent_revision, commit_message=None):
         """The `user` is updating the file at `path` with `content`."""
         existing_file = self.get_file(path)
         if existing_file is None:
@@ -93,7 +92,7 @@ class FileStore(object):
         that directory.
         """
         if directory_path is None:
-            directory_path = ''
+            directory_path = ""
         else:
             directory = self.get_file(directory_path)
             if directory is None or not directory._is_directory:
@@ -127,7 +126,7 @@ class File(BaseFile):
             if self._mimetype is None:
                 binary = self._is_binary
             else:
-                binary = not self._mimetype.startswith('text/')
+                binary = not self._mimetype.startswith("text/")
             if binary:
                 return FileType.BINARY_FILE
             else:
@@ -142,4 +141,4 @@ class File(BaseFile):
 
     @property
     def _is_binary(self):
-        return b'\0' in self.content
+        return b"\0" in self.content

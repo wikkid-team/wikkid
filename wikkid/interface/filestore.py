@@ -20,8 +20,7 @@ class IFileStore(Interface):
     def get_file(path):
         """Return an object representing the file at specified path."""
 
-    def update_file(path, content, author, parent_revision,
-                    commit_message=None):
+    def update_file(path, content, author, parent_revision, commit_message=None):
         """Update a text file at the given path with the content.
 
         :param path: The path of the file.
@@ -66,26 +65,27 @@ class IFile(Interface):
     """A file from the file store."""
 
     path = Attribute(
-        "The full path of the page with respect to the root of the "
-        "file store.")
+        "The full path of the page with respect to the root of the file store."
+    )
 
     base_name = Attribute("The last part of the path.")
 
     file_type = Attribute("Soon to be a Choice with a lazr.enum.")
 
     mimetype = Attribute(
-        "The guessed mimetype for the file. Directories don't have a "
-        "mimetype.")
+        "The guessed mimetype for the file. Directories don't have a mimetype."
+    )
 
     last_modified_in_revision = Attribute(
-        "The revision id of the last revision that this file was "
-        "modified in.")
+        "The revision id of the last revision that this file was modified in."
+    )
 
     last_modified_by = Attribute("The person who last modified the file.")
 
     last_modified_date = Attribute(
-        'The timestamp of the revision that last modified the file. '
-        'This is a naive datetime object in UTC.')
+        "The timestamp of the revision that last modified the file. "
+        "This is a naive datetime object in UTC."
+    )
 
     def get_content():
         """Get the contents of the file.
