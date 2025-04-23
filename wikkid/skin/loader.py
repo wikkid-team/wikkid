@@ -26,19 +26,19 @@ class Skin(object):
         """Load the required templates."""
         # Need to load the initial templates for the skin.
         if skin_name is None:
-            skin_name = 'default'
-        self.logger = logging.getLogger('wikkid')
+            skin_name = "default"
+        self.logger = logging.getLogger("wikkid")
         # TODO: if we are using a user defined directory for the skin, here is
         # where we'd use a different loader.
-        loader = PackageLoader('wikkid.skin', skin_name)
+        loader = PackageLoader("wikkid.skin", skin_name)
         self.env = Environment(loader=loader)
         self.templates = {
-            'view_page': self.env.get_template('page.html'),
-            'edit_page': self.env.get_template('edit.html'),
-            'view_directory': self.env.get_template('directory_listing.html'),
-            'missing': self.env.get_template('missing-page.html'),
-            'missing-dir': self.env.get_template('missing-directory.html')
-            }
+            "view_page": self.env.get_template("page.html"),
+            "edit_page": self.env.get_template("edit.html"),
+            "view_directory": self.env.get_template("directory_listing.html"),
+            "missing": self.env.get_template("missing-page.html"),
+            "missing-dir": self.env.get_template("missing-directory.html"),
+        }
         module_location = urlutils.dirname(__file__)
         self.dir_name = urlutils.joinpath(module_location, skin_name)
 
@@ -47,8 +47,7 @@ class Skin(object):
 
     @property
     def favicon(self):
-        location = os.path.abspath(
-            urlutils.joinpath(self.dir_name, 'favicon.ico'))
+        location = os.path.abspath(urlutils.joinpath(self.dir_name, "favicon.ico"))
         if os.path.exists(location):
             return location
         else:
@@ -56,8 +55,7 @@ class Skin(object):
 
     @property
     def static_dir(self):
-        location = os.path.abspath(
-            urlutils.joinpath(self.dir_name, 'static'))
+        location = os.path.abspath(urlutils.joinpath(self.dir_name, "static"))
         if os.path.exists(location):
             return location
         else:

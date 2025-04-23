@@ -16,10 +16,10 @@ class BinaryFile(BaseView):
     """Renders a binary file with its mimetype."""
 
     for_interface = IBinaryFile
-    name = 'view'
+    name = "view"
     is_default = True
 
     def _render(self, skin):
         return Response(
-            body=self.context.get_bytes(),
-            content_type=self.context.mimetype)
+            body=self.context.get_bytes(), content_type=self.context.mimetype
+        )

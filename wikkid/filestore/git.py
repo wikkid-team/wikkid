@@ -4,9 +4,7 @@
 # This software is licensed under the GNU Affero General Public License
 # version 3 (see the file LICENSE).
 
-"""A git filestore using Dulwich.
-
-"""
+"""A git filestore using Dulwich."""
 
 import datetime
 import mimetypes
@@ -28,13 +26,13 @@ from wikkid.interface.filestore import FileType, IFile, IFileStore
 class FileStore(object):
     """A filestore that just uses an internal map to store data."""
 
-    _encoding = 'utf-8'
+    _encoding = "utf-8"
 
     @classmethod
     def from_path(cls, path):
         return cls(Repo(path))
 
-    def __init__(self, repo, ref=b'HEAD'):
+    def __init__(self, repo, ref=b"HEAD"):
         """Repo is a dulwich repository."""
         self.repo = repo
         self.ref = ref
@@ -61,15 +59,13 @@ class FileStore(object):
             return None
         try:
             (mode, sha) = tree_lookup_path(
-                self.store.__getitem__,
-                root_id, path.encode(self._encoding))
+                self.store.__getitem__, root_id, path.encode(self._encoding)
+            )
         except KeyError:
             return None
-        return File(
-            self.store, mode, sha, path, commit_id, encoding=self._encoding)
+        return File(self.store, mode, sha, path, commit_id, encoding=self._encoding)
 
-    def update_file(self, path, content, author, parent_revision,
-                    commit_message=None):
+    def update_file(self, path, content, author, parent_revision, commit_message=None):
         """The `author` is updating the file at `path` with `content`."""
         commit_id, root_id = self._get_root()
         if root_id is None:
@@ -87,8 +83,7 @@ class FileStore(object):
                 tree = Tree()
             else:
                 if not stat.S_ISDIR(mode):
-                    raise FileExists(
-                        "File %s exists and is not a directory" % el)
+                    raise FileExists("File %s exists and is not a directory" % el)
                 tree = self.store[sha]
             trees.append(tree)
         if elements[-1] in tree:
@@ -97,8 +92,8 @@ class FileStore(object):
                 raise FileExists("File %s exists and is a directory" % path)
             if old_sha != parent_revision and parent_revision is not None:
                 raise UpdateConflicts(
-                    "File conflict %s != %s" % (
-                        old_sha, parent_revision), old_sha)
+                    "File conflict %s != %s" % (old_sha, parent_revision), old_sha
+                )
         if not isinstance(content, bytes):
             raise TypeError(content)
         blob = Blob.from_string(content)
@@ -115,8 +110,11 @@ class FileStore(object):
         if author is not None:
             author = author.encode(self._encoding)
         self.repo.do_commit(
-            ref=self.ref, message=commit_message.encode(self._encoding),
-            author=author, tree=child[1])
+            ref=self.ref,
+            message=commit_message.encode(self._encoding),
+            author=author,
+            tree=child[1],
+        )
 
     def list_directory(self, directory_path):
         """Return a list of File objects for in the directory path.
@@ -126,11 +124,11 @@ class FileStore(object):
         that directory.
         """
         if directory_path is None:
-            directory_path = ''
+            directory_path = ""
         else:
             directory_path = directory_path.strip(posixpath.sep)
         commit_id, root_id = self._get_root()
-        if directory_path == '':
+        if directory_path == "":
             sha = root_id
             mode = stat.S_IFDIR
         else:
@@ -139,17 +137,24 @@ class FileStore(object):
             try:
                 (mode, sha) = tree_lookup_path(
                     self.store.__getitem__,
-                    root_id, directory_path.encode(self._encoding))
+                    root_id,
+                    directory_path.encode(self._encoding),
+                )
             except KeyError:
                 return None
         if mode is not None and stat.S_ISDIR(mode):
             ret = []
-            for (name, mode, sha) in self.store[sha].items():
+            for name, mode, sha in self.store[sha].items():
                 ret.append(
-                    File(self.store, mode, sha,
-                         posixpath.join(
-                             directory_path, name.decode(self._encoding)),
-                         commit_id, encoding=self._encoding))
+                    File(
+                        self.store,
+                        mode,
+                        sha,
+                        posixpath.join(directory_path, name.decode(self._encoding)),
+                        commit_id,
+                        encoding=self._encoding,
+                    )
+                )
             return ret
         else:
             return None
@@ -178,7 +183,7 @@ class File(object):
             if self.mimetype is None:
                 binary = self._is_binary
             else:
-                binary = not self.mimetype.startswith('text/')
+                binary = not self.mimetype.startswith("text/")
             if binary:
                 return FileType.BINARY_FILE
             else:
@@ -197,12 +202,14 @@ class File(object):
 
     @property
     def _is_binary(self):
-        return b'\0' in self.get_content()
+        return b"\0" in self.get_content()
 
     def _get_last_modified_commit(self):
         walker = Walker(
-            self.store, include=[self.commit_sha],
-            paths=[self.path.encode(self.encoding)])
+            self.store,
+            include=[self.commit_sha],
+            paths=[self.path.encode(self.encoding)],
+        )
         return next(iter(walker)).commit
 
     @property

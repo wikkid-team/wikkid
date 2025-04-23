@@ -16,7 +16,7 @@ class RootPage(BaseView):
     """The default view for the root page redirects to the home page."""
 
     for_interface = IRootResource
-    name = 'view'
+    name = "view"
     is_default = True
 
     def _render(self, skin):

@@ -31,9 +31,9 @@ class DirectoryListingPage(DirectoryBreadcrumbView):
     """
 
     for_interface = IDirectoryResource
-    name = 'listing'
+    name = "listing"
     is_default = False
-    template = 'view_directory'
+    template = "view_directory"
 
     def before_render(self):
         """Get the listing and split it into directories and files."""
@@ -50,26 +50,24 @@ class DirectoryListingPage(DirectoryBreadcrumbView):
 
         items = []
         # If we are looking at / don't add a parent dir.
-        if self.context.path != '/':
+        if self.context.path != "/":
             parent = self.context.parent
-            items.append(
-                ListingItem(parent, self.request, 'listing', 'up', name='..'))
+            items.append(ListingItem(parent, self.request, "listing", "up", name=".."))
         for item in sorted(directories, key=sort_key):
-            items.append(
-                ListingItem(item, self.request, 'listing', 'directory'))
+            items.append(ListingItem(item, self.request, "listing", "directory"))
         for item in sorted(files, key=sort_key):
-            items.append(ListingItem(item, self.request, None, 'file'))
+            items.append(ListingItem(item, self.request, None, "file"))
         self.items = items
 
     @property
     def content(self):
-        return 'Directory listing for %s' % self.path
+        return "Directory listing for %s" % self.path
 
     @property
     def title(self):
         """The title is just the directory path."""
         dir_name = self.context.get_dir_name()
         if dir_name is None:
-            return 'Wiki Root'
+            return "Wiki Root"
         else:
             return dir_name

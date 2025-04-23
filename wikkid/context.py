@@ -7,8 +7,8 @@
 
 """A means of storing execution context."""
 
-DEFAULT_FORMAT = 'rest'
-DEFAULT_HOST = 'localhost'
+DEFAULT_FORMAT = "rest"
+DEFAULT_HOST = "localhost"
 DEFAULT_PORT = 8080
 
 
@@ -18,8 +18,7 @@ class ExecutionContext(object):
     This is the Encapsulate Context pattern.
     """
 
-    def __init__(self, host=None, port=None, default_format=None,
-                 script_name=None):
+    def __init__(self, host=None, port=None, default_format=None, script_name=None):
         """Create an execution context for the application.
 
         :param host: The hostname that content is being served from.
@@ -39,5 +38,5 @@ class ExecutionContext(object):
         # TODO: make sure the script_name if set starts with a slash and
         # doesn't finish with one.
         if script_name is None:
-            script_name = ''
-        self.script_name = script_name.rstrip('/')
+            script_name = ""
+        self.script_name = script_name.rstrip("/")

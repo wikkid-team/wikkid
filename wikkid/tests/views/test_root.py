@@ -20,37 +20,31 @@ class TestRootViews(ViewTestCase):
     def test_root_redirects(self):
         """Going to / redirects to the Home page."""
         factory = self.make_factory()
-        view = self.get_view(factory, '/')
-        error = self.assertRaises(
-            HTTPSeeOther,
-            view.render,
-            None)
-        self.assertEqual('/Home', error.headers['Location'])
+        view = self.get_view(factory, "/")
+        error = self.assertRaises(HTTPSeeOther, view.render, None)
+        self.assertEqual("/Home", error.headers["Location"])
 
     def test_root_redirects_with_script_name(self):
         """Redirection works and respects the script name"""
         factory = self.make_factory()
-        view = self.get_view(factory, '/', base_url='/p/test')
-        error = self.assertRaises(
-            HTTPSeeOther,
-            view.render,
-            None)
-        self.assertEqual('/p/test/Home', error.headers['Location'])
+        view = self.get_view(factory, "/", base_url="/p/test")
+        error = self.assertRaises(HTTPSeeOther, view.render, None)
+        self.assertEqual("/p/test/Home", error.headers["Location"])
 
     def test_home_rendering(self):
         """Render the home page and test the elements."""
         factory = self.make_factory()
-        view = self.get_view(factory, '/Home')
-        content = view.render(Skin('default'))
+        view = self.get_view(factory, "/Home")
+        content = view.render(Skin("default"))
         soup = BeautifulSoup(content.text, features="lxml")
-        [style] = soup.find_all('link', {'rel': 'stylesheet'})
-        self.assertThat(style['href'], Equals('/static/default.css'))
+        [style] = soup.find_all("link", {"rel": "stylesheet"})
+        self.assertThat(style["href"], Equals("/static/default.css"))
 
     def test_home_rendering_with_script_name(self):
         """Render the home page and test the elements."""
         factory = self.make_factory()
-        view = self.get_view(factory, '/Home', base_url='/p/test')
-        content = view.render(Skin('default'))
+        view = self.get_view(factory, "/Home", base_url="/p/test")
+        content = view.render(Skin("default"))
         soup = BeautifulSoup(content.text, features="lxml")
-        [style] = soup.find_all('link', {'rel': 'stylesheet'})
-        self.assertThat(style['href'], Equals('/p/test/static/default.css'))
+        [style] = soup.find_all("link", {"rel": "stylesheet"})
+        self.assertThat(style["href"], Equals("/p/test/static/default.css"))

@@ -21,10 +21,10 @@ from wikkid.interface.resource import IDirectoryResource, IWikiTextFile
 class WikiTextFile(TextFile, DirectoryMethods):
     """A text file that represents a wiki page."""
 
-    def __init__(self, server, path, write_filename,
-                 file_resource, dir_resource):
+    def __init__(self, server, path, write_filename, file_resource, dir_resource):
         super(WikiTextFile, self).__init__(
-            server, path, write_filename, file_resource, dir_resource)
+            server, path, write_filename, file_resource, dir_resource
+        )
         if dir_resource is not None:
             directlyProvides(self, IDirectoryResource)
 

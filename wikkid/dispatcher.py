@@ -45,9 +45,9 @@ def get_view(obj, view_name, request, ec=ExecutionContext()):
 
 def register_view(view_class):
     """Register the view."""
-    interface = getattr(view_class, 'for_interface', None)
-    view_name = getattr(view_class, 'name', None)
-    default_view = getattr(view_class, 'is_default', False)
+    interface = getattr(view_class, "for_interface", None)
+    view_name = getattr(view_class, "name", None)
+    default_view = getattr(view_class, "is_default", False)
 
     if view_name is None or interface is None:
         # Don't register.
@@ -61,17 +61,18 @@ def register_view(view_class):
 
 def unregister_view(view_class):
     """Unregister the view."""
-    interface = getattr(view_class, 'for_interface', None)
-    view_name = getattr(view_class, 'name', None)
-    default_view = getattr(view_class, 'is_default', False)
+    interface = getattr(view_class, "for_interface", None)
+    view_name = getattr(view_class, "name", None)
+    default_view = getattr(view_class, "is_default", False)
 
     if view_name is None or interface is None:
         # Don't register.
         return
     key = (interface, view_name)
-    assert _VIEW_REGISTRY[key] is view_class, \
-        "key registered with different class: %r: %r != %r" % (
-            key, _VIEW_REGISTRY[key], view_class)
+    assert _VIEW_REGISTRY[key] is view_class, (
+        "key registered with different class: %r: %r != %r"
+        % (key, _VIEW_REGISTRY[key], view_class)
+    )
     del _VIEW_REGISTRY[key]
     if default_view:
         del _VIEW_REGISTRY[(interface, None)]
@@ -86,14 +87,17 @@ def unregister_view(view_class):
 # wikkid.view package so that when the classes are parsed, they register
 # themselves with the view registry.
 
+
 def load_view_modules():
     curr_dir = os.path.abspath(dirname(__file__))
-    view_dir = joinpath(curr_dir, 'view')
+    view_dir = joinpath(curr_dir, "view")
     py_files = [
-        filename for filename in os.listdir(view_dir)
-        if filename.endswith('.py') and not filename.startswith('__')]
+        filename
+        for filename in os.listdir(view_dir)
+        if filename.endswith(".py") and not filename.startswith("__")
+    ]
     for filename in py_files:
-        __import__('wikkid.view.%s' % filename[:-3])
+        __import__("wikkid.view.%s" % filename[:-3])
 
 
 load_view_modules()

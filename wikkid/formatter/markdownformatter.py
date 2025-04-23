@@ -18,7 +18,6 @@ class MarkdownFormatter(object):
     """Format source files as HTML using markdown."""
 
     def format(self, filename, text):
-        """Format the text.
-        """
-        md = markdown.Markdown(safe_mode='replace')
+        """Format the text."""
+        md = markdown.Markdown(safe_mode="replace")
         return md.convert(text)

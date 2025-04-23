@@ -6,5 +6,4 @@
 
 """A Distributed Wiki."""
 
-
 version = "0.5"

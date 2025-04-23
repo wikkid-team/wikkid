@@ -13,8 +13,8 @@ from wikkid.view.utils import expand_wiki_name
 class BaseEditView(BaseView):
     """Base class for editing text."""
 
-    name = 'edit'
-    template = 'edit_page'
+    name = "edit"
+    template = "edit_page"
 
     @property
     def title(self):
@@ -23,7 +23,7 @@ class BaseEditView(BaseView):
     @property
     def save_url(self):
         """The link for the cancel button."""
-        return self.canonical_url(self.context, 'save')
+        return self.canonical_url(self.context, "save")
 
     @property
     def cancel_url(self):

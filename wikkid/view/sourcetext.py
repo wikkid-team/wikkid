@@ -18,12 +18,11 @@ class SourceTextPage(DirectoryBreadcrumbView):
     """
 
     for_interface = ISourceTextFile
-    name = 'view'
+    name = "view"
     is_default = True
-    template = 'view_page'
+    template = "view_page"
 
     @property
     def content(self):
         formatter = PygmentsFormatter()
-        return formatter.format(
-            self.context.base_name, self.context.get_bytes())
+        return formatter.format(self.context.base_name, self.context.get_bytes())

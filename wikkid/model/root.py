@@ -40,4 +40,4 @@ class RootResource(DirectoryResource):
 
     @property
     def preferred_path(self):
-        return '/'
+        return "/"

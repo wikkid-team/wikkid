@@ -25,24 +25,24 @@ from wikkid.filestore.basefile import BaseFile
 from wikkid.interface.filestore import FileType, IFile, IFileStore
 
 
-def normalize_line_endings(content, ending=b'\n'):
+def normalize_line_endings(content, ending=b"\n"):
     return ending.join(content.splitlines())
 
 
 def get_line_ending(lines):
     """Work out the line ending used in lines."""
     if len(lines) == 0:
-        return b'\n'
+        return b"\n"
     first = lines[0]
-    if first.endswith(b'\r\n'):
-        return b'\r\n'
+    if first.endswith(b"\r\n"):
+        return b"\r\n"
     # Default to \n if there are no line endings.
-    return b'\n'
+    return b"\n"
 
 
 def get_commit_message(commit_message):
-    if commit_message is None or commit_message.strip() == '':
-        return 'No description of change given.'
+    if commit_message is None or commit_message.strip() == "":
+        return "No description of change given."
     return commit_message
 
 
@@ -51,8 +51,8 @@ def normalize_content(content):
     content = normalize_line_endings(content)
     # Make sure the content ends with a new-line.  This makes
     # end of file conflicts nicer.
-    if not content.endswith(b'\n'):
-        content += b'\n'
+    if not content.endswith(b"\n"):
+        content += b"\n"
     return content
 
 
@@ -61,7 +61,7 @@ def iter_paths(path):
     while len(path_segments) > 0:
         tail = path_segments.pop()
         if len(path_segments) == 0:
-            yield '', tail
+            yield "", tail
         else:
             yield joinpath(*path_segments), tail
 
@@ -85,7 +85,7 @@ class FileStore(object):
     def __init__(self, tree):
         self.tree = tree
         self.branch = tree.branch
-        self.logger = logging.getLogger('wikkid')
+        self.logger = logging.getLogger("wikkid")
 
     def basis_tree(self):
         return self.tree.basis_tree()
@@ -97,8 +97,7 @@ class FileStore(object):
         else:
             return File(self, path)
 
-    def update_file(self, path, content, author, parent_revision,
-                    commit_message=None):
+    def update_file(self, path, content, author, parent_revision, commit_message=None):
         """Update the file at the specified path with the content.
 
         This is going to be really interesting when we need to deal with
@@ -114,8 +113,8 @@ class FileStore(object):
             if self.tree.is_versioned(path):
                 # What if a parent_revision hasn't been set?
                 self._update_file(
-                    path, content, author, parent_revision,
-                    commit_message)
+                    path, content, author, parent_revision, commit_message
+                )
             else:
                 self._add_file(path, content, author, commit_message)
 
@@ -135,8 +134,7 @@ class FileStore(object):
             f = self.get_file(check.pop())
             if f is not None:
                 if not f.is_directory:
-                    raise FileExists(
-                        '%s exists and is not a directory' % f.path)
+                    raise FileExists("%s exists and is not a directory" % f.path)
 
     def _add_file(self, path, content, author, commit_message):
         """Add a new file at the specified path with the content.
@@ -152,10 +150,8 @@ class FileStore(object):
         # Put the file there.
         # TODO: UTF-8 encode text files?
         t.put_bytes(basename(path), content)
-        self.tree.smart_add([t.local_abspath('.')])
-        self.tree.commit(
-            message=commit_message,
-            authors=[author])
+        self.tree.smart_add([t.local_abspath(".")])
+        self.tree.commit(message=commit_message, authors=[author])
 
     def _get_final_text(self, content, f, parent_revision):
         current_rev = f.last_modified_in_revision
@@ -177,14 +173,13 @@ class FileStore(object):
         if len(new_lines) > 0 and not new_lines[-1].endswith(ending):
             new_lines[-1] += ending
         merge = Merge3(basis_lines, new_lines, current_lines)
-        result = b''.join(merge.merge_lines())  # or merge_regions or whatever
-        conflicted = (b'>>>>>>>' + ending) in result
+        result = b"".join(merge.merge_lines())  # or merge_regions or whatever
+        conflicted = (b">>>>>>>" + ending) in result
         if conflicted:
             raise UpdateConflicts(result, current_rev)
         return result
 
-    def _update_file(self, path, content, author, parent_revision,
-                     commit_message):
+    def _update_file(self, path, content, author, parent_revision, commit_message):
         """Update an existing file with the content.
 
         This method merges the changes in based on the parent revision.
@@ -194,9 +189,7 @@ class FileStore(object):
         with wt.lock_write():
             result = self._get_final_text(content, f, parent_revision)
             wt.controldir.root_transport.put_bytes(path, result)
-            wt.commit(
-                message=commit_message, authors=[author],
-                specific_files=[path])
+            wt.commit(message=commit_message, authors=[author], specific_files=[path])
 
     def list_directory(self, directory_path):
         """Return a list of File objects for in the directory path.
@@ -213,8 +206,9 @@ class FileStore(object):
         wt = self.tree
         with wt.lock_read():
             for fp, fc, fkind, entry in wt.list_files(
-                    from_dir=directory_path, recursive=False):
-                if fc != 'V':
+                from_dir=directory_path, recursive=False
+            ):
+                if fc != "V":
                     # If the file isn't versioned, skip it.
                     continue
                 if directory_path is None:
@@ -240,14 +234,14 @@ class File(BaseFile):
     def _get_filetype(self):
         """Work out the filetype based on the mimetype if possible."""
         with self.tree.lock_read():
-            is_directory = ('directory' == self.tree.kind(self.path))
+            is_directory = "directory" == self.tree.kind(self.path)
             if is_directory:
                 return FileType.DIRECTORY
             else:
                 if self._mimetype is None:
                     binary = self._is_binary
                 else:
-                    binary = not self._mimetype.startswith('text/')
+                    binary = not self._mimetype.startswith("text/")
                 if binary:
                     return FileType.BINARY_FILE
                 else:
@@ -265,12 +259,10 @@ class File(BaseFile):
     def last_modified_in_revision(self):
         if self._last_modified_in_revision is None:
             try:
-                self._last_modified_in_revision = self.tree.get_file_revision(
-                    self.path)
+                self._last_modified_in_revision = self.tree.get_file_revision(self.path)
             except AttributeError:
                 bt = self.tree.basis_tree()
-                self._last_modified_in_revision = bt.get_file_revision(
-                    self.path)
+                self._last_modified_in_revision = bt.get_file_revision(self.path)
         return self._last_modified_in_revision
 
     @property
@@ -301,24 +293,22 @@ class File(BaseFile):
     @property
     def is_directory(self):
         """Is this file a directory?"""
-        return 'directory' == self.tree.kind(self.path)
+        return "directory" == self.tree.kind(self.path)
 
     def update(self, content, user):
         raise NotImplementedError()
 
 
 class BranchFileStore(FileStore):
-
     def __init__(self, branch):
         self.branch = branch
         self.tree = branch.basis_tree()
-        self.logger = logging.getLogger('wikkid')
+        self.logger = logging.getLogger("wikkid")
 
     def basis_tree(self):
         return self.tree
 
-    def update_file(self, path, content, author, parent_revision,
-                    commit_message=None):
+    def update_file(self, path, content, author, parent_revision, commit_message=None):
         commit_message = get_commit_message(commit_message)
         with self.branch.lock_write():
             if self.tree.is_versioned(path):
@@ -334,19 +324,18 @@ class BranchFileStore(FileStore):
                     tt.delete_contents(trans_id)
                 else:
                     name = splitpath(path)[-1]
-                    tt.version_file(
-                        trans_id=trans_id, file_id=gen_file_id(name))
+                    tt.version_file(trans_id=trans_id, file_id=gen_file_id(name))
                     create_parents(tt, path, trans_id)
                 tt.create_file([content], trans_id)
                 try:
                     tt.commit(self.branch, commit_message, authors=[author])
                 except MalformedTransform as e:
                     for conflict in e.conflicts:
-                        if conflict[0] == 'non-directory parent':
+                        if conflict[0] == "non-directory parent":
                             path = FinalPaths(tt).get_path(trans_id)
                             raise FileExists(
-                                '%s exists and is not a directory' %
-                                conflict[1])
+                                "%s exists and is not a directory" % conflict[1]
+                            )
                     raise
 
             self.tree = self.branch.basis_tree()

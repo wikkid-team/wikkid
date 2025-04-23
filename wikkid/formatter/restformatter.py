@@ -21,5 +21,5 @@ class RestructuredTextFormatter(object):
 
         I'm almost 100% positive that this method needs more args.
         """
-        parts = publish_parts(text, writer_name='html')
-        return parts['html_title'] + parts['body']
+        parts = publish_parts(text, writer_name="html")
+        return parts["html_title"] + parts["body"]

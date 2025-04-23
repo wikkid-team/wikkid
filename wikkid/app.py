@@ -36,9 +36,11 @@ def serve_file(filename):
         res.last_modified = os.path.getmtime(filename)
         # Todo: is this the best value for the etag?
         # perhaps md5 would be a better alternative
-        res.etag = '%s-%s-%s' % (
-            os.path.getmtime(filename), os.path.getsize(filename),
-            hash(filename))
+        res.etag = "%s-%s-%s" % (
+            os.path.getmtime(filename),
+            os.path.getsize(filename),
+            hash(filename),
+        )
         return res
 
     else:
@@ -56,27 +58,27 @@ class WikkidApp(object):
         self.resource_factory = ResourceFactory(self.filestore)
         # Need to load the initial templates for the skin.
         if skin_name is None:
-            skin_name = 'default'
+            skin_name = "default"
         self.skin = Skin(skin_name)
-        self.logger = logging.getLogger('wikkid')
+        self.logger = logging.getLogger("wikkid")
 
     def preprocess_environ(self, environ):
         request = Request(environ)
         path = urllib.parse.unquote(request.path)
         script_name = self.execution_context.script_name
         # Firstly check to see if the path is the same as the script_name
-        if path != script_name and not path.startswith(script_name + '/'):
+        if path != script_name and not path.startswith(script_name + "/"):
             raise HTTPNotFound()
 
-        shifted_prefix = ''
+        shifted_prefix = ""
         while shifted_prefix != script_name:
             shifted = shift_path_info(environ)
-            shifted_prefix = '{0}/{1}'.format(shifted_prefix, shifted)
+            shifted_prefix = "{0}/{1}".format(shifted_prefix, shifted)
         # Now we are just interested in the path_info having ignored the
         # script name.
         path = urllib.parse.unquote(request.path_info)
-        if path == '':
-            path = '/'  # Explicitly be the root (we need the /)
+        if path == "":
+            path = "/"  # Explicitly be the root (we need the /)
         return request, path
 
     def _get_view(self, request, path):
@@ -93,17 +95,16 @@ class WikkidApp(object):
         except HTTPException as e:
             return e
 
-        if path == '/favicon.ico':
+        if path == "/favicon.ico":
             if self.skin.favicon is not None:
                 return serve_file(self.skin.favicon)
             else:
                 return HTTPNotFound()
 
-        if path.startswith('/static/'):
+        if path.startswith("/static/"):
             if self.skin.static_dir is not None:
                 static_dir = self.skin.static_dir.rstrip(os.sep) + os.sep
-                static_file = os.path.abspath(
-                    urlutils.joinpath(static_dir, path[8:]))
+                static_file = os.path.abspath(urlutils.joinpath(static_dir, path[8:]))
                 if static_file.startswith(static_dir):
                     return serve_file(static_file)
                 else:

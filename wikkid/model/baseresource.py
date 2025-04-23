@@ -14,8 +14,7 @@ from wikkid.interface.resource import IRootResource
 class BaseResource(object):
     """Information about a resource."""
 
-    def __init__(self, server, path, write_filename,
-                 file_resource, dir_resource):
+    def __init__(self, server, path, write_filename, file_resource, dir_resource):
         self.factory = server
         self.path = path
         self.write_filename = write_filename
@@ -48,4 +47,4 @@ class BaseResource(object):
     @property
     def root_resource(self):
         """Any resource should be able to get to the root resource."""
-        return self.factory.get_resource_at_path('/')
+        return self.factory.get_resource_at_path("/")

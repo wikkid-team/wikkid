@@ -15,11 +15,13 @@ from wikkid.formatter.restformatter import RestructuredTextFormatter
 # Both textile and markdown are optional.
 try:
     from wikkid.formatter.markdownformatter import MarkdownFormatter
+
     has_markdown = True
 except ImportError:
     has_markdown = False
 try:
     from wikkid.formatter.textileformatter import TextileFormatter
+
     has_textile = True
 except ImportError:
     has_textile = False
@@ -30,13 +32,13 @@ class FormatterRegistry(object):
 
     def __init__(self):
         self.formatters = {
-            'pygments': PygmentsFormatter(),
-            'rest': RestructuredTextFormatter(),
-            }
+            "pygments": PygmentsFormatter(),
+            "rest": RestructuredTextFormatter(),
+        }
         if has_markdown:
-            self.formatters['markdown'] = MarkdownFormatter()
+            self.formatters["markdown"] = MarkdownFormatter()
         if has_textile:
-            self.formatters['textile'] = TextileFormatter()
+            self.formatters["textile"] = TextileFormatter()
 
     def __getitem__(self, formatter):
         return self.formatters[formatter]
@@ -50,7 +52,7 @@ def get_formatter(name):
     return formatter_registry[name]
 
 
-FORMAT_MATCHER = re.compile(r'^#\s+(\w+).*$')
+FORMAT_MATCHER = re.compile(r"^#\s+(\w+).*$")
 
 
 def get_wiki_formatter(content: str, default_formatter: str) -> str:
@@ -71,13 +73,13 @@ def get_wiki_formatter(content: str, default_formatter: str) -> str:
     is returned.  If the default_formatter doesn't exist, a key error
     is raised.
     """
-    end_of_line = content.find('\n')
+    end_of_line = content.find("\n")
     match = FORMAT_MATCHER.match(content[:end_of_line])
     if match is not None:
         try:
             name = match.group(1).lower()
             formatter = formatter_registry[name]
-            return content[end_of_line + 1:], formatter
+            return content[end_of_line + 1 :], formatter
         except KeyError:
             # Fall through to returning the default.
             pass

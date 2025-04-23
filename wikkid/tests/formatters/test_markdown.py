@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 # available, the tests are skipped.
 try:
     from wikkid.formatter.markdownformatter import MarkdownFormatter
+
     has_markdown = True
 except ImportError:
     has_markdown = False
@@ -27,7 +28,7 @@ class TestMarkdownFormatter(TestCase):
         if has_markdown:
             self.formatter = MarkdownFormatter()
         else:
-            self.skip('markdown formatter not available')
+            self.skip("markdown formatter not available")
 
     def test_simple_headings(self):
         # A simple heading and a paragraph.
@@ -40,13 +41,13 @@ class TestMarkdownFormatter(TestCase):
 
             Simple sentence.
             """)
-        result = self.formatter.format('filename', text)
+        result = self.formatter.format("filename", text)
         soup = BeautifulSoup(result, features="lxml")
-        self.assertEqual('Heading 1', soup.h1.string)
-        self.assertEqual('Heading 2', soup.h2.string)
+        self.assertEqual("Heading 1", soup.h1.string)
+        self.assertEqual("Heading 2", soup.h2.string)
         # We don't care about whitespace on <p> tags, and markdown inserts
         # newlines.
-        self.assertEqual('Simple sentence.', soup.p.string.strip())
+        self.assertEqual("Simple sentence.", soup.p.string.strip())
 
     def test_detailed_headings(self):
         text = dedent("""\
@@ -61,21 +62,21 @@ class TestMarkdownFormatter(TestCase):
             ##### Heading 5
 
             ###### Heading 6""")
-        result = self.formatter.format('filename', text)
+        result = self.formatter.format("filename", text)
         soup = BeautifulSoup(result, features="lxml")
-        self.assertEqual('Heading 1', soup.h1.string)
-        self.assertEqual('Heading 2', soup.h2.string)
-        self.assertEqual('Heading 3', soup.h3.string)
-        self.assertEqual('Heading 4', soup.h4.string)
-        self.assertEqual('Heading 5', soup.h5.string)
-        self.assertEqual('Heading 6', soup.h6.string)
+        self.assertEqual("Heading 1", soup.h1.string)
+        self.assertEqual("Heading 2", soup.h2.string)
+        self.assertEqual("Heading 3", soup.h3.string)
+        self.assertEqual("Heading 4", soup.h4.string)
+        self.assertEqual("Heading 5", soup.h5.string)
+        self.assertEqual("Heading 6", soup.h6.string)
 
     def test_inline_link(self):
         # A paragraph containing a wiki word.
         text = "A link to the [FrontPage](http://127.0.0.1) helps."
-        result = self.formatter.format('filename', text)
+        result = self.formatter.format("filename", text)
         soup = BeautifulSoup(result, features="lxml")
-        self.assertEqual('http://127.0.0.1', soup.a['href'])
+        self.assertEqual("http://127.0.0.1", soup.a["href"])
 
     def test_reference_link(self):
         # A paragraph containing a wiki word.
@@ -84,25 +85,27 @@ class TestMarkdownFormatter(TestCase):
 
             [id]: http://127.0.0.1
             """)
-        result = self.formatter.format('filename', text)
+        result = self.formatter.format("filename", text)
         soup = BeautifulSoup(result, features="lxml")
-        self.assertEqual('http://127.0.0.1', soup.a['href'])
+        self.assertEqual("http://127.0.0.1", soup.a["href"])
 
     def test_emphasis(self):
-        texts = ('We can have *emphasis* and **strong** as well!',
-                 'We can have _emphasis_ and __strong__ as well!')
+        texts = (
+            "We can have *emphasis* and **strong** as well!",
+            "We can have _emphasis_ and __strong__ as well!",
+        )
         for text in texts:
-            result = self.formatter.format('filename', text)
+            result = self.formatter.format("filename", text)
             soup = BeautifulSoup(result, features="lxml")
-            self.assertEqual('emphasis', soup.em.string)
-            self.assertEqual('strong', soup.strong.string)
+            self.assertEqual("emphasis", soup.em.string)
+            self.assertEqual("strong", soup.strong.string)
 
     def test_blockquote(self):
         text = dedent("""\
             > This is a block quoted paragraph
             > that spans multiple lines.
             """)
-        result = self.formatter.format('filename', text)
+        result = self.formatter.format("filename", text)
         soup = BeautifulSoup(result, features="lxml")
         self.assertIsNotNone(soup.blockquote)
 
@@ -120,20 +123,20 @@ class TestMarkdownFormatter(TestCase):
              2. OL 2
              7. OL 3
              """)
-        result = self.formatter.format('filename', text)
+        result = self.formatter.format("filename", text)
         soup = BeautifulSoup(result, features="lxml")
 
         self.assertIsNot(None, soup.ul)
-        ulNodes = soup.ul.findAll('li')
+        ulNodes = soup.ul.findAll("li")
         self.assertEqual(
-            ['UL 1', 'UL 2', 'UL 3'],
-            [node.string.strip() for node in ulNodes])
+            ["UL 1", "UL 2", "UL 3"], [node.string.strip() for node in ulNodes]
+        )
 
         self.assertIsNot(None, soup.ol)
-        olNodes = soup.ol.findAll('li')
+        olNodes = soup.ol.findAll("li")
         self.assertEqual(
-            ['OL 1', 'OL 2', 'OL 3'],
-            [node.string.strip() for node in olNodes])
+            ["OL 1", "OL 2", "OL 3"], [node.string.strip() for node in olNodes]
+        )
 
     def test_code_blocks(self):
         text = dedent("""\
@@ -143,32 +146,27 @@ class TestMarkdownFormatter(TestCase):
 
             More Normal text.
             """)
-        result = self.formatter.format('filename', text)
+        result = self.formatter.format("filename", text)
         soup = BeautifulSoup(result, features="lxml")
-        self.assertEqual(
-            soup.pre.code.string.strip(), 'Some Code inside pre tags')
+        self.assertEqual(soup.pre.code.string.strip(), "Some Code inside pre tags")
 
     def test_hr(self):
         # test different HR types:
-        texts = ('* * *',
-                 '***',
-                 '*********',
-                 '- - - -',
-                 '------------------')
+        texts = ("* * *", "***", "*********", "- - - -", "------------------")
         for text in texts:
-            result = self.formatter.format('filename', text)
+            result = self.formatter.format("filename", text)
             soup = BeautifulSoup(result, features="lxml")
             self.assertIsNot(None, soup.hr)
 
     def test_code(self):
-        text = 'use the `printf()` function'
-        result = self.formatter.format('filename', text)
+        text = "use the `printf()` function"
+        result = self.formatter.format("filename", text)
         soup = BeautifulSoup(result, features="lxml")
-        self.assertEqual('printf()', soup.code.string)
+        self.assertEqual("printf()", soup.code.string)
 
     def test_unicode(self):
         # Test the unicode support of the markdown formatter.
-        text = '\N{SNOWMAN}'
-        result = self.formatter.format('format', text)
+        text = "\N{SNOWMAN}"
+        result = self.formatter.format("format", text)
         soup = BeautifulSoup(result, features="lxml")
         self.assertEqual(soup.p.string.strip(), text)

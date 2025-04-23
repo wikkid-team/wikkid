@@ -11,12 +11,12 @@ import unittest
 
 def test_suite():
     names = [
-        'registry',
-        'rest',
-        'markdown',
-        'textile',
-        ]
-    module_names = ['wikkid.tests.formatters.test_' + name for name in names]
+        "registry",
+        "rest",
+        "markdown",
+        "textile",
+    ]
+    module_names = ["wikkid.tests.formatters.test_" + name for name in names]
     loader = unittest.TestLoader()
     suite = loader.loadTestsFromNames(module_names)
 

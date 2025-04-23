@@ -7,7 +7,6 @@
 
 """A text to html formatter using textile."""
 
-
 from textile import textile
 from zope.interface import implementer
 
@@ -19,6 +18,5 @@ class TextileFormatter(object):
     """Format source files as HTML using textile."""
 
     def format(self, filename, text):
-        """Format the text.
-        """
+        """Format the text."""
         return textile(text)

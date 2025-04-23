@@ -42,7 +42,9 @@ class DirectoryMethods(object):
             file_path = entry.path
             listing.append(
                 self.factory.get_resource(
-                    '/' + file_path, file_path, file_resource, dir_resource))
+                    "/" + file_path, file_path, file_resource, dir_resource
+                )
+            )
 
         return listing
 
