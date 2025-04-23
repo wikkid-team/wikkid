@@ -22,7 +22,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         sudo apt install --no-install-recommends -y rustc
-        pip install -U pip flake8 testtools git+https://github.com/breezy-team/breezy bs4 lxml
+        pip install -U pip flake8 testtools git+https://github.com/breezy-team/breezy bs4 lxml ruff
         python setup.py develop
     - name: Style checks
       run: |
@@ -31,6 +31,8 @@ jobs:
       run: |
         pip install -U mypy
         #python -m mypy wikkid
+    - name: Ruff format
+      run: ruff format --check .
     - name: Test suite run
       run: |
         python -m testtools.run discover wikkid.tests
