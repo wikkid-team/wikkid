@@ -85,21 +85,22 @@ def main(args):
         from wikkid.filestore.bzr import FileStore
         from wikkid.user.bzr import LocalBazaarUserMiddleware
         import breezy.bzr
-        import breezy.git
+        import breezy.git  # noqa: F401
 
         working_tree = WorkingTree.open(branch)
         logger.info('Using: %s', working_tree)
         filestore = FileStore(working_tree)
+
+        app = WikkidApp(filestore=filestore, execution_context=execution_context)
+        app = LocalBazaarUserMiddleware(app, working_tree.branch)
     elif options.format == 'git':
         from wikkid.filestore.git import FileStore
         from wikkid.user.git import LocalGitUserMiddleware
         filestore = FileStore.from_path(branch)
 
-    app = WikkidApp(filestore=filestore, execution_context=execution_context)
-    if options.format == 'bzr':
-        app = LocalBazaarUserMiddleware(app, working_tree.branch)
-    elif options.format == 'git':
+        app = WikkidApp(filestore=filestore, execution_context=execution_context)
         app = LocalGitUserMiddleware(app, filestore.repo)
+
     from wsgiref.simple_server import make_server
     httpd = make_server(options.host, options.port, app)
     logger.info('Serving on http://%s:%s', options.host, options.port)
