@@ -17,6 +17,7 @@ except ImportError:
 import logging
 import optparse
 import sys
+from typing import Optional
 
 from wikkid import version
 from wikkid.app import WikkidApp
@@ -39,13 +40,27 @@ def setup_logging():
     root.addHandler(handler)
 
 
+def detect_format(root: str) -> Optional[str]:
+    """Detect the format in use by a path."""
+    import os
+    if not os.path.isdir(root):
+        return None
+    while root != os.path.dirname(root):
+        if os.path.exists(os.path.join(root, '.bzr')):
+            return 'bzr'
+        elif os.path.exists(os.path.join(root, '.git')):
+            return 'git'
+        root = os.path.dirname(root)
+    return None
+
+
 def main(args):
 
     usage = "Usage: %prog [options] <wiki-branch>"
     parser = optparse.OptionParser(
         usage=usage, description="Run a Wikkid Wiki server.", version=version)
-    parser.add_option('--format', type='choice', default='bzr',
-        choices=['bzr', 'git'], help=("Default repository format to use."))
+    parser.add_option('--vcs', type='choice', default='auto',
+        choices=['auto', 'bzr', 'git'], help=("Default version control system to use."))
     parser.add_option(
         '--host', type='string', default=DEFAULT_HOST,
         help=('The interface to listen on. Defaults to %r' % DEFAULT_HOST))
@@ -61,12 +76,6 @@ def main(args):
         help=('The SCRIPT_NAME for the environment.  This is the prefix for the URLs'))
     options, args = parser.parse_args(sys.argv[1:])
 
-    execution_context = ExecutionContext(
-        host=options.host,
-        port=options.port,
-        default_format=options.default_format,
-        script_name=options.script_name)
-
     if len(args) == 0:
         print("No branch location specified.")
         parser.print_usage()
@@ -80,26 +89,45 @@ def main(args):
     logger = logging.getLogger('wikkid')
     logger.setLevel(logging.INFO)
 
-    if options.format == 'bzr':
+    logger.info('Using default format: %s (use --default-format to change)', options.default_format)
+
+    execution_context = ExecutionContext(
+        host=options.host,
+        port=options.port,
+        default_format=options.default_format,
+        script_name=options.script_name)
+
+    if options.vcs == 'auto':
+        # just scroll up until we either find a .bzr or a .git directory
+        f = detect_format(branch)
+        if f is not None:
+            options.vcs = f
+            logger.info('Detected vcs: %s (override with --vcs)', options.vcs)
+        else:
+            options.vcs = 'git'
+            logger.info('Defaulting to vcs: %s (override with --vcs)', options.vcs)
+
+    if options.vcs == 'bzr':
         from breezy.workingtree import WorkingTree
         from wikkid.filestore.bzr import FileStore
         from wikkid.user.bzr import LocalBazaarUserMiddleware
         import breezy.bzr
-        import breezy.git
+        import breezy.git  # noqa: F401
 
         working_tree = WorkingTree.open(branch)
         logger.info('Using: %s', working_tree)
         filestore = FileStore(working_tree)
-    elif options.format == 'git':
+
+        app = WikkidApp(filestore=filestore, execution_context=execution_context)
+        app = LocalBazaarUserMiddleware(app, working_tree.branch)
+    elif options.vcs == 'git':
         from wikkid.filestore.git import FileStore
         from wikkid.user.git import LocalGitUserMiddleware
         filestore = FileStore.from_path(branch)
 
-    app = WikkidApp(filestore=filestore, execution_context=execution_context)
-    if options.format == 'bzr':
-        app = LocalBazaarUserMiddleware(app, working_tree.branch)
-    elif options.format == 'git':
+        app = WikkidApp(filestore=filestore, execution_context=execution_context)
         app = LocalGitUserMiddleware(app, filestore.repo)
+
     from wsgiref.simple_server import make_server
     httpd = make_server(options.host, options.port, app)
     logger.info('Serving on http://%s:%s', options.host, options.port)

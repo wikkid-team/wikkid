@@ -34,7 +34,7 @@ def serve_file(filename):
         res.app_iter = FileIterable(filename)
         res.content_length = os.path.getsize(filename)
         res.last_modified = os.path.getmtime(filename)
-        # Todo: is this the best value for the etag?
+        # TODO: is this the best value for the etag?
         # perhaps md5 would be a better alternative
         res.etag = "%s-%s-%s" % (
             os.path.getmtime(filename),

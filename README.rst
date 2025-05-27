@@ -4,6 +4,10 @@ Wikkid Wiki Home
 
 Wikkid is a wiki that uses Git or Bazaar as a way to store the content.
 
+By default, it uses ``rest`` (restructuredText) as the file format
+for wiki page, but it can also be configured to use ``markdown``
+or ``textile``.
+
 Principles of Wikkid
 --------------------
 
@@ -32,6 +36,10 @@ Or, using docker::
     $ docker run -p 8080:8080 -v /path/to/some/repo:/data \
       ghcr.io/wikkid-team/wikkid
     $ sensible-browser http://localhost:8080/
+
+To see what options are available, run::
+
+    $ wikkid-serve --help
 
 Now what?
 ---------
