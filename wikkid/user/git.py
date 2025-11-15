@@ -18,7 +18,7 @@ from wikkid.user.baseuser import BaseUser
 
 
 def create_git_user_from_author_string(author):
-    name, address = email.Utils.parseaddr(author)
+    name, address = email.utils.parseaddr(author)
     if name:
         display_name = name
     else:
