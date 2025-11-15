@@ -17,7 +17,6 @@ except ImportError:
 import logging
 import optparse
 import sys
-from typing import Optional
 
 from wikkid import version
 from wikkid.app import WikkidApp
@@ -40,7 +39,7 @@ def setup_logging():
     root.addHandler(handler)
 
 
-def detect_format(root: str) -> Optional[str]:
+def detect_format(root: str) -> str | None:
     """Detect the format in use by a path."""
     import os
     if not os.path.isdir(root):
