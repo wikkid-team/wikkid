@@ -26,7 +26,7 @@ class BaseViewMetaClass(type):
         return instance
 
 
-class Breadcrumb(object):
+class Breadcrumb:
     """Breadcrumbs exist to give the user quick links up the path chain."""
 
     def __init__(self, context, request, view=None, title=None):

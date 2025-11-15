@@ -13,7 +13,7 @@ from wikkid.interface.formatter import ITextFormatter
 
 
 @implementer(ITextFormatter)
-class RestructuredTextFormatter(object):
+class RestructuredTextFormatter:
     """Format text as HTML using restructured text."""
 
     def format(self, filename, text):

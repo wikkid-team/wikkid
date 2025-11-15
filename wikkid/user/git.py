@@ -26,7 +26,7 @@ def create_git_user_from_author_string(author):
     return User(address, display_name, author)
 
 
-class LocalGitUserMiddleware(object):
+class LocalGitUserMiddleware:
     """A middleware to inject a user into the environment."""
 
     def __init__(self, app, repo):
@@ -44,7 +44,7 @@ class LocalGitUserMiddleware(object):
 
 
 @implementer(IUserFactory)
-class UserFactory(object):
+class UserFactory:
     """Generate a user from local bazaar config."""
 
     def __init__(self, branch):

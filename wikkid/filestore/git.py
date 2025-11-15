@@ -23,7 +23,7 @@ from wikkid.interface.filestore import FileType, IFile, IFileStore
 
 
 @implementer(IFileStore)
-class FileStore(object):
+class FileStore:
     """A filestore that just uses an internal map to store data."""
 
     _encoding = "utf-8"
@@ -161,7 +161,7 @@ class FileStore(object):
 
 
 @implementer(IFile)
-class File(object):
+class File:
     """A Git file object."""
 
     def __init__(self, store, mode, sha, path, commit_sha, encoding):

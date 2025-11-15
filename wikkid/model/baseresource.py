@@ -11,7 +11,7 @@ import breezy.urlutils as urlutils
 from wikkid.interface.resource import IRootResource
 
 
-class BaseResource(object):
+class BaseResource:
     """Information about a resource."""
 
     def __init__(self, server, path, write_filename, file_resource, dir_resource):

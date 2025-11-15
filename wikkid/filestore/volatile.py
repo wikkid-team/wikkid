@@ -22,7 +22,7 @@ from wikkid.interface.filestore import FileType, IFile, IFileStore
 
 
 @implementer(IFileStore)
-class FileStore(object):
+class FileStore:
     """A filestore that just uses an internal map to store data."""
 
     def __init__(self, files=None):

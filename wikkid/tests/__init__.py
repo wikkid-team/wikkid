@@ -12,7 +12,7 @@ import testtools
 from zope.interface.verify import verifyObject
 
 
-class ProvidesMixin(object):
+class ProvidesMixin:
     def assertProvides(self, obj, interface):
         """Assert 'obj' correctly provides 'interface'."""
         self.assertTrue(

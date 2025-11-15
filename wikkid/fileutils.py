@@ -10,7 +10,7 @@ This stops us reading the entire file into memory when we serve it.
 """
 
 
-class FileIterable(object):
+class FileIterable:
     """An iterable file-like object."""
 
     def __init__(self, filename, start=None, stop=None):
@@ -25,7 +25,7 @@ class FileIterable(object):
         return self.__class__(self.filename, start, stop)
 
 
-class FileIterator(object):
+class FileIterator:
     """Iterate over a file.
 
     FileIterable provides a simple file iterator, optionally allowing the

@@ -13,7 +13,7 @@ import breezy.urlutils as urlutils
 from wikkid.interface.filestore import FileType
 
 
-class BaseFile(object):
+class BaseFile:
     """Provide common fields and methods and properties for files."""
 
     def __init__(self, path):

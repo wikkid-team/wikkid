@@ -51,7 +51,7 @@ class IFileStore(Interface):
         """
 
 
-class FileType(object):
+class FileType:
     """Package lazr.enum and use an Enumerated Type."""
 
     MISSING = 1  # The file at the address does not exist.

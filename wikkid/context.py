@@ -12,7 +12,7 @@ DEFAULT_HOST = "localhost"
 DEFAULT_PORT = 8080
 
 
-class ExecutionContext(object):
+class ExecutionContext:
     """Store run-time execution context data.
 
     This is the Encapsulate Context pattern.

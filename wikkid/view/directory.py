@@ -11,7 +11,7 @@ from wikkid.view.base import DirectoryBreadcrumbView
 from wikkid.view.urls import canonical_url
 
 
-class ListingItem(object):
+class ListingItem:
     """An item to be shown in the directory listing."""
 
     def __init__(self, context, request, view, css_class, name=None):

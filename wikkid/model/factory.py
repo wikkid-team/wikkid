@@ -21,7 +21,7 @@ from wikkid.model.sourcetext import SourceTextFile
 from wikkid.model.wikitext import WikiTextFile
 
 
-class ResourceFactory(object):
+class ResourceFactory:
     """Factory to create the model objects used by the views."""
 
     DEFAULT_PATH = "Home"

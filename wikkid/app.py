@@ -47,7 +47,7 @@ def serve_file(filename):
         return HTTPNotFound()
 
 
-class WikkidApp(object):
+class WikkidApp:
     """The main wikkid application."""
 
     def __init__(self, filestore, skin_name=None, execution_context=None):

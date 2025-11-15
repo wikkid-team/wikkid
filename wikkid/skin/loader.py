@@ -19,7 +19,7 @@ import breezy.urlutils as urlutils
 from jinja2 import Environment, PackageLoader
 
 
-class Skin(object):
+class Skin:
     """A Wikkid wiki skin."""
 
     def __init__(self, skin_name=None):

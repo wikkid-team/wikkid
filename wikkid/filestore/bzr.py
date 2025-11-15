@@ -79,7 +79,7 @@ def create_parents(tt, path, trans_id):
 
 
 @implementer(IFileStore)
-class FileStore(object):
+class FileStore:
     """Wraps a Bazaar branch to be a filestore."""
 
     def __init__(self, tree):

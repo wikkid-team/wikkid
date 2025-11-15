@@ -18,7 +18,7 @@ from wikkid.interface.formatter import ITextFormatter
 
 
 @implementer(ITextFormatter)
-class PygmentsFormatter(object):
+class PygmentsFormatter:
     """Format source files as HTML using pygments."""
 
     def format(self, filename, text):
