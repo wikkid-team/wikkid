@@ -17,7 +17,7 @@ from wikkid.interface.filestore import FileType
 from wikkid.interface.resource import IDirectoryResource
 
 
-class DirectoryMethods(object):
+class DirectoryMethods:
     """Directory methods are used by DirectoryResource and WikiTextFile.
 
     The methods are only valid on WikiTextFile objects when there is a

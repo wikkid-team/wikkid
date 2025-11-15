@@ -23,7 +23,7 @@ from wikkid.interface.filestore import FileType, IFile, IFileStore
 
 
 @implementer(IFileStore)
-class FileStore(object):
+class FileStore:
     """A filestore that just uses an internal map to store data."""
 
     _encoding = "utf-8"
@@ -83,16 +83,16 @@ class FileStore(object):
                 tree = Tree()
             else:
                 if not stat.S_ISDIR(mode):
-                    raise FileExists("File %s exists and is not a directory" % el)
+                    raise FileExists(f"File {el} exists and is not a directory")
                 tree = self.store[sha]
             trees.append(tree)
         if elements[-1] in tree:
             (old_mode, old_sha) = tree[elements[-1]]
             if stat.S_ISDIR(old_mode):
-                raise FileExists("File %s exists and is a directory" % path)
+                raise FileExists(f"File {path} exists and is a directory")
             if old_sha != parent_revision and parent_revision is not None:
                 raise UpdateConflicts(
-                    "File conflict %s != %s" % (old_sha, parent_revision), old_sha
+                    f"File conflict {old_sha} != {parent_revision}", old_sha
                 )
         if not isinstance(content, bytes):
             raise TypeError(content)
@@ -161,7 +161,7 @@ class FileStore(object):
 
 
 @implementer(IFile)
-class File(object):
+class File:
     """A Git file object."""
 
     def __init__(self, store, mode, sha, path, commit_sha, encoding):
@@ -223,4 +223,6 @@ class File(object):
     @property
     def last_modified_date(self):
         c = self._get_last_modified_commit()
-        return datetime.datetime.utcfromtimestamp(c.commit_time)
+        return datetime.datetime.fromtimestamp(
+            c.commit_time, tz=datetime.timezone.utc
+        ).replace(tzinfo=None)

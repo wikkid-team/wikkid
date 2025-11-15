@@ -26,7 +26,7 @@ def create_bzr_user_from_author_string(author):
     return User(address, display_name, author)
 
 
-class LocalBazaarUserMiddleware(object):
+class LocalBazaarUserMiddleware:
     """A middleware to inject a user into the environment."""
 
     def __init__(self, app, branch):
@@ -42,7 +42,7 @@ class LocalBazaarUserMiddleware(object):
 
 
 @implementer(IUserFactory)
-class UserFactory(object):
+class UserFactory:
     """Generate a user from local bazaar config."""
 
     def __init__(self, branch):

@@ -18,7 +18,7 @@ from wikkid.interface.formatter import ITextFormatter
 
 
 @implementer(ITextFormatter)
-class PygmentsFormatter(object):
+class PygmentsFormatter:
     """Format source files as HTML using pygments."""
 
     def format(self, filename, text):
@@ -31,4 +31,4 @@ class PygmentsFormatter(object):
             lexer = guess_lexer_for_filename(filename, text)
             return highlight(text, lexer, HtmlFormatter())
         except ClassNotFound:
-            return "<pre>{0}</pre>".format(html.escape(text))
+            return f"<pre>{html.escape(text)}</pre>"

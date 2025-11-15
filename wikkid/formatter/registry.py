@@ -27,7 +27,7 @@ except ImportError:
     has_textile = False
 
 
-class FormatterRegistry(object):
+class FormatterRegistry:
     """Has a dictionary of formatters based on name."""
 
     def __init__(self):

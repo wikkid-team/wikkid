@@ -18,7 +18,7 @@ from wikkid.user.baseuser import BaseUser
 
 
 def create_git_user_from_author_string(author):
-    name, address = email.Utils.parseaddr(author)
+    name, address = email.utils.parseaddr(author)
     if name:
         display_name = name
     else:
@@ -26,7 +26,7 @@ def create_git_user_from_author_string(author):
     return User(address, display_name, author)
 
 
-class LocalGitUserMiddleware(object):
+class LocalGitUserMiddleware:
     """A middleware to inject a user into the environment."""
 
     def __init__(self, app, repo):
@@ -34,7 +34,7 @@ class LocalGitUserMiddleware(object):
         config = repo.get_config_stack()
         email = config.get(("user",), "email")
         name = config.get(("user",), "name")
-        self.user = User(email, name, "%s <%s>" % (name, email))
+        self.user = User(email, name, f"{name} <{email}>")
 
     def __call__(self, environ, start_response):
         environ["wikkid.user"] = self.user
@@ -44,7 +44,7 @@ class LocalGitUserMiddleware(object):
 
 
 @implementer(IUserFactory)
-class UserFactory(object):
+class UserFactory:
     """Generate a user from local bazaar config."""
 
     def __init__(self, branch):

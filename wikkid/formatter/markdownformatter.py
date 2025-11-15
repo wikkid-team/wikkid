@@ -14,7 +14,7 @@ from wikkid.interface.formatter import ITextFormatter
 
 
 @implementer(ITextFormatter)
-class MarkdownFormatter(object):
+class MarkdownFormatter:
     """Format source files as HTML using markdown."""
 
     def format(self, filename, text):

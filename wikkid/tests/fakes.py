@@ -11,19 +11,19 @@ from zope.interface import implementer
 from wikkid.interface.user import IUser
 
 
-class TestUserFactory(object):
+class TestUserFactory:
     """Right now, user factories don't do anything."""
 
 
 @implementer(IUser)
-class TestUser(object):
+class TestUser:
     """A test user that implements the interface."""
 
     def __init__(self, email, display_name):
         self.email = email
         self.display_name = display_name
-        self.committer_id = "{0} <{1}>".format(email, display_name)
+        self.committer_id = f"{email} <{display_name}>"
 
 
-class TestRequest(object):
+class TestRequest:
     """A fake request object."""

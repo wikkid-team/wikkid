@@ -12,7 +12,7 @@ Provides the gravatar support.
 import hashlib
 
 
-class BaseUser(object):
+class BaseUser:
     @property
     def gravatar(self):
         url = "http://www.gravatar.com/avatar/"

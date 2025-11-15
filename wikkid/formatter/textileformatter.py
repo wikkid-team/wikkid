@@ -14,7 +14,7 @@ from wikkid.interface.formatter import ITextFormatter
 
 
 @implementer(ITextFormatter)
-class TextileFormatter(object):
+class TextileFormatter:
     """Format source files as HTML using textile."""
 
     def format(self, filename, text):
