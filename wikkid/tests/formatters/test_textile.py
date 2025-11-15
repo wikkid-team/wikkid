@@ -28,7 +28,7 @@ class TestTextileFormatter(TestCase):
         if has_textile:
             self.formatter = TextileFormatter()
         else:
-            self.skip("textile formatter not available")
+            self.skipTest("textile formatter not available")
 
     def test_detailed_headings(self):
         text = dedent("""\

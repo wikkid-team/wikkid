@@ -35,6 +35,12 @@ testing = [
     "bs4",
     "lxml",
 ]
+markdown = [
+    "markdown",
+]
+textile = [
+    "textile",
+]
 
 [tool.setuptools]
 script-files = ["bin/wikkid-serve"]
