@@ -14,8 +14,8 @@ except ImportError:
     # Not running from a branch.
     pass
 
+import argparse
 import logging
-import optparse
 import sys
 
 from wikkid import version
@@ -55,34 +55,29 @@ def detect_format(root: str) -> str | None:
 
 def main(args):
 
-    usage = "Usage: %prog [options] <wiki-branch>"
-    parser = optparse.OptionParser(
-        usage=usage, description="Run a Wikkid Wiki server.", version=version)
-    parser.add_option('--vcs', type='choice', default='auto',
-        choices=['auto', 'bzr', 'git'], help=("Default version control system to use."))
-    parser.add_option(
-        '--host', type='string', default=DEFAULT_HOST,
-        help=f'The interface to listen on. Defaults to {DEFAULT_HOST!r}')
-    parser.add_option(
-        '--port', type='int', default=DEFAULT_PORT,
-        help=f'The port to listen on.  Defaults to {DEFAULT_PORT}.')
-    parser.add_option(
-        '--default-format', type='string', default=DEFAULT_FORMAT,
-        help=f"Specify the default wiki format to use. Defaults to {DEFAULT_FORMAT!r}")
-    parser.add_option(
+    parser = argparse.ArgumentParser(
+        description="Run a Wikkid Wiki server.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--version', action='version', version=version)
+    parser.add_argument('--vcs', choices=['auto', 'bzr', 'git'], default='auto',
+        help="Default version control system to use.")
+    parser.add_argument(
+        '--host', default=DEFAULT_HOST,
+        help=f'The interface to listen on.')
+    parser.add_argument(
+        '--port', type=int, default=DEFAULT_PORT,
+        help=f'The port to listen on.')
+    parser.add_argument(
+        '--default-format', default=DEFAULT_FORMAT,
+        help=f"Specify the default wiki format to use.")
+    parser.add_argument(
         '--script-name',
-        help=('The SCRIPT_NAME for the environment.  This is the prefix for the URLs'))
-    options, args = parser.parse_args(sys.argv[1:])
+        help='The SCRIPT_NAME for the environment.  This is the prefix for the URLs')
+    parser.add_argument('branch', help='Path to the wiki branch')
 
-    if len(args) == 0:
-        print("No branch location specified.")
-        parser.print_usage()
-        sys.exit(1)
-    if len(args) > 1:
-        print(f"Unexpected positional args: {args[1:]}")
-        parser.print_usage()
-        sys.exit(1)
-    branch = args[0]
+    options = parser.parse_args(sys.argv[1:])
+
+    branch = options.branch
     setup_logging()
     logger = logging.getLogger('wikkid')
     logger.setLevel(logging.INFO)
