@@ -223,4 +223,6 @@ class File:
     @property
     def last_modified_date(self):
         c = self._get_last_modified_commit()
-        return datetime.datetime.utcfromtimestamp(c.commit_time)
+        return datetime.datetime.fromtimestamp(
+            c.commit_time, tz=datetime.timezone.utc
+        ).replace(tzinfo=None)
