@@ -6,6 +6,8 @@
 
 """Interfaces relating to filestores."""
 
+from enum import IntEnum
+
 from zope.interface import Attribute, Interface
 
 
@@ -51,8 +53,8 @@ class IFileStore(Interface):
         """
 
 
-class FileType:
-    """Package lazr.enum and use an Enumerated Type."""
+class FileType(IntEnum):
+    """File type enumeration."""
 
     MISSING = 1  # The file at the address does not exist.
     WIKI_PAGE = 2  # The resource is a wiki page.
