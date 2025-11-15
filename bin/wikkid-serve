@@ -62,14 +62,13 @@ def main(args):
         choices=['auto', 'bzr', 'git'], help=("Default version control system to use."))
     parser.add_option(
         '--host', type='string', default=DEFAULT_HOST,
-        help=('The interface to listen on. Defaults to %r' % DEFAULT_HOST))
+        help=f'The interface to listen on. Defaults to {DEFAULT_HOST!r}')
     parser.add_option(
         '--port', type='int', default=DEFAULT_PORT,
-        help=('The port to listen on.  Defaults to %s.' % DEFAULT_PORT))
+        help=f'The port to listen on.  Defaults to {DEFAULT_PORT}.')
     parser.add_option(
         '--default-format', type='string', default=DEFAULT_FORMAT,
-        help=("Specify the default wiki format to use. Defaults to %r"
-              % DEFAULT_FORMAT))
+        help=f"Specify the default wiki format to use. Defaults to {DEFAULT_FORMAT!r}")
     parser.add_option(
         '--script-name',
         help=('The SCRIPT_NAME for the environment.  This is the prefix for the URLs'))
@@ -80,7 +79,7 @@ def main(args):
         parser.print_usage()
         sys.exit(1)
     if len(args) > 1:
-        print("Unexpected positional args: %s" % args[1:])
+        print(f"Unexpected positional args: {args[1:]}")
         parser.print_usage()
         sys.exit(1)
     branch = args[0]

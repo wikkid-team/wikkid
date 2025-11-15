@@ -34,7 +34,7 @@ class LocalGitUserMiddleware:
         config = repo.get_config_stack()
         email = config.get(("user",), "email")
         name = config.get(("user",), "name")
-        self.user = User(email, name, "%s <%s>" % (name, email))
+        self.user = User(email, name, f"{name} <{email}>")
 
     def __call__(self, environ, start_response):
         environ["wikkid.user"] = self.user

@@ -22,7 +22,7 @@ class TestUser:
     def __init__(self, email, display_name):
         self.email = email
         self.display_name = display_name
-        self.committer_id = "{0} <{1}>".format(email, display_name)
+        self.committer_id = f"{email} <{display_name}>"
 
 
 class TestRequest:

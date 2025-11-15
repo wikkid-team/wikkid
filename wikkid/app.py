@@ -36,10 +36,8 @@ def serve_file(filename):
         res.last_modified = os.path.getmtime(filename)
         # TODO: is this the best value for the etag?
         # perhaps md5 would be a better alternative
-        res.etag = "%s-%s-%s" % (
-            os.path.getmtime(filename),
-            os.path.getsize(filename),
-            hash(filename),
+        res.etag = (
+            f"{os.path.getmtime(filename)}-{os.path.getsize(filename)}-{hash(filename)}"
         )
         return res
 
@@ -73,7 +71,7 @@ class WikkidApp:
         shifted_prefix = ""
         while shifted_prefix != script_name:
             shifted = shift_path_info(environ)
-            shifted_prefix = "{0}/{1}".format(shifted_prefix, shifted)
+            shifted_prefix = f"{shifted_prefix}/{shifted}"
         # Now we are just interested in the path_info having ignored the
         # script name.
         path = urllib.parse.unquote(request.path_info)

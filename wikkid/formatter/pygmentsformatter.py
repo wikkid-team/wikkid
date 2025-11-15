@@ -31,4 +31,4 @@ class PygmentsFormatter:
             lexer = guess_lexer_for_filename(filename, text)
             return highlight(text, lexer, HtmlFormatter())
         except ClassNotFound:
-            return "<pre>{0}</pre>".format(html.escape(text))
+            return f"<pre>{html.escape(text)}</pre>"

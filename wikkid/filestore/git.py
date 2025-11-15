@@ -83,16 +83,16 @@ class FileStore:
                 tree = Tree()
             else:
                 if not stat.S_ISDIR(mode):
-                    raise FileExists("File %s exists and is not a directory" % el)
+                    raise FileExists(f"File {el} exists and is not a directory")
                 tree = self.store[sha]
             trees.append(tree)
         if elements[-1] in tree:
             (old_mode, old_sha) = tree[elements[-1]]
             if stat.S_ISDIR(old_mode):
-                raise FileExists("File %s exists and is a directory" % path)
+                raise FileExists(f"File {path} exists and is a directory")
             if old_sha != parent_revision and parent_revision is not None:
                 raise UpdateConflicts(
-                    "File conflict %s != %s" % (old_sha, parent_revision), old_sha
+                    f"File conflict {old_sha} != {parent_revision}", old_sha
                 )
         if not isinstance(content, bytes):
             raise TypeError(content)
