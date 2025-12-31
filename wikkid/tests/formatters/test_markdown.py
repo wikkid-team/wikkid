@@ -28,7 +28,7 @@ class TestMarkdownFormatter(TestCase):
         if has_markdown:
             self.formatter = MarkdownFormatter()
         else:
-            self.skip("markdown formatter not available")
+            self.skipTest("markdown formatter not available")
 
     def test_simple_headings(self):
         # A simple heading and a paragraph.
